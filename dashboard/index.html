@@ -722,7 +722,27 @@ h1 .ln:nth-child(2) > span{animation-delay:.67s}
     for (var i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
     return URL.createObjectURL(new Blob([arr], { type: mime }));
   }
+  var dlP = null;
+  function downloadsApi() {
+    if (!dlP) dlP = (window.claude && window.claude.use) ? window.claude.use("downloads").catch(function () { return null; }) : Promise.resolve(null);
+    return dlP;
+  }
   function openFile(f) {
+    downloadsApi().then(function (dl) {
+      if (!dl) return openFileLocal(f);
+      var parts = f.data.split(","), mime = (parts[0].match(/:(.*?);/) || [, "application/octet-stream"])[1];
+      var bin = atob(parts[1]), arr = new Uint8Array(bin.length);
+      for (var i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+      dl.save({ filename: f.fname || f.name, data: new Blob([arr], { type: mime }) }).catch(function (e) {
+        var c = e && e.code;
+        if (c === "declined") return;
+        if (c === "rejected_extension" || c === "extension_not_enabled") toast("Format berkas ini tidak bisa diunduh di sini.");
+        else if (c === "rate_limited") toast("Tunggu sebentar, lalu coba lagi.");
+        else openFileLocal(f);
+      });
+    });
+  }
+  function openFileLocal(f) {
     try {
       var u = dataUrlToBlobUrl(f.data);
       var a = document.createElement("a"); a.href = u; a.target = "_blank"; a.rel = "noopener";
