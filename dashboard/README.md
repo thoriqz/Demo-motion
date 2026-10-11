@@ -14,3 +14,10 @@ truk molen melintas di jalan proyek. Bila semua bidang selesai, papan nama
 ROEMANTARA di direksi keet menyala.
 
 Data disimpan di localStorage peramban. Logo: `assets/logo_roemantara.png`.
+
+## Perbarui lewat Excel
+Di bagian Daftar Laporan ada tombol **Unduh Excel** (berisi status dan tautan saat ini) dan
+**Impor Excel** (.xlsx, .xls, atau .csv). Baris dicocokkan lewat kolom NO; kolom STATUS menerima
+Belum / Proses / Selesai, kolom TAUTAN SUMBER harus diawali https://. Sebelum diterapkan,
+dashboard menampilkan daftar perubahan untuk diperiksa. Template dengan dropdown status:
+`Template_Laporan_Divisi_Umum.xlsx`.

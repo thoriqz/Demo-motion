@@ -279,6 +279,22 @@ select.fld option{background:var(--paper);color:var(--ink)}
   .file .rm{grid-column:3}
 }
 
+/* ---------- excel ---------- */
+.xl{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px;border:1.5px dashed var(--line);padding:10px 12px;background:var(--sheet)}
+.xl .eyebrow{flex:1 1 220px}
+.xbtn{border:1.5px solid var(--line);background:transparent;color:var(--line);font:600 14px var(--display);text-transform:uppercase;letter-spacing:.06em;padding:0 14px;height:38px;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+.xbtn:hover{background:var(--line);color:var(--paper)}
+.xbtn.solid{background:var(--accent);border-color:var(--accent);color:#fff}
+.xbtn.solid:hover{filter:brightness(1.08)}
+.xprev{border:1.5px solid var(--accent);background:var(--sheet);padding:14px;margin-bottom:12px;display:flex;flex-direction:column;gap:10px}
+.xprev h3{font-size:20px;text-transform:uppercase}
+.xprev ul{margin:0;padding:0;list-style:none;max-height:240px;overflow:auto;border-top:1px solid var(--grid)}
+.xprev li{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:10px;padding:7px 0;border-bottom:1px solid var(--grid);font-size:13px;align-items:center}
+.xprev li b{font:700 16px var(--display);color:var(--muted)}
+.xprev li span.ch{font:500 11px var(--mono);text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
+.xprev .warn{font:500 11px var(--mono);color:var(--accent)}
+.xprev .act{display:flex;gap:8px;flex-wrap:wrap}
+
 /* ---------- jadwal ---------- */
 .tl .row{grid-template-columns:minmax(0,180px) minmax(0,1fr) auto}
 .tl .d{font:700 20px/1.1 var(--display);text-transform:uppercase;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
@@ -366,6 +382,13 @@ select.fld option{background:var(--paper);color:var(--ink)}
       <h2>Daftar Laporan</h2>
       <div class="filters" id="bfilters" role="group" aria-label="Filter bidang"></div>
     </div>
+    <div class="xl">
+      <span class="eyebrow">Perbarui lewat Excel: unduh file, isi kolom STATUS (Belum / Proses / Selesai) dan TAUTAN SUMBER, lalu impor kembali.</span>
+      <button type="button" class="xbtn" id="xlDown">↓ Unduh Excel</button>
+      <label class="xbtn solid" for="xlFile">↑ Impor Excel</label>
+      <input type="file" id="xlFile" class="vh" accept=".xlsx,.xls,.csv">
+    </div>
+    <div class="xprev" id="xlPrev" hidden></div>
     <div class="reg" id="reg"></div>
   </section>
   </div>
@@ -403,6 +426,7 @@ select.fld option{background:var(--paper);color:var(--ink)}
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
 (function () {
   var KEY = "dashboard-divisi-umum-v1";
@@ -849,6 +873,131 @@ select.fld option{background:var(--paper);color:var(--ink)}
     rd.onerror = function () { toast("Berkas tidak dapat dibaca."); cb(null); };
     rd.readAsDataURL(file);
   }
+
+  /* ── Excel: unduh & impor ── */
+  function xlsxReady() { if (window.XLSX) return true; toast("Modul Excel belum termuat. Periksa koneksi lalu muat ulang halaman."); return false; }
+  function excelDown() {
+    if (!xlsxReady()) return;
+    var rows = [["NO", "LAPORAN KEGIATAN", "BIDANG", "FREKUENSI", "STATUS", "TAUTAN SUMBER"]];
+    ITEMS.forEach(function (it) { rows.push([it.no, it.name, it.b + (it.b2 ? " / " + it.b2 : ""), freq(it), status(it.no), rec(it.no).link || ""]); });
+    var ws = XLSX.utils.aoa_to_sheet(rows);
+    ws["!cols"] = [{ wch: 5 }, { wch: 52 }, { wch: 14 }, { wch: 32 }, { wch: 12 }, { wch: 48 }];
+    var help = XLSX.utils.aoa_to_sheet([
+      ["Petunjuk pengisian"],
+      ["1. Isi kolom STATUS dengan salah satu: Belum, Proses, atau Selesai."],
+      ["2. Kolom TAUTAN SUMBER boleh dikosongkan; jika diisi harus diawali https://"],
+      ["3. Jangan ubah kolom NO, karena dashboard mencocokkan baris berdasarkan nomor laporan."],
+      ["4. Simpan file, lalu buka dashboard dan klik Impor Excel."]
+    ]);
+    help["!cols"] = [{ wch: 90 }];
+    var wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Laporan");
+    XLSX.utils.book_append_sheet(wb, help, "Petunjuk");
+    var buf = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+    var d = new Date(), name = "Laporan_Divisi_Umum_" + d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0") + ".xlsx";
+    var blob = new Blob([buf], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+    downloadsApi().then(function (dl) {
+      if (dl) return dl.save({ filename: name, data: blob }).then(function () { toast("File Excel disimpan"); }, function (e) { if (!e || e.code !== "declined") toast("File Excel tidak bisa diunduh di sini."); });
+      var u = URL.createObjectURL(blob), a = document.createElement("a"); a.href = u; a.download = name;
+      document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(u); }, 60000);
+    });
+  }
+  function normStatus(v) {
+    var t = String(v == null ? "" : v).trim().toLowerCase();
+    if (!t) return null;
+    if (/selesai|done|complete|sudah|ok|✓/.test(t)) return "Selesai";
+    if (/proses|progress|berjalan|on ?going|dikerjakan/.test(t)) return "Proses";
+    if (/belum|todo|to do|pending|not/.test(t)) return "Belum";
+    return undefined;
+  }
+  function parseSheet(rows) {
+    var hi = -1, col = {};
+    for (var r = 0; r < Math.min(rows.length, 15); r++) {
+      var h = rows[r].map(function (c) { return String(c == null ? "" : c).trim().toUpperCase(); });
+      if (h.indexOf("STATUS") >= 0 && (h.indexOf("NO") >= 0 || h.indexOf("NO.") >= 0)) {
+        hi = r;
+        h.forEach(function (n, i) {
+          if (n === "NO" || n === "NO.") col.no = i;
+          else if (n === "STATUS") col.st = i;
+          else if (/TAUTAN|LINK|URL/.test(n)) col.lk = i;
+          else if (n === "KETERANGAN") col.ket = i;
+          else if (/LAPORAN/.test(n)) col.nm = i;
+        });
+        break;
+      }
+    }
+    if (hi < 0) return { err: "Kolom NO dan STATUS tidak ditemukan. Gunakan file dari tombol Unduh Excel." };
+    var changes = [], warns = [];
+    for (var i = hi + 1; i < rows.length; i++) {
+      var row = rows[i], no = parseInt(row[col.no], 10);
+      if (!no) continue;
+      var it = ITEMS[no - 1];
+      if (!it) { warns.push("Baris NO " + row[col.no] + " tidak dikenal, dilewati."); continue; }
+      var ns = normStatus(row[col.st]);
+      if (ns === undefined) { warns.push("No " + no + ": status \"" + row[col.st] + "\" tidak dikenal, dilewati."); ns = null; }
+      var lk = col.lk != null ? String(row[col.lk] == null ? "" : row[col.lk]).trim() : null;
+      if (lk == null && col.ket != null && /^https:\/\//i.test(String(row[col.ket] || "").trim())) lk = String(row[col.ket]).trim();
+      if (lk && !safe(lk)) { warns.push("No " + no + ": tautan harus diawali https://, dilewati."); lk = null; }
+      var c = { no: no, name: it.name, b: it.b };
+      if (ns && ns !== status(no)) { c.from = status(no); c.to = ns; }
+      if (lk != null && lk !== (rec(no).link || "")) c.link = lk;
+      if (c.to || c.link != null) changes.push(c);
+    }
+    return { changes: changes, warns: warns };
+  }
+  var pending = null;
+  function showPreview(res, fname) {
+    var box = $("xlPrev"); box.innerHTML = ""; box.hidden = false;
+    if (res.err) {
+      box.appendChild(el("h3", "", "File tidak bisa dibaca"));
+      box.appendChild(el("p", "warn", res.err));
+      var ok = el("button", "xbtn", "Tutup"); ok.type = "button"; ok.addEventListener("click", function () { box.hidden = true; }); box.appendChild(ok);
+      return;
+    }
+    pending = res.changes;
+    box.appendChild(el("h3", "", res.changes.length ? res.changes.length + " laporan akan diperbarui" : "Tidak ada perubahan"));
+    box.appendChild(el("p", "eyebrow", "Dari file " + fname + ". Periksa dulu sebelum diterapkan."));
+    if (res.changes.length) {
+      var ul = el("ul");
+      res.changes.forEach(function (c) {
+        var li = el("li"); li.appendChild(el("b", "", String(c.no).padStart(2, "0")));
+        li.appendChild(el("span", "", c.name));
+        li.appendChild(el("span", "ch", (c.to ? c.from + " → " + c.to : "") + (c.to && c.link != null ? " · " : "") + (c.link != null ? (c.link ? "tautan baru" : "tautan dihapus") : "")));
+        ul.appendChild(li);
+      });
+      box.appendChild(ul);
+    }
+    res.warns.forEach(function (w) { box.appendChild(el("p", "warn", w)); });
+    var act = el("div", "act");
+    if (res.changes.length) { var ap = el("button", "xbtn solid", "Terapkan perubahan"); ap.type = "button"; ap.addEventListener("click", applyImport); act.appendChild(ap); }
+    var cn = el("button", "xbtn", res.changes.length ? "Batal" : "Tutup"); cn.type = "button"; cn.addEventListener("click", function () { pending = null; box.hidden = true; }); act.appendChild(cn);
+    box.appendChild(act);
+  }
+  function applyImport() {
+    if (!pending) return;
+    var n = pending.length;
+    pending.forEach(function (c) { var r = rec(c.no); if (c.to) { r.status = c.to; lastB = c.b; } if (c.link != null) r.link = c.link; });
+    pending = null;
+    if (!save()) return;
+    ITEMS.forEach(function (it) { var inp = $("lk-" + it.no); if (inp) { inp.value = rec(it.no).link || ""; inp.dispatchEvent(new Event("input")); } });
+    $("xlPrev").hidden = true;
+    renderAll(); toast(n + " laporan diperbarui dari Excel");
+  }
+  function excelUp(file) {
+    if (!file || !xlsxReady()) return;
+    var rd = new FileReader();
+    rd.onload = function () {
+      try {
+        var wb = XLSX.read(new Uint8Array(rd.result), { type: "array" });
+        var ws = wb.Sheets["Laporan"] || wb.Sheets[wb.SheetNames[0]];
+        showPreview(parseSheet(XLSX.utils.sheet_to_json(ws, { header: 1, defval: "" })), file.name);
+      } catch (e) { showPreview({ err: "File tidak dapat dibaca sebagai Excel atau CSV." }, file.name); }
+    };
+    rd.onerror = function () { toast("File tidak dapat dibaca."); };
+    rd.readAsArrayBuffer(file);
+  }
+  $("xlDown").addEventListener("click", excelDown);
+  $("xlFile").addEventListener("change", function (e) { excelUp(e.target.files[0]); e.target.value = ""; });
 
   /* ── lampiran ── */
   function renderLampiran() {
