@@ -50,32 +50,31 @@ button{font:inherit;color:inherit}
 svg.tower{display:block;width:100%;height:auto;max-height:640px}
 .tower text{font-family:var(--mono);fill:var(--muted);font-size:9px}
 .tower .stroke{stroke:var(--line);fill:none}
-.floor rect.slab{stroke:var(--line);stroke-width:1.2;transition:fill .6s,stroke .6s}
-.floor .win{transition:fill .5s ease}
+.floor rect.slab{fill:transparent;stroke:var(--line);stroke-width:1;transition:fill .6s,stroke .3s}
+.floor .win{fill:transparent;stroke:var(--todo);stroke-width:.8;stroke-dasharray:2 2;transition:fill .45s ease,stroke .3s}
 .floor{cursor:pointer}
-.floor.s-belum rect.slab{fill:transparent;stroke-dasharray:4 3;stroke:var(--todo)}
-.floor.s-proses rect.slab{fill:url(#hatch);stroke:var(--wip)}
-.floor.s-selesai rect.slab{fill:var(--line);fill-opacity:.85}
-.floor .win{fill:transparent}
-.floor.s-selesai .win{fill:var(--lit)}
-.floor.s-proses .win{fill:none}
-.floor:hover rect.slab,.floor.hl rect.slab{stroke:var(--accent);stroke-width:2;stroke-dasharray:none}
+.floor.s-proses .win{fill:url(#hatch);stroke:var(--wip);stroke-dasharray:none}
+.floor.s-selesai rect.slab{fill:var(--line);fill-opacity:.14}
+.floor.s-selesai .win{fill:var(--lit);stroke:var(--line);stroke-dasharray:none}
+.floor.s-selesai .win.dim{fill-opacity:.55}
+.floor:hover rect.slab,.floor.hl rect.slab{stroke:var(--accent);stroke-width:2}
 .floor text.lvl{font-size:9px}
 .floor.hl text.lvl,.floor:hover text.lvl{fill:var(--accent)}
 .rise{animation:rise .7s cubic-bezier(.2,.8,.2,1) both}
 @keyframes rise{from{transform:translateY(10px);opacity:.25}to{transform:none;opacity:1}}
 .draw{stroke-dasharray:1400;animation:draw 1.6s ease-out both}
 @keyframes draw{from{stroke-dashoffset:1400}to{stroke-dashoffset:0}}
-#trolley{transition:transform 1.4s cubic-bezier(.5,0,.2,1)}
-#cable{transition:transform 1.4s cubic-bezier(.5,0,.2,1);transform-box:fill-box;transform-origin:top}
-#hookG{transition:transform 1.4s cubic-bezier(.5,0,.2,1)}
-#hookSway{animation:sway 3.4s ease-in-out infinite;transform-box:fill-box;transform-origin:top center}
-@keyframes sway{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+#gondola{transition:transform 1.4s cubic-bezier(.5,0,.2,1),opacity .6s}
+.cable{transition:transform 1.4s cubic-bezier(.5,0,.2,1),opacity .6s;transform-box:fill-box;transform-origin:top}
+#gondolaSway{animation:sway 4s ease-in-out infinite;transform-box:fill-box;transform-origin:top center}
+@keyframes sway{0%,100%{transform:rotate(-1.2deg)}50%{transform:rotate(1.2deg)}}
 #beacon{animation:blink 1.2s steps(2) infinite}
 @keyframes blink{50%{opacity:.15}}
-#flag{transition:opacity .6s;opacity:0}
-.topped #flag{opacity:1}
-.topped #hookG{opacity:.0}
+#sign rect{fill:var(--paper);stroke:var(--line);transition:fill .6s}
+#sign text{fill:var(--muted);font-size:7.5px;letter-spacing:.12em;transition:fill .6s}
+.topped #sign rect{fill:var(--lit);fill-opacity:.35}
+.topped #sign text{fill:var(--accent);font-weight:600}
+.topped #gondola,.topped .cable{opacity:0}
 
 .side{display:flex;flex-direction:column;gap:20px;min-width:0}
 .titleblock{border:1.5px solid var(--line);display:grid;grid-template-columns:1fr 1fr;background:var(--sheet)}
@@ -278,12 +277,12 @@ select.fld option{background:var(--paper);color:var(--ink)}
   <div class="view" id="v-ringkasan">
   <div class="hero">
     <figure class="drawing" style="margin:0">
-      <div class="eyebrow"><span>Tampak depan · Gedung laporan</span><span>Skala 1 lantai = 1 laporan</span></div>
-      <svg class="tower" id="tower" viewBox="0 0 380 560" role="img" aria-label="Gedung 15 lantai yang menunjukkan status setiap laporan">
+      <div class="eyebrow"><span>Tampak depan · Gedung kantor</span><span>Skala 1 lantai = 1 laporan</span></div>
+      <svg class="tower" id="tower" viewBox="0 0 380 560" role="img" aria-label="Gedung kantor 15 lantai yang menunjukkan status setiap laporan">
         <defs>
-          <pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-            <rect width="6" height="6" fill="transparent"/>
-            <line x1="0" y1="0" x2="0" y2="6" stroke="var(--wip)" stroke-width="2"/>
+          <pattern id="hatch" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+            <rect width="5" height="5" fill="transparent"/>
+            <line x1="0" y1="0" x2="0" y2="5" stroke="var(--wip)" stroke-width="1.6"/>
           </pattern>
         </defs>
         <!-- tanah -->
@@ -294,36 +293,55 @@ select.fld option{background:var(--paper);color:var(--ink)}
         </g>
         <!-- dimensi -->
         <g class="stroke" stroke-width=".8" opacity=".7">
-          <line x1="44" y1="520" x2="44" y2="130"/>
-          <line x1="38" y1="520" x2="50" y2="520"/><line x1="38" y1="130" x2="50" y2="130"/>
+          <line x1="44" y1="490" x2="44" y2="130"/>
+          <line x1="38" y1="490" x2="50" y2="490"/><line x1="38" y1="130" x2="50" y2="130"/>
         </g>
-        <text x="34" y="330" transform="rotate(-90 34 330)" text-anchor="middle">+ 15 LT / 15 LAPORAN</text>
-        <!-- crane -->
-        <g class="stroke" stroke-width="1.4">
-          <path class="draw" d="M324 520 V40 M336 520 V40 M324 40 H336"/>
-          <path d="M324 500 L336 480 M336 500 L324 480 M324 460 L336 440 M336 460 L324 440 M324 420 L336 400 M336 420 L324 400 M324 380 L336 360 M336 380 L324 360 M324 340 L336 320 M336 340 L324 320 M324 300 L336 280 M336 300 L324 280 M324 260 L336 240 M336 260 L324 240 M324 220 L336 200 M336 220 L324 200 M324 180 L336 160 M336 180 L324 160 M324 140 L336 120 M336 140 L324 120 M324 100 L336 80 M336 100 L324 80 M324 60 L336 40" stroke-width=".7" opacity=".7"/>
-          <path class="draw" d="M100 40 H372 M100 52 H372 M330 40 V18 L100 40 M330 18 L372 40"/>
-          <rect x="350" y="52" width="20" height="22" fill="var(--line)" fill-opacity=".25"/>
+        <text x="34" y="310" transform="rotate(-90 34 310)" text-anchor="middle">+ 15 LT / 15 LAPORAN</text>
+        <!-- atap: ruang mesin, papan nama, antena -->
+        <g class="stroke" stroke-width="1.2">
+          <path class="draw" d="M190 100 V56 M183 64 H197 M185 74 H195 M187 84 H193"/>
+          <rect x="132" y="100" width="116" height="26"/>
+          <path d="M136 106 H144 M136 111 H144 M136 116 H144 M136 121 H144 M236 106 H244 M236 111 H244 M236 116 H244 M236 121 H244" stroke-width=".7" opacity=".7"/>
+          <path d="M100 126 V118 H106 M260 126 V118 H254" stroke-width="1"/>
         </g>
-        <circle id="beacon" cx="330" cy="16" r="3" fill="var(--accent)"/>
-        <g id="trolley" style="transform:translateX(200px)">
-          <rect x="-8" y="52" width="16" height="6" fill="var(--accent)"/>
-          <rect id="cable" x="-0.6" y="58" width="1.2" height="100" fill="var(--ink)" style="transform:scaleY(1)"/>
-          <g id="hookG" style="transform:translateY(100px)">
-            <g id="hookSway">
-              <path d="M0 58 V64 M-4 64 H4 M0 64 v4 a4 4 0 1 1 -4 4" stroke="var(--ink)" fill="none" stroke-width="1.4"/>
-              <line x1="-3" y1="68" x2="-26" y2="80" stroke="var(--ink)" stroke-width=".7"/>
-              <line x1="3" y1="68" x2="26" y2="80" stroke="var(--ink)" stroke-width=".7"/>
-              <rect x="-30" y="80" width="60" height="6" fill="var(--accent)"/>
+        <g id="sign"><rect x="148" y="106" width="84" height="14" stroke-width="1"/><text x="190" y="116" text-anchor="middle">ROEMANTARA</text></g>
+        <circle id="beacon" cx="190" cy="54" r="3" fill="var(--accent)"/>
+        <!-- badan gedung -->
+        <g id="floors"></g>
+        <g class="stroke">
+          <rect class="draw" x="88" y="126" width="186" height="364" stroke-width="1.6"/>
+          <rect x="84" y="122" width="194" height="4" fill="var(--line)" stroke="none"/>
+          <rect x="270" y="130" width="4" height="360" fill="var(--line)" fill-opacity=".35" stroke="none"/>
+        </g>
+        <!-- podium lobi -->
+        <g class="stroke" stroke-width="1.2">
+          <rect x="70" y="490" width="222" height="30"/>
+          <path d="M70 490 H292" stroke-width="2.4"/>
+          <path d="M150 500 H232" stroke-width="2.4"/>
+          <rect x="172" y="502" width="38" height="18" fill="var(--line)" fill-opacity=".14"/>
+          <path d="M191 502 V520 M187 510 V513 M195 510 V513" stroke-width=".9"/>
+          <path d="M78 500 V520 M98 500 V520 M118 500 V520 M138 500 V520 M244 500 V520 M264 500 V520 M284 500 V520 M78 500 H138 M244 500 H284" stroke-width=".7" opacity=".7"/>
+          <path d="M164 520 H218 M168 523 H214" stroke-width=".8"/>
+        </g>
+        <text x="191" y="497" text-anchor="middle" style="font-size:6px;letter-spacing:.2em">LOBI</text>
+        <!-- skala: pohon & orang -->
+        <g class="stroke" stroke-width="1">
+          <circle cx="322" cy="490" r="13"/><path d="M322 503 V520"/>
+          <circle cx="350" cy="500" r="9"/><path d="M350 509 V520"/>
+          <circle cx="62" cy="503.5" r="2.4"/><path d="M62 506 V514 M62 514 L59 520 M62 514 L65 520 M58 509 H66"/>
+        </g>
+        <!-- gondola pembersih kaca -->
+        <rect class="cable" id="cableL" x="104.4" y="126" width="1.2" height="100" fill="var(--ink)" style="transform:scaleY(3.6)"/>
+        <rect class="cable" id="cableR" x="254.4" y="126" width="1.2" height="100" fill="var(--ink)" style="transform:scaleY(3.6)"/>
+        <g id="gondola" style="transform:translateY(486px)">
+          <g id="gondolaSway">
+            <path d="M105 -10 V0 M255 -10 V0 M100 -8 H260" stroke="var(--ink)" stroke-width=".9" fill="none"/>
+            <rect x="98" y="0" width="164" height="6" fill="var(--accent)"/>
+            <g fill="var(--ink)">
+              <circle cx="150" cy="-12.5" r="2.2"/><rect x="148.6" y="-10" width="2.8" height="10"/>
+              <circle cx="212" cy="-12.5" r="2.2"/><rect x="210.6" y="-10" width="2.8" height="10"/>
             </g>
           </g>
-        </g>
-        <!-- gedung -->
-        <g id="floors"></g>
-        <g id="flag">
-          <line x1="186" y1="130" x2="186" y2="96" stroke="var(--ink)" stroke-width="1.4"/>
-          <path d="M186 96 L218 104 L186 112 Z" fill="var(--accent)"/>
-          <text x="222" y="108" style="fill:var(--accent);font-weight:500">TUTUP ATAP</text>
         </g>
       </svg>
     </figure>
@@ -483,7 +501,7 @@ select.fld option{background:var(--paper);color:var(--ink)}
 
   /* ── gedung ── */
   var NS = "http://www.w3.org/2000/svg";
-  var BX = 96, BW = 180, FH = 26, GROUND = 520;
+  var BX = 90, BW = 180, FH = 24, GROUND = 490, BAYS = 9;
   function floorTop(no) { return GROUND - no * FH; }
   function sv(tag, attrs, parent) { var e = document.createElementNS(NS, tag); for (var k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
   function buildTower() {
@@ -493,26 +511,28 @@ select.fld option{background:var(--paper);color:var(--ink)}
       var fg = sv("g", { "class": "floor rise s-belum", "data-no": r.no, tabindex: "0", role: "button", "aria-label": "Lantai " + r.no + ": " + r.name }, g);
       fg.style.animationDelay = (i * 55) + "ms";
       sv("title", {}, fg).textContent = "LT " + String(r.no).padStart(2, "0") + " · " + r.name;
-      sv("rect", { "class": "slab", x: BX, y: y + 2, width: BW, height: FH - 4 }, fg);
-      for (var w = 0; w < 7; w++) sv("rect", { "class": "win", x: BX + 10 + w * 24, y: y + 8, width: 14, height: FH - 16 }, fg);
+      sv("rect", { "class": "slab", x: BX, y: y, width: BW, height: FH }, fg);
+      for (var w = 0; w < BAYS; w++) {
+        var win = sv("rect", { "class": "win" + ((w * 7 + r.no * 3) % 5 === 0 ? " dim" : ""), x: BX + w * 20 + 3, y: y + 5, width: 14, height: FH - 9 }, fg);
+        win.style.transitionDelay = (w * 45) + "ms";
+      }
       sv("text", { "class": "lvl", x: BX - 8, y: y + FH / 2 + 3, "text-anchor": "end" }, fg).textContent = "LT" + String(r.no).padStart(2, "0");
-      sv("text", { x: BX + BW + 6, y: y + FH / 2 + 3, "font-size": "7.5" }, fg).textContent = r.b.toUpperCase();
+      sv("text", { x: 280, y: y + FH / 2 + 3, "font-size": "7.5" }, fg).textContent = r.b.toUpperCase();
       fg.addEventListener("click", function () { focusRow(r.no); });
       fg.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); focusRow(r.no); } });
       fg.addEventListener("mouseenter", function () { hl(r.no, true); });
       fg.addEventListener("mouseleave", function () { hl(r.no, false); });
     });
-    sv("rect", { x: BX - 6, y: floorTop(15) - 4, width: BW + 12, height: 4, fill: "var(--line)" }, g);
   }
-  function moveCrane() {
+  function moveGondola() {
     var pending = ITEMS.filter(function (r) { return status(r.no) !== "Selesai"; })[0];
     var svg = $("tower");
-    if (!pending) { svg.classList.add("topped"); $("trolley").style.transform = "translateX(240px)"; return; }
+    if (!pending) { svg.classList.add("topped"); return; }
     svg.classList.remove("topped");
-    var drop = Math.max(20, floorTop(pending.no) - 30 - 58);
-    $("trolley").style.transform = "translateX(" + (BX + BW / 2) + "px)";
-    $("cable").style.transform = "scaleY(" + (drop / 100) + ")";
-    $("hookG").style.transform = "translateY(" + (drop - 6) + "px)";
+    var py = floorTop(pending.no) + FH - 4;   /* platform di bawah jendela lantai tujuan */
+    $("gondola").style.transform = "translateY(" + py + "px)";
+    var k = "scaleY(" + ((py - 134) / 100) + ")";
+    $("cableL").style.transform = k; $("cableR").style.transform = k;
   }
   function paintTower() {
     ITEMS.forEach(function (r) {
@@ -520,7 +540,7 @@ select.fld option{background:var(--paper);color:var(--ink)}
       f.classList.remove("s-belum", "s-proses", "s-selesai");
       f.classList.add("s-" + status(r.no).toLowerCase());
     });
-    moveCrane();
+    moveGondola();
   }
 
   /* ── ringkasan ── */
