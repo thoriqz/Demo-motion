@@ -158,7 +158,7 @@ section{margin-top:40px}
 .chip[aria-pressed="true"]{background:var(--line);color:var(--paper)}
 .chip:hover{border-color:var(--accent)}
 .reg{border:1.5px solid var(--line);background:var(--sheet)}
-.row{display:grid;grid-template-columns:52px minmax(0,1.6fr) minmax(0,1fr) auto minmax(0,1fr);gap:14px;align-items:center;padding:12px 14px;border-bottom:1px solid var(--grid);position:relative;transition:background .3s}
+.row{display:grid;grid-template-columns:52px minmax(0,1.5fr) minmax(0,.85fr) minmax(0,.8fr) auto minmax(0,.9fr);gap:14px;align-items:center;padding:12px 14px;border-bottom:1px solid var(--grid);position:relative;transition:background .3s}
 .row:last-child{border-bottom:0}
 .row.hl{background:var(--grid)}
 .row::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--c,var(--todo));transition:background .4s}
@@ -183,7 +183,7 @@ section{margin-top:40px}
 .note::placeholder{color:var(--muted);opacity:.7}
 @media (max-width:900px){
   .row{grid-template-columns:44px minmax(0,1fr);row-gap:8px}
-  .row .when,.row .seg-wrap,.row .note-wrap{grid-column:2}
+  .row .when,.row .seg-wrap,.row .note-wrap,.row .res{grid-column:2}
 }
 .foot{margin-top:28px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font:500 11px var(--mono);color:var(--muted)}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,30px);opacity:0;background:var(--ink);color:var(--paper);padding:8px 14px;font:500 12px var(--mono);transition:.3s;pointer-events:none}
@@ -279,6 +279,44 @@ select.fld option{background:var(--paper);color:var(--ink)}
   .file .rm{grid-column:3}
 }
 
+/* ---------- hasil per tugas ---------- */
+.res{display:flex;align-items:flex-end;gap:10px;min-width:0}
+.res .rv{font:700 26px/1 var(--display);font-variant-numeric:tabular-nums;white-space:nowrap}
+.res .rv small{font:500 10.5px var(--mono);color:var(--muted);margin-left:4px;text-transform:uppercase;letter-spacing:.04em}
+.res .rv.none{color:var(--muted);font-size:20px}
+.res .rm{font:500 9.5px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:3px}
+.spark{display:flex;align-items:flex-end;gap:2px;height:24px;flex:none}
+.spark i{display:block;width:6px;background:var(--line);min-height:2px}
+.spark i.nil{background:transparent;border-bottom:1.5px dotted var(--todo);height:0!important}
+.spark i.now{background:var(--accent)}
+.row .ket{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.35}
+.hsum{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:1.5px solid var(--line);background:var(--sheet)}
+.hsum>div{padding:12px 14px;border-right:1px solid var(--line);min-width:0}
+.hsum>div:last-child{border-right:0}
+.hsum b{display:block;font:700 30px/1.05 var(--display);font-variant-numeric:tabular-nums;margin-top:4px;overflow-wrap:anywhere}
+.hsum span.s{display:block;font-size:12px;color:var(--muted);margin-top:2px}
+@media (max-width:760px){.hsum{grid-template-columns:1fr 1fr}.hsum>div:nth-child(2n){border-right:0}.hsum>div:nth-child(-n+2){border-bottom:1px solid var(--line)}}
+.tbl-scroll{overflow-x:auto;border:1.5px solid var(--line);background:var(--sheet)}
+table.ht{border-collapse:collapse;width:100%;min-width:760px;font-size:13px}
+table.ht th,table.ht td{border-bottom:1px solid var(--grid);padding:8px 10px;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+table.ht th{font:500 10px var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);background:var(--grid);vertical-align:bottom}
+table.ht th small{display:block;font-size:10px;color:var(--ink);letter-spacing:0;margin-top:2px}
+table.ht td.l,table.ht th.l{text-align:left;white-space:normal}
+table.ht td.l{font-weight:600;min-width:220px}
+table.ht td.l span{display:block;font:500 10px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.04em;font-weight:500}
+table.ht td.nil{color:var(--todo)}
+table.ht td.rk,table.ht th.rk{background:var(--grid);font-weight:700}
+table.ht th.cur,table.ht td.cur{box-shadow:inset 2px 0 0 var(--accent),inset -2px 0 0 var(--accent)}
+table.ht th.cur{color:var(--accent)}
+table.ht tbody tr:hover td{background:var(--grid)}
+.days{display:grid;grid-template-columns:repeat(auto-fill,minmax(42px,1fr));gap:4px;margin-bottom:12px}
+.dc{border:1px solid var(--grid);padding:4px 2px;text-align:center;font:600 13px var(--display);background:var(--sheet)}
+.dc small{display:block;font:500 8.5px var(--mono);color:var(--muted);text-transform:uppercase}
+.dc.ok{border-color:var(--done);box-shadow:inset 0 -3px 0 var(--done)}
+.dc.bad{border-color:var(--accent);box-shadow:inset 0 -3px 0 var(--accent)}
+.dc.fut{opacity:.45}
+.src{font:500 11px var(--mono);color:var(--muted);letter-spacing:.04em}
+
 /* ---------- excel ---------- */
 .xl{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px;border:1.5px dashed var(--line);padding:10px 12px;background:var(--sheet)}
 .xl .eyebrow{flex:1 1 220px}
@@ -303,7 +341,7 @@ select.fld option{background:var(--paper);color:var(--ink)}
 .tl .n small{font:500 11px var(--mono);color:var(--muted);margin-left:4px;text-transform:uppercase}
 .today{font:600 10px var(--mono);letter-spacing:.06em;background:var(--accent);color:var(--paper);padding:2px 6px}
 @media (max-width:900px){ .tl .row{grid-template-columns:minmax(0,1fr) auto} .tl .k{grid-column:1/-1;order:3} }
-@media (max-width:640px){ .tabs{width:100%} .tabs button{flex:1} .clock{display:none} }
+@media (max-width:640px){ .tabs{width:100%} .tabs button{flex:1 1 0;min-width:0;padding:8px 6px} .tabs button b{font-size:15px} .clock{display:none} }
 </style>
 
 <div class="wrap">
@@ -311,8 +349,9 @@ select.fld option{background:var(--paper);color:var(--ink)}
     <div class="brand"><img class="logo" src="assets/logo_roemantara.png" alt="Logo Roemantara" width="46" height="37"><div><b>Divisi Umum</b><span class="eyebrow">Roemantara Indonesia</span></div></div>
     <nav class="tabs" role="tablist" aria-label="Menu dashboard">
       <button type="button" role="tab" data-view="ringkasan" aria-selected="true"><span>A-01</span><b>Ringkasan</b></button>
-      <button type="button" role="tab" data-view="lampiran" aria-selected="false"><span>A-02</span><b>Lampiran</b></button>
-      <button type="button" role="tab" data-view="jadwal" aria-selected="false"><span>A-03</span><b>Jadwal</b></button>
+      <button type="button" role="tab" data-view="hasil" aria-selected="false"><span>A-02</span><b>Hasil</b></button>
+      <button type="button" role="tab" data-view="lampiran" aria-selected="false"><span>A-03</span><b>Lampiran</b></button>
+      <button type="button" role="tab" data-view="jadwal" aria-selected="false"><span>A-04</span><b>Jadwal</b></button>
     </nav>
     <div class="clock" id="clock" aria-live="off"></div>
   </header>
@@ -391,6 +430,36 @@ select.fld option{background:var(--paper);color:var(--ink)}
     <div class="xprev" id="xlPrev" hidden></div>
     <div class="reg" id="reg"></div>
   </section>
+  </div>
+
+  <!-- ═════════ HASIL ═════════ -->
+  <div class="view" id="v-hasil" hidden>
+    <section>
+      <div class="sechead">
+        <h2>Hasil kegiatan</h2>
+        <div class="legend"><span id="hSrc" class="src"></span></div>
+      </div>
+      <div class="hsum" id="hSum"></div>
+      <div class="xl" style="margin-top:12px">
+        <span class="eyebrow">Sumber angka: file Excel Laporan Divisi Umum (Tabel B, C, D). Isi angkanya di Excel, simpan, lalu impor di sini. Rekap dihitung sama seperti rumus di Excel: Jumlah, Akhir, atau Rata-rata.</span>
+        <label class="xbtn solid" for="xlFile2">↑ Impor Excel</label>
+        <input type="file" id="xlFile2" class="vh" accept=".xlsx,.xls,.csv">
+      </div>
+      <div class="xprev" id="xlPrev2" hidden></div>
+    </section>
+    <section>
+      <div class="sechead"><h2>C. Laporan mingguan</h2><div class="legend"><span>Setiap Sabtu · garis oranye = minggu berjalan</span></div></div>
+      <div class="tbl-scroll"><table class="ht" id="tWeek"></table></div>
+    </section>
+    <section>
+      <div class="sechead"><h2>D. Laporan bulanan</h2><div class="legend"><span>Setiap tanggal 25</span></div></div>
+      <div class="tbl-scroll"><table class="ht" id="tMonth"></table></div>
+    </section>
+    <section>
+      <div class="sechead"><h2>B. Rekonsiliasi harian</h2><div class="legend"><span><i class="pin" style="background:var(--done)"></i>Sesuai</span><span><i class="pin" style="background:var(--accent)"></i>Ada selisih</span><span>Sehabis closing</span></div></div>
+      <div class="days" id="dGrid"></div>
+      <div class="tbl-scroll"><table class="ht" id="tDay"></table></div>
+    </section>
   </div>
 
   <!-- ═════════ LAMPIRAN ═════════ -->
@@ -771,7 +840,10 @@ select.fld option{background:var(--paper);color:var(--ink)}
       var nm = el("div"); nm.appendChild(el("div", "name", it.name));
       var tags = el("div", "tags"); tags.appendChild(el("span", "tag bd", it.b + (it.b2 ? " · " + it.b2 : "")));
       freqTags(it).forEach(function (t) { tags.appendChild(el("span", "tag", t)); });
-      nm.appendChild(tags); row.appendChild(nm);
+      nm.appendChild(tags);
+      var mk = (HS.meta[it.no] || {}).k; if (mk) nm.appendChild(el("div", "ket", mk));
+      row.appendChild(nm);
+      row.appendChild(el("div", "res"));
       var when = el("div", "when");
       dueOf(it).forEach(function (d) { var x = el("div", "", d.lbl); x.appendChild(el("span", "rel" + (d.n <= 2 ? " soon" : ""), d.txt || rel(d.n))); when.appendChild(x); });
       row.appendChild(when);
@@ -872,6 +944,219 @@ select.fld option{background:var(--paper);color:var(--ink)}
     rd.onload = function () { cb(rd.result); };
     rd.onerror = function () { toast("Berkas tidak dapat dibaca."); cb(null); };
     rd.readAsDataURL(file);
+  }
+
+  /* ── Hasil kegiatan (angka dari Excel Laporan Divisi Umum) ── */
+  var HKEY = "dashboard-divisi-umum-hasil-v1";
+  var DEFAULT_HASIL = {"source": "Laporan_Dashboard_Direksi.xlsx", "periode": {"mulai": "2026-09-26", "selesai": "2026-10-25", "bulan": "2026-10-01", "sabtu1": "2026-10-10"}, "weeks": ["2026-10-10", "2026-10-17", "2026-10-24", "2026-10-31", "2026-11-07"], "months": ["2026-10-01", "2026-11-01", "2026-12-01", "2027-01-01", "2027-02-01", "2027-03-01", "2027-04-01", "2027-05-01", "2027-06-01", "2027-07-01", "2027-08-01", "2027-09-01"], "weekly": {"1": [4, null, null, null, null], "4": [0, null, null, null, null], "5": [1, null, null, null, null], "12": [6, null, null, null, null], "13": [2, null, null, null, null]}, "monthly": {}, "daily": [], "meta": {"1": {"u": "Transaksi", "m": "Jumlah", "k": "Jumlah transaksi pengadaan & pembelian (PO/nota) yang diproses"}, "2": {"u": "Item", "m": "Akhir", "k": "Jumlah item aset, inventaris & stok tercatat di database (posisi akhir periode)"}, "3": {"u": "Vendor", "m": "Akhir", "k": "Jumlah vendor & subkon aktif yang terdaftar di database (posisi akhir periode)"}, "4": {"u": "Kasus", "m": "Jumlah", "k": "Jumlah komplain / klaim garansi yang diterima"}, "5": {"u": "Orang", "m": "Jumlah", "k": "Jumlah tamu yang datang untuk konsultasi / meeting"}, "6": {"u": "Agenda", "m": "Jumlah", "k": "Jumlah kegiatan visit, survei, dan undangan eksternal"}, "7": {"u": "Kali Update", "m": "Jumlah", "k": "Jumlah pembaruan kalender besar kegiatan"}, "8": {"u": "Rp", "m": "Jumlah", "k": "Selisih saldo buku vs kas/bank setiap selesai closing harian (detail di Tabel B)"}, "9": {"u": "Rp", "m": "Jumlah", "k": "Selisih rekonsiliasi keuangan per minggu"}, "10": {"u": "Rp", "m": "Jumlah", "k": "Selisih rekonsiliasi keuangan per bulan (closing tgl 25)"}, "11": {"u": "Dokumen", "m": "Jumlah", "k": "Laporan tutup buku yang diselesaikan (1 = selesai)"}, "12": {"u": "Dokumen", "m": "Jumlah", "k": "Jumlah surat FPP / SPH / SPK / BA / Garansi yang diterbitkan"}, "13": {"u": "Orang", "m": "Akhir", "k": "Jumlah tenaga freelance aktif (posisi akhir periode)"}, "14": {"u": "%", "m": "Rata-rata", "k": "Persentase kehadiran karyawan"}, "15": {"u": "Rp", "m": "Jumlah", "k": "Total nilai payroll yang dibayarkan"}}};
+  var HS = DEFAULT_HASIL;
+  try { var hsv = JSON.parse(localStorage.getItem(HKEY)); if (hsv && hsv.weeks) HS = hsv; } catch (e) {}
+  function isoD(d) {
+    if (d instanceof Date) { var t = new Date(d.getTime() + 43200000); return t.getUTCFullYear() + "-" + String(t.getUTCMonth() + 1).padStart(2, "0") + "-" + String(t.getUTCDate()).padStart(2, "0"); }
+    if (typeof d === "number" && d > 20000) return isoD(new Date(Date.UTC(1899, 11, 30) + d * 864e5));
+    return null;
+  }
+  function pd(iso) { var a = iso.split("-"); return new Date(+a[0], a[1] - 1, +a[2]); }
+  var fD = new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "short" }), fM = new Intl.DateTimeFormat("id-ID", { month: "short", year: "numeric" });
+  function numV(v) { if (v === "" || v == null) return null; if (typeof v === "number") return isFinite(v) ? v : null; var n = parseFloat(String(v).replace(/[^\d,.-]/g, "").replace(/\./g, "").replace(",", ".")); return isFinite(n) ? n : null; }
+  function rekap(vals, m) {
+    var f = (vals || []).filter(function (v) { return v != null; });
+    if (!f.length) return null;
+    if (m === "Jumlah") return f.reduce(function (a, b) { return a + b; }, 0);
+    if (m === "Rata-rata") return f.reduce(function (a, b) { return a + b; }, 0) / f.length;
+    return f[f.length - 1];
+  }
+  function fmtV(v, u) {
+    if (v == null) return "–";
+    if (u === "Rp") return "Rp " + Math.round(v).toLocaleString("id-ID");
+    if (u === "%") { var pc = Math.abs(v) <= 1.5 ? v * 100 : v; return (Math.round(pc * 10) / 10).toLocaleString("id-ID") + "%"; }
+    return (Math.round(v * 100) / 100).toLocaleString("id-ID");
+  }
+  function unitLbl(u) { return u === "Rp" || u === "%" ? "" : u; }
+  function curWeekIdx() { var t = today.getTime(), k = -1; HS.weeks.forEach(function (w, i) { if (w && pd(w).getTime() - 6 * 864e5 <= t) k = i; }); return k; }
+  function curMonthIdx() { var k = -1; HS.months.forEach(function (m, i) { if (!m) return; var d = pd(m); if (d.getFullYear() === today.getFullYear() && d.getMonth() === today.getMonth()) k = i; }); return k; }
+  function dailyStats() {
+    var tot = 0, bad = 0, ok = 0;
+    HS.daily.forEach(function (r) { if (r.b == null || r.a == null) return; var d = r.a - r.b; tot += d; if (d === 0) ok++; else bad++; });
+    return { tot: tot, bad: bad, ok: ok, n: ok + bad };
+  }
+  /* ringkasan satu tugas: angka utama, keterangan, dan nilai per minggu untuk grafik kecil */
+  function hasilOf(it) {
+    var m = HS.meta[it.no] || {}, u = m.u || "", me = m.m || "Jumlah";
+    if (it.h) { var ds = dailyStats(); return { v: ds.n ? ds.tot : null, u: "Rp", me: me, lbl: ds.n ? "Selisih · " + ds.bad + " hari tidak sesuai dari " + ds.n : "Rekonsiliasi harian belum diisi", bars: null }; }
+    if (it.w) { var wv = HS.weekly[it.no] || []; return { v: rekap(wv, me), u: u, me: me, lbl: "Rekap mingguan · " + me, bars: [0, 1, 2, 3, 4].map(function (i) { return wv[i] == null ? null : wv[i]; }) }; }
+    var mi = curMonthIdx(), mv = HS.monthly[it.no] || [];
+    return { v: mi >= 0 ? (mv[mi] == null ? null : mv[mi]) : rekap(mv, me), u: u, me: me, lbl: "Bulan " + (mi >= 0 ? fM.format(pd(HS.months[mi])) : "ini") + " · " + me, bars: null };
+  }
+  function paintRes() {
+    var cw = curWeekIdx();
+    ITEMS.forEach(function (it) {
+      var box = q("#row-" + it.no + " .res"); box.innerHTML = "";
+      var h = hasilOf(it), w = el("div");
+      var rv = el("div", "rv" + (h.v == null ? " none" : ""), fmtV(h.v, h.u));
+      if (h.v != null && unitLbl(h.u)) rv.appendChild(el("small", "", unitLbl(h.u)));
+      w.appendChild(rv); w.appendChild(el("div", "rm", h.lbl)); box.appendChild(w);
+      if (h.bars) {
+        var mx = Math.max.apply(null, h.bars.map(function (v) { return Math.abs(v || 0); }).concat([1]));
+        var sp = el("div", "spark"); sp.title = h.bars.map(function (v, i) { return "M" + (i + 1) + ": " + (v == null ? "–" : fmtV(v, h.u)); }).join(" · ");
+        h.bars.forEach(function (v, i) { var b = el("i", (v == null ? "nil" : "") + (i === cw ? " now" : "")); if (v != null) b.style.height = Math.max(2, Math.abs(v) / mx * 24) + "px"; sp.appendChild(b); });
+        box.appendChild(sp);
+      }
+    });
+  }
+  function renderHasil() {
+    var cw = curWeekIdx(), cm = curMonthIdx();
+    $("hSrc").textContent = "Sumber: " + (HS.source || "-") + (HS.importedAt ? " · diimpor " + new Date(HS.importedAt).toLocaleString("id-ID", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : " · data awal");
+    var filled = 0; Object.keys(HS.weekly).forEach(function (k) { HS.weekly[k].forEach(function (v) { if (v != null) filled++; }); });
+    var mfilled = 0; Object.keys(HS.monthly).forEach(function (k) { HS.monthly[k].forEach(function (v) { if (v != null) mfilled++; }); });
+    var ds = dailyStats(), per = HS.periode || {};
+    var sum = $("hSum"); sum.innerHTML = "";
+    [["Periode", per.mulai ? fD.format(pd(per.mulai)) + " – " + fD.format(pd(per.selesai)) : "–", "Closing setiap tanggal 25"],
+     ["Minggu berjalan", cw >= 0 ? "Minggu " + (cw + 1) : "–", cw >= 0 ? "Sabtu, " + fD.format(pd(HS.weeks[cw])) : "Belum mulai"],
+     ["Isian mingguan", String(filled), "nilai terisi dari 11 tugas × 5 minggu"],
+     ["Rekonsiliasi harian", ds.n ? fmtV(ds.tot, "Rp") : "–", ds.n ? ds.bad + " hari selisih · " + ds.ok + " hari sesuai" : "Belum ada hari yang diisi"]
+    ].forEach(function (c) { var d = el("div"); d.appendChild(el("span", "eyebrow", c[0])); d.appendChild(el("b", "", c[1])); d.appendChild(el("span", "s", c[2])); sum.appendChild(d); });
+
+    function table(id, cols, colLbl, rowsIt, getVals, cur) {
+      var t = $(id); t.innerHTML = "";
+      var th = el("thead"), tr = el("tr");
+      [["NO", ""], ["TUGAS", "l"], ["SATUAN", ""], ["METODE", ""]].forEach(function (h) { tr.appendChild(el("th", h[1], h[0])); });
+      cols.forEach(function (c, i) { var x = el("th", i === cur ? "cur" : "", colLbl(i)); x.appendChild(el("small", "", c ? colSub(c) : "–")); tr.appendChild(x); });
+      tr.appendChild(el("th", "rk", "Rekap")); th.appendChild(tr); t.appendChild(th);
+      var tb = el("tbody");
+      rowsIt.forEach(function (it) {
+        var m = HS.meta[it.no] || {}, vals = getVals(it), r = el("tr");
+        r.appendChild(el("td", "", String(it.no)));
+        var n = el("td", "l", it.name); n.appendChild(el("span", "", it.b)); r.appendChild(n);
+        r.appendChild(el("td", "", m.u || "")); r.appendChild(el("td", "", m.m || ""));
+        cols.forEach(function (c, i) { var v = vals[i]; r.appendChild(el("td", (v == null ? "nil" : "") + (i === cur ? " cur" : ""), v == null ? "·" : fmtV(v, m.u))); });
+        r.appendChild(el("td", "rk", fmtV(rekap(vals, m.m), m.u)));
+        tb.appendChild(r);
+      });
+      t.appendChild(tb);
+    }
+    function colSub(iso) { return iso.slice(8) === "01" ? "" : fD.format(pd(iso)); }
+    table("tWeek", HS.weeks, function (i) { return "Minggu " + (i + 1); }, ITEMS.filter(function (it) { return it.w; }), function (it) { return HS.weekly[it.no] || []; }, cw);
+    table("tMonth", HS.months, function (i) { return HS.months[i] ? fM.format(pd(HS.months[i])) : "–"; }, ITEMS.filter(function (it) { return it.m; }), function (it) { return HS.monthly[it.no] || []; }, cm);
+
+    /* rekonsiliasi harian: kotak per hari periode + tabel hari yang diisi */
+    var g = $("dGrid"); g.innerHTML = "";
+    var byD = {}; HS.daily.forEach(function (r) { byD[r.d] = r; });
+    if (per.mulai) {
+      for (var d = pd(per.mulai); d <= pd(per.selesai); d.setDate(d.getDate() + 1)) {
+        var k = isoD(d), r = byD[k], cls = "dc";
+        if (r && r.a != null && r.b != null) cls += r.a - r.b === 0 ? " ok" : " bad"; else if (d > today) cls += " fut";
+        var c = el("div", cls, String(d.getDate())); c.appendChild(el("small", "", new Intl.DateTimeFormat("id-ID", { weekday: "short" }).format(d).slice(0, 3)));
+        c.title = fD.format(d) + (r && r.a != null && r.b != null ? " · selisih " + fmtV(r.a - r.b, "Rp") : " · belum diisi");
+        g.appendChild(c);
+      }
+    }
+    var t = $("tDay"); t.innerHTML = "";
+    var hr = el("tr"); ["Tanggal", "Saldo buku / sistem", "Saldo aktual kas / bank", "Selisih", "Status"].forEach(function (h, i) { hr.appendChild(el("th", i ? "" : "l", h)); });
+    var th2 = el("thead"); th2.appendChild(hr); t.appendChild(th2);
+    var tb2 = el("tbody");
+    if (!HS.daily.length) { var er = el("tr"), ec = el("td", "l", "Belum ada data rekonsiliasi harian di file Excel. Isi Tabel B (saldo buku dan saldo aktual), lalu impor ulang."); ec.colSpan = 5; er.appendChild(ec); tb2.appendChild(er); }
+    HS.daily.forEach(function (r) {
+      var row = el("tr"), df = r.a != null && r.b != null ? r.a - r.b : null;
+      row.appendChild(el("td", "l", fD.format(pd(r.d))));
+      row.appendChild(el("td", "", fmtV(r.b, "Rp"))); row.appendChild(el("td", "", fmtV(r.a, "Rp"))); row.appendChild(el("td", "", fmtV(df, "Rp")));
+      row.appendChild(el("td", "", df == null ? "–" : df === 0 ? "Sesuai" : "Ada selisih"));
+      tb2.appendChild(row);
+    });
+    t.appendChild(tb2);
+  }
+
+  /* membaca format "Laporan Divisi Umum": tabel A (keterangan), B (harian), C (mingguan), D (bulanan) */
+  function U(v) { return String(v == null ? "" : v).trim().toUpperCase(); }
+  /* nomor tugas dari kolom NO; bila sel rumus kosong, cocokkan dari nama tugas */
+  function noOf(row, flag) {
+    var n = parseInt(numV(row[0]), 10); if (n) return n;
+    var nm = U(row[1]).replace(/\s+/g, " "); if (!nm) return 0;
+    var hit = ITEMS.filter(function (it) { return it[flag] && U(it.name).replace(/\s*\((HARIAN|MINGGUAN|BULANAN)\)/, "").replace(/\s+/g, " ") === nm.replace(/\/ /g, "/ ").replace(/\s+/g, " "); });
+    if (!hit.length) hit = ITEMS.filter(function (it) { return it[flag] && U(it.name).replace(/[^A-Z]/g, "").indexOf(nm.replace(/[^A-Z]/g, "").slice(0, 18)) === 0; });
+    return hit.length ? hit[0].no : 0;
+  }
+  function parseHasilBook(wb) {
+    var out = null;
+    wb.SheetNames.some(function (sn) {
+      var rows = XLSX.utils.sheet_to_json(wb.Sheets[sn], { header: 1, defval: "", raw: true });
+      var res = { periode: {}, weeks: [], months: [], weekly: {}, monthly: {}, daily: [], meta: {} }, found = 0;
+      for (var r = 0; r < rows.length; r++) {
+        var row = rows[r], a = U(row[0]);
+        var lb = U(row[1]);
+        if (/PERIODE MULAI/.test(lb)) res.periode.mulai = isoD(row[2]);
+        else if (/PERIODE SELESAI/.test(lb)) res.periode.selesai = isoD(row[2]);
+        else if (/BULAN MULAI/.test(lb)) res.periode.bulan = isoD(row[2]);
+        else if (/MINGGU PERTAMA/.test(lb)) res.periode.sabtu1 = isoD(row[2]);
+        if (a !== "NO") continue;
+        var h1 = U(row[1]), h2 = U(row[2]), h4 = U(row[4]);
+        var i = r + 1;
+        if (h1 === "TUGAS" && h4 === "SATUAN") {                      /* Tabel A */
+          for (; i < rows.length && numV(rows[i][0]); i++) res.meta[parseInt(rows[i][0], 10)] = { u: String(rows[i][4] || "").trim(), m: String(rows[i][5] || "").trim() || "Jumlah", k: String(rows[i][6] || "").trim() };
+          found++;
+        } else if (h1 === "TANGGAL") {                                  /* Tabel B */
+          for (; i < rows.length && numV(rows[i][0]); i++) { var d = isoD(rows[i][1]), b = numV(rows[i][2]), ak = numV(rows[i][3]); if (b != null || ak != null) res.daily.push({ d: d, n: parseInt(rows[i][0], 10), b: b, a: ak }); }
+          found++;
+        } else if (h1 === "TUGAS" && /MINGGU 1/.test(h4)) {             /* Tabel C */
+          if (/TANGGAL/i.test(String(rows[i][1]))) { res.weeks = [4, 5, 6, 7, 8].map(function (c) { return isoD(rows[i][c]); }); i++; }
+          var wl = ITEMS.filter(function (it) { return it.w; });
+          for (var k = 0; k < wl.length && i < rows.length; k++, i++) { var nw = noOf(rows[i], "w") || (U(rows[i][0]) || U(rows[i][1]) ? 0 : wl[k].no); if (!nw) break; res.weekly[nw] = [4, 5, 6, 7, 8].map(function (c) { return numV(rows[i][c]); }); }
+          found++;
+        } else if (h1 === "TUGAS" && h2 === "SATUAN") {                 /* Tabel D */
+          res.months = []; for (var c = 4; c < 16; c++) res.months.push(isoD(rows[r][c]));
+          var ml = ITEMS.filter(function (it) { return it.m; });
+          for (var k2 = 0; k2 < ml.length && i < rows.length; k2++, i++) { var nm2 = noOf(rows[i], "m") || (U(rows[i][0]) || U(rows[i][1]) ? 0 : ml[k2].no); if (!nm2) break; var mv = []; for (var c2 = 4; c2 < 16; c2++) mv.push(numV(rows[i][c2])); res.monthly[nm2] = mv; }
+          found++;
+        }
+      }
+      if (found >= 2) { out = res; return true; }
+      return false;
+    });
+    if (!out) return null;
+    /* tanggal dari sel rumus bisa kosong bila file disimpan tanpa hasil hitung: hitung ulang seperti rumus Excel */
+    function addD(iso, n) { var d = pd(iso); d.setDate(d.getDate() + n); return isoD(d); }
+    function addM(iso, n) { var d = pd(iso); return isoD(new Date(d.getFullYear(), d.getMonth() + n, d.getDate())); }
+    var P0 = out.periode;
+    if (P0.mulai && !P0.selesai) P0.selesai = addD(addM(P0.mulai, 1), -1);
+    if (P0.sabtu1) out.weeks = [0, 1, 2, 3, 4].map(function (k) { return (out.weeks[k]) || addD(P0.sabtu1, 7 * k); });
+    if (P0.bulan) { var mm = []; for (var k = 0; k < 12; k++) mm.push(out.months[k] || addM(P0.bulan, k)); out.months = mm; }
+    out.daily = out.daily.map(function (r) { if (!r.d && P0.mulai && r.n) r.d = addD(P0.mulai, r.n - 1); return { d: r.d, b: r.b, a: r.a }; }).filter(function (r) { return r.d && (!P0.selesai || r.d <= P0.selesai); });
+    if (!out.weeks.length) out.weeks = HS.weeks;
+    if (!out.months.length) out.months = HS.months;
+    if (!Object.keys(out.meta).length) out.meta = HS.meta;
+    if (!out.periode.mulai) out.periode = HS.periode;
+    if (out.weeks.some(function (w) { return !w; })) out.weeks = HS.weeks;
+    if (out.months.some(function (m) { return !m; })) out.months = HS.months;
+    return out;
+  }
+  function cntFilled(o) { var n = 0; Object.keys(o).forEach(function (k) { o[k].forEach(function (v) { if (v != null) n++; }); }); return n; }
+  var pendingH = null;
+  function showHasilPreview(res, fname) {
+    var box = $(currentView === "hasil" ? "xlPrev2" : "xlPrev"); box.innerHTML = ""; box.hidden = false;
+    pendingH = res; pendingH.source = fname;
+    box.appendChild(el("h3", "", "Data hasil kegiatan terbaca"));
+    box.appendChild(el("p", "eyebrow", "Dari file " + fname + (res.periode.mulai ? " · periode " + fD.format(pd(res.periode.mulai)) + " – " + fD.format(pd(res.periode.selesai)) : "") + ". Periksa dulu sebelum diterapkan."));
+    var ul = el("ul");
+    [["Nilai mingguan terisi", cntFilled(res.weekly)], ["Nilai bulanan terisi", cntFilled(res.monthly)], ["Hari rekonsiliasi terisi", res.daily.length]].forEach(function (x) {
+      var li = el("li"); li.appendChild(el("b", "", String(x[1]))); li.appendChild(el("span", "", x[0])); li.appendChild(el("span", "ch", "")); ul.appendChild(li);
+    });
+    var save0 = HS; HS = res;
+    ITEMS.filter(function (it) { var h = hasilOf(it); return h.v != null; }).forEach(function (it) {
+      var h = hasilOf(it), li = el("li"); li.appendChild(el("b", "", String(it.no).padStart(2, "0"))); li.appendChild(el("span", "", it.name));
+      li.appendChild(el("span", "ch", fmtV(h.v, h.u) + (unitLbl(h.u) ? " " + unitLbl(h.u) : ""))); ul.appendChild(li);
+    });
+    HS = save0;
+    box.appendChild(ul);
+    var act = el("div", "act");
+    var ap = el("button", "xbtn solid", "Terapkan data hasil"); ap.type = "button";
+    ap.addEventListener("click", function () {
+      if (!pendingH) return;
+      pendingH.importedAt = Date.now(); HS = pendingH; pendingH = null;
+      try { localStorage.setItem(HKEY, JSON.stringify(HS)); } catch (e) { toast("Data hasil diterapkan, tapi tidak bisa disimpan di peramban ini."); }
+      box.hidden = true; renderAll(); toast("Data hasil kegiatan diperbarui");
+    });
+    var cn = el("button", "xbtn", "Batal"); cn.type = "button"; cn.addEventListener("click", function () { pendingH = null; box.hidden = true; });
+    act.appendChild(ap); act.appendChild(cn); box.appendChild(act);
   }
 
   /* ── Excel: unduh & impor ── */
@@ -988,7 +1273,9 @@ select.fld option{background:var(--paper);color:var(--ink)}
     var rd = new FileReader();
     rd.onload = function () {
       try {
-        var wb = XLSX.read(new Uint8Array(rd.result), { type: "array" });
+        var wb = XLSX.read(new Uint8Array(rd.result), { type: "array", cellDates: true });
+        var hres = parseHasilBook(wb);
+        if (hres) { showHasilPreview(hres, file.name); return; }
         var ws = wb.Sheets["Laporan"] || wb.Sheets[wb.SheetNames[0]];
         showPreview(parseSheet(XLSX.utils.sheet_to_json(ws, { header: 1, defval: "" })), file.name);
       } catch (e) { showPreview({ err: "File tidak dapat dibaca sebagai Excel atau CSV." }, file.name); }
@@ -998,6 +1285,7 @@ select.fld option{background:var(--paper);color:var(--ink)}
   }
   $("xlDown").addEventListener("click", excelDown);
   $("xlFile").addEventListener("change", function (e) { excelUp(e.target.files[0]); e.target.value = ""; });
+  $("xlFile2").addEventListener("change", function (e) { excelUp(e.target.files[0]); e.target.value = ""; });
 
   /* ── lampiran ── */
   function renderLampiran() {
@@ -1136,12 +1424,14 @@ select.fld option{background:var(--paper);color:var(--ink)}
     });
   }
 
-  function renderAll() { renderHero(); renderBidang(); renderFilters(); paintRows(); paintTower(); renderLampiran(); renderJadwal(); }
+  function renderAll() { renderHero(); renderBidang(); renderFilters(); paintRows(); paintRes(); paintTower(); renderHasil(); renderLampiran(); renderJadwal(); }
   function setCur(b) { cur = b; renderBidang(); renderFilters(); paintRows(); SITES.forEach(function (x) { siteG[x.b].classList.toggle("hlb", cur === x.b); }); }
 
   /* ── menu ── */
+  var currentView = "ringkasan";
   function setView(v) {
-    ["ringkasan", "lampiran", "jadwal"].forEach(function (x) { $("v-" + x).hidden = x !== v; });
+    currentView = v;
+    ["ringkasan", "hasil", "lampiran", "jadwal"].forEach(function (x) { $("v-" + x).hidden = x !== v; });
     document.querySelectorAll(".tabs button").forEach(function (b) { b.setAttribute("aria-selected", String(b.getAttribute("data-view") === v)); });
     window.scrollTo({ top: 0 });
     if (v === "jadwal") requestAnimationFrame(function () { var t = q(".cal .today"), s = q(".cal-scroll"); if (t) s.scrollLeft = Math.max(0, t.offsetLeft - s.clientWidth / 2); });

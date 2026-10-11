@@ -21,3 +21,11 @@ Di bagian Daftar Laporan ada tombol **Unduh Excel** (berisi status dan tautan sa
 Belum / Proses / Selesai, kolom TAUTAN SUMBER harus diawali https://. Sebelum diterapkan,
 dashboard menampilkan daftar perubahan untuk diperiksa. Template dengan dropdown status:
 `Template_Laporan_Divisi_Umum.xlsx`.
+
+## Hasil kegiatan (format Excel "Laporan Divisi Umum")
+Menu **A-02 Hasil** dan kolom hasil di Daftar Laporan membaca angka dari file Excel
+berformat "Laporan Hasil Kegiatan Divisi Umum" (Tabel A keterangan tugas, B rekonsiliasi
+harian, C laporan mingguan per Sabtu, D laporan bulanan per tanggal 25). Tombol Impor Excel
+mengenali format ini otomatis. Rekap dihitung seperti rumus di Excel: Jumlah = total,
+Akhir = nilai terakhir yang terisi, Rata-rata = rata-rata nilai terisi. Data awal yang
+tertanam diambil dari file Laporan_Dashboard_Direksi.xlsx (Minggu 1, 10 Okt 2026).
