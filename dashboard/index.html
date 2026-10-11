@@ -84,6 +84,25 @@ svg.tower{display:block;width:100%;height:auto;max-height:640px}
 .iso .dim{stroke:var(--line);stroke-width:.6;fill:none}
 .iso .dimt{fill:var(--line);font-size:7.5px}
 .iso .tick{stroke:var(--line);stroke-width:1.1}
+.site{cursor:pointer}
+.site:focus{outline:none}
+.site.hlb .faceL,.site.hlb .faceR,.site.hlb .faceT,.site:focus-visible .faceL,.site:focus-visible .faceR{stroke:var(--accent)}
+.iso .col{stroke:var(--line);stroke-width:1.1}
+.iso .scaf{fill:url(#hatch);opacity:.6;stroke:var(--wip);stroke-width:.5}
+.iso .lit{fill:var(--lit);stroke:var(--line);stroke-width:.4}
+.iso .lit.dim{fill-opacity:.5}
+.iso .road{fill:var(--line);fill-opacity:.07;stroke:var(--line);stroke-width:.8}
+.iso .bname{font-family:var(--display);font-weight:700;font-size:12px;fill:var(--ink);letter-spacing:.04em}
+.iso .bstage{font-size:7px;fill:var(--muted);letter-spacing:.06em}
+.iso .bstage.done{fill:var(--done)}
+.iso #labels text{paint-order:stroke;stroke:var(--paper);stroke-width:3px;stroke-linejoin:round;pointer-events:none}
+.grow{animation:grow .7s cubic-bezier(.2,.8,.2,1) both}
+@keyframes grow{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:none}}
+.flag{animation:wave 1.8s ease-in-out infinite;transform-box:fill-box;transform-origin:left center}
+@keyframes wave{50%{transform:scaleX(.82) skewY(5deg)}}
+.truck{animation:drive 20s linear infinite}
+@keyframes drive{from{transform:translate(0,0)}to{transform:translate(var(--dx),var(--dy))}}
+#hookLoad{transition:none}
 
 .side{display:flex;flex-direction:column;gap:20px;min-width:0}
 .titleblock{border:1.5px solid var(--line);display:grid;grid-template-columns:1fr 1fr;background:var(--sheet)}
@@ -286,21 +305,21 @@ select.fld option{background:var(--paper);color:var(--ink)}
   <div class="view" id="v-ringkasan">
   <div class="hero">
     <figure class="drawing" style="margin:0">
-      <div class="eyebrow"><span>Isometrik · Gedung kantor</span><span>Satuan m · 1 lantai = 1 laporan</span></div>
-      <svg class="tower iso" id="tower" viewBox="0 0 420 520" role="img" aria-label="Gedung kantor 15 lantai dalam gambar isometrik yang menunjukkan status setiap laporan">
+      <div class="eyebrow"><span>Rencana tapak · Kawasan proyek</span><span>1 gedung = 1 bidang</span></div>
+      <svg class="tower iso" id="tower" viewBox="0 0 420 368" role="img" aria-label="Kawasan proyek: lima gedung bidang yang dibangun sesuai progres laporan">
         <defs>
           <pattern id="hatch" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
             <rect width="4" height="4" fill="transparent"/>
             <line x1="0" y1="0" x2="0" y2="4" stroke="var(--wip)" stroke-width="1.4"/>
           </pattern>
         </defs>
-        <g id="site"></g>
-        <g id="podium"></g>
-        <g id="floors"></g>
-        <g id="roof"></g>
-        <g id="dims"></g>
-        <g id="gondolaWrap"></g>
+        <g id="ground"></g>
+        <g id="scene"></g>
+        <g id="craneTop"></g>
+        <g id="traffic"></g>
+        <g id="labels"></g>
       </svg>
+      <div class="eyebrow" style="margin-top:8px;display:flex;gap:14px;flex-wrap:wrap"><span>▦ Rangka + perancah = proses</span><span>■ Fasad menyala = selesai</span><span>⚑ Bendera = serah terima</span></div>
     </figure>
 
     <div class="side">
@@ -459,8 +478,7 @@ select.fld option{background:var(--paper);color:var(--ink)}
   /* ── gedung ── */
   var NS = "http://www.w3.org/2000/svg";
   /* Proyeksi isometrik: satuan meter → px. x ke kanan-bawah, y ke kiri-bawah, z ke atas. */
-  var SC = 5.4, CX = 150, CY = 360, CO = 0.866;
-  var W = 24, D = 16, ZP = 4.5, FH = 3.6, ZT = ZP + 15 * FH, ZR = ZT + 1;
+  var SC = 4.2, CX = 178, CY = 120, CO = 0.866, LH = 3.6, BASE = 0.6;
   function P(x, y, z) { return [CX + (x - y) * CO * SC, CY + (x + y) * 0.5 * SC - z * SC]; }
   function pts(a) { return a.map(function (p) { var q = P(p[0], p[1], p[2]); return q[0].toFixed(1) + "," + q[1].toFixed(1); }).join(" "); }
   function sv(tag, attrs, parent) { var e = document.createElementNS(NS, tag); for (var k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
@@ -472,142 +490,201 @@ select.fld option{background:var(--paper);color:var(--ink)}
     poly([[x1, y1, z0], [x1, y0, z0], [x1, y0, z1], [x1, y1, z1]], "faceR", g);
     if (top !== false) poly([[x0, y0, z1], [x1, y0, z1], [x1, y1, z1], [x0, y1, z1]], "faceT", g);
   }
-  function dimLine(a, b, off, label, g) {   /* garis dimensi sejajar sumbu, digeser sejauh off */
-    var A = [a[0] + off[0], a[1] + off[1], a[2]], B = [b[0] + off[0], b[1] + off[1], b[2]];
-    pl([a, [a[0] + off[0] * 1.15, a[1] + off[1] * 1.15, a[2]]], "dim", g);
-    pl([b, [b[0] + off[0] * 1.15, b[1] + off[1] * 1.15, b[2]]], "dim", g);
-    pl([A, B], "dim", g);
-    [A, B].forEach(function (p) { var q = P(p[0], p[1], p[2]); sv("line", { x1: q[0] - 2.5, y1: q[1] + 2.5, x2: q[0] + 2.5, y2: q[1] - 2.5, "class": "tick" }, g); });
-    var m = P((A[0] + B[0]) / 2, (A[1] + B[1]) / 2, A[2]);
-    var ang = a[0] !== b[0] ? 30 : -30;
-    txt(label, 0, 0, { "class": "dimt", "text-anchor": "middle", transform: "translate(" + m[0].toFixed(1) + " " + (m[1] + 9).toFixed(1) + ") rotate(" + ang + ")" }, g);
+
+  /* Tapak: satu gedung per bidang, plus direksi keet dan tower crane */
+  var SITES = [
+    { b: "GA",      x: 4,  y: 4,  w: 12, d: 10, F: 6 },
+    { b: "Finance", x: 22, y: 4,  w: 12, d: 10, F: 5 },
+    { b: "HR",      x: 40, y: 4,  w: 12, d: 10, F: 4 },
+    { b: "Admin",   x: 4,  y: 26, w: 12, d: 10, F: 5 },
+    { b: "Legal",   x: 22, y: 26, w: 12, d: 10, F: 3 }
+  ];
+  var OFFICE = { x: 41, y: 27, w: 11, d: 7, h: 3.2 };
+  var CR = { x: 19, y: 20, h: 33, jz: 35, L: 30, back: 9 };
+  var prev = {}, lastB = null, siteG = {}, siteL = {};
+
+  function siteState(s) {
+    var list = ofBidang(s.b), T = list.length, c = counts(list);
+    var fa = T ? (c.Selesai === T ? s.F : Math.floor(c.Selesai / T * s.F)) : 0;
+    var fr = T ? Math.min(s.F, fa + (c.Proses ? Math.ceil(c.Proses / T * s.F) : 0)) : 0;
+    if (T && !fr && c.Selesai) fr = 1;
+    var stage = !T ? "Lahan cadangan" : fa === s.F ? "Serah terima" : fr > fa ? (fa > 0 ? "Fasad & rangka" : "Struktur rangka") : fa > 0 ? "Fasad & finishing" : "Pematokan";
+    return { T: T, c: c, fr: Math.max(fr, fa), fa: fa, stage: stage, top: BASE + Math.max(fr, fa) * LH };
   }
-  function vDim(px, z0, z1, label, g, ref) {
-    var t = P(ref[0], ref[1], z1), bt = P(ref[0], ref[1], z0);
-    sv("line", { x1: px, y1: t[1], x2: px, y2: bt[1], "class": "dim" }, g);
-    sv("line", { x1: t[0] + 4, y1: t[1], x2: px + 6, y2: t[1], "class": "dim" }, g);
-    sv("line", { x1: bt[0] + 4, y1: bt[1], x2: px + 6, y2: bt[1], "class": "dim" }, g);
-    [t, bt].forEach(function (q) { sv("line", { x1: px - 2.5, y1: q[1] + 2.5, x2: px + 2.5, y2: q[1] - 2.5, "class": "tick" }, g); });
-    var my = (t[1] + bt[1]) / 2;
-    txt(label, 0, 0, { "class": "dimt", "text-anchor": "middle", transform: "translate(" + (px - 5) + " " + my.toFixed(1) + ") rotate(-90)" }, g);
+
+  function drawSite(s, g) {
+    var st = siteState(s), pv = prev[s.b] || { fr: 0, fa: 0, init: true };
+    var x0 = s.x, y0 = s.y, x1 = s.x + s.w, y1 = s.y + s.d;
+    while (g.firstChild) g.removeChild(g.firstChild);
+    sv("title", {}, g).textContent = s.b + " · " + st.c.Selesai + "/" + st.T + " selesai · " + st.stage;
+    if (st.fr === 0) {
+      poly([[x0, y0, 0], [x1, y0, 0], [x1, y1, 0], [x0, y1, 0]], "hid", g);
+      [[x0, y0], [x1, y0], [x1, y1], [x0, y1]].forEach(function (c) { pl([[c[0], c[1], 0], [c[0], c[1], 1.6]], "ln", g); });
+      poly([[x0, y1, 0], [x1, y1, 0], [x1, y0, 0], [x1, y0, 0.01], [x1, y1, 0.01], [x0, y1, 0.01]], "faceT", g);
+    } else {
+      box(x0 - 0.6, y0 - 0.6, 0, x1 + 0.6, y1 + 0.6, BASE, g);
+    }
+    for (var i = 0; i < st.fr; i++) {
+      var z0 = BASE + i * LH, z1 = z0 + LH, lg = sv("g", {}, g);
+      var isNew = !pv.init && (i >= (i < st.fa ? pv.fa : pv.fr));
+      if (isNew) { lg.setAttribute("class", "grow"); lg.style.animationDelay = ((i - (i < st.fa ? pv.fa : pv.fr)) * 140) + "ms"; }
+      else if (pv.init) { lg.setAttribute("class", "grow"); lg.style.animationDelay = (300 + i * 90) + "ms"; }
+      if (i < st.fa) {
+        box(x0, y0, z0, x1, y1, z1, lg, i === st.fr - 1);
+        var n = 0;
+        for (var bx = 0; bx < 4; bx++, n++) poly([[x0 + bx * 3 + 0.5, y1, z0 + 0.7], [x0 + bx * 3 + 2.5, y1, z0 + 0.7], [x0 + bx * 3 + 2.5, y1, z0 + 2.9], [x0 + bx * 3 + 0.5, y1, z0 + 2.9]], "lit" + ((n * 7 + i * 3) % 5 === 0 ? " dim" : ""), lg);
+        for (var by = 3; by >= 1; by--, n++) poly([[x1, y0 + by * 3 + 0.2, z0 + 0.7], [x1, y0 + by * 3 - 1.8, z0 + 0.7], [x1, y0 + by * 3 - 1.8, z0 + 2.9], [x1, y0 + by * 3 + 0.2, z0 + 2.9]], "lit" + ((n * 7 + i * 3) % 5 === 0 ? " dim" : ""), lg);
+      } else {
+        pl([[x0, y0, z0], [x0, y0, z1]], "hid", lg);
+        [[x0, y1], [x0 + s.w / 2, y1], [x1, y1], [x1, y0 + s.d / 2], [x1, y0]].forEach(function (c) { pl([[c[0], c[1], z0], [c[0], c[1], z1]], "col", lg); });
+        poly([[x0, y0, z1], [x1, y0, z1], [x1, y1, z1], [x0, y1, z1]], "faceT", lg);
+        poly([[x0 - 0.8, y1 + 0.8, z0], [x1 + 0.8, y1 + 0.8, z0], [x1 + 0.8, y1 + 0.8, z1], [x0 - 0.8, y1 + 0.8, z1]], "scaf", lg);
+        poly([[x1 + 0.8, y1 + 0.8, z0], [x1 + 0.8, y0 - 0.8, z0], [x1 + 0.8, y0 - 0.8, z1], [x1 + 0.8, y1 + 0.8, z1]], "scaf", lg);
+      }
+    }
+    if (st.T && st.fa === s.F) {
+      var rz = st.top, rg = sv("g", { "class": pv.fa === s.F || pv.init ? "" : "grow" }, g);
+      box(x0, y0, rz, x1, y1, rz + 0.8, rg);
+      poly([[x0 + 0.6, y0 + 0.6, rz + 0.8], [x1 - 0.6, y0 + 0.6, rz + 0.8], [x1 - 0.6, y1 - 0.6, rz + 0.8], [x0 + 0.6, y1 - 0.6, rz + 0.8]], "thin", rg);
+      var fp = P(x1 - 1, y1 - 1, rz + 0.8), ft = P(x1 - 1, y1 - 1, rz + 6);
+      sv("line", { x1: fp[0], y1: fp[1], x2: ft[0], y2: ft[1], "class": "ln" }, rg);
+      sv("path", { d: "M" + ft[0] + " " + ft[1] + " l13 3.5 l-13 3.5 z", fill: "var(--accent)", "class": "flag" }, rg);
+    }
+    var lg2 = siteL[s.b]; while (lg2.firstChild) lg2.removeChild(lg2.firstChild);
+    var lp = P(s.x + s.w / 2, s.y + s.d / 2, st.top + (st.fa === s.F && st.T ? 9 : 4));
+    txt(s.b.toUpperCase(), lp[0], lp[1] - 9, { "class": "bname", "text-anchor": "middle" }, lg2);
+    txt((st.T ? st.c.Selesai + "/" + st.T + " · " : "") + st.stage.toUpperCase(), lp[0], lp[1], { "class": "bstage" + (st.fa === s.F && st.T ? " done" : ""), "text-anchor": "middle" }, lg2);
+    g.classList.toggle("hlb", cur === s.b);
+    g.setAttribute("aria-label", "Gedung " + s.b + ": " + st.c.Selesai + " dari " + st.T + " selesai, tahap " + st.stage);
+    prev[s.b] = { fr: st.fr, fa: st.fa };
+    return st;
   }
 
   function buildTower() {
-    /* tapak & sumbu */
-    var site = $("site");
-    poly([[-6, -6, 0], [W + 6, -6, 0], [W + 6, D + 6, 0], [-6, D + 6, 0]], "hid", site);
-    pl([[W / 2, -9, 0], [W / 2, D + 9, 0]], "hid", site);
-    pl([[-9, D / 2, 0], [W + 9, D / 2, 0]], "hid", site);
+    var gr = $("ground"), sc = $("scene");
+    /* lahan, grid, jalan */
+    poly([[-3, -3, 0], [58, -3, 0], [58, 41, 0], [-3, 41, 0]], "hid", gr);
+    for (var gx = 0; gx <= 56; gx += 8) pl([[gx, -3, 0], [gx, 41, 0]], "hid", gr);
+    poly([[-8, 42, 0], [64, 42, 0], [64, 47, 0], [-8, 47, 0]], "road", gr);
+    pl([[-8, 44.5, 0], [64, 44.5, 0]], "hid", gr);
+    poly([[17, 15, 0], [21, 15, 0], [21, 42, 0], [17, 42, 0]], "road", gr);
+    var gp = P(17, 42, 0); txt("GERBANG PROYEK", gp[0] - 4, gp[1] + 12, { "class": "dimt", "text-anchor": "end", style: "font-size:6px;letter-spacing:.14em" }, gr);
 
-    /* podium lobi */
-    var pod = $("podium");
-    box(-2, -2, 0, W + 2, D + 2, ZP, pod);
-    for (var gx = 1; gx < W + 4; gx += 3) pl([[gx - 2, D + 2, 0.4], [gx - 2, D + 2, ZP - 0.6]], "thin", pod);
-    for (var gy = 1; gy < D + 4; gy += 3) pl([[W + 2, gy - 2, 0.4], [W + 2, gy - 2, ZP - 0.6]], "thin", pod);
-    poly([[10, D + 2, 0], [14, D + 2, 0], [14, D + 2, 3], [10, D + 2, 3]], "faceR", pod);
-    pl([[12, D + 2, 0], [12, D + 2, 3]], "thin", pod);
-    box(8, D + 2, 3.2, 16, D + 5, 3.7, pod);                       /* kanopi */
-    box(9, D + 2, 0, 15, D + 4.2, 0.25, pod); box(9, D + 2, 0.25, 15, D + 3.1, 0.5, pod);  /* anak tangga */
-    var lb = P(12, D + 2, 3.9); txt("LOBI", 0, 0, { "class": "dimt", "text-anchor": "middle", style: "font-size:5px;letter-spacing:.2em", transform: "matrix(.866 .5 0 1 " + lb[0].toFixed(1) + " " + lb[1].toFixed(1) + ")" }, pod);
-    /* garis tersembunyi tower */
-    pl([[0, 0, ZP], [0, 0, ZR]], "hid", pod);
-
-    /* lantai */
-    var g = $("floors");
-    ITEMS.forEach(function (r, i) {
-      var z0 = ZP + (r.no - 1) * FH, z1 = z0 + FH, zm = z0 + FH / 2;
-      var fg = sv("g", { "class": "floor rise s-belum", "data-no": r.no, tabindex: "0", role: "button", "aria-label": "Lantai " + r.no + ": " + r.name }, g);
-      fg.style.animationDelay = (i * 55) + "ms";
-      sv("title", {}, fg).textContent = "LT " + String(r.no).padStart(2, "0") + " · " + r.name;
-      poly([[0, D, z0], [W, D, z0], [W, D, z1], [0, D, z1]], "faceL", fg);
-      poly([[W, D, z0], [W, 0, z0], [W, 0, z1], [W, D, z1]], "faceR", fg);
-      poly([[0, D, z0], [W, D, z0], [W, 0, z0], [W, 0, z1], [W, D, z1], [0, D, z1]], "slab", fg);
-      var n = 0;
-      for (var bx = 0; bx < 6; bx++, n++) {
-        var x0 = bx * 4 + 0.6, x1 = bx * 4 + 3.4;
-        var wl = poly([[x0, D, z0 + 0.7], [x1, D, z0 + 0.7], [x1, D, z0 + 3.0], [x0, D, z0 + 3.0]], "win" + ((n * 7 + r.no * 3) % 5 === 0 ? " dim" : ""), fg);
-        wl.style.transitionDelay = (n * 40) + "ms";
+    /* objek diurutkan dari belakang ke depan */
+    var objs = SITES.map(function (s) { return { k: s.x + s.w / 2 + s.y + s.d / 2, s: s }; });
+    objs.push({ k: CR.x + CR.y, crane: true });
+    objs.push({ k: OFFICE.x + OFFICE.w / 2 + OFFICE.y + OFFICE.d / 2, office: true });
+    objs.sort(function (a, b) { return a.k - b.k; });
+    objs.forEach(function (o) {
+      if (o.s) {
+        var g = sv("g", { "class": "site", "data-b": o.s.b, tabindex: "0", role: "button" }, sc);
+        siteG[o.s.b] = g; siteL[o.s.b] = sv("g", {}, $("labels"));
+        g.addEventListener("click", function () { setCur(cur === o.s.b ? "Semua" : o.s.b); });
+        g.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setCur(cur === o.s.b ? "Semua" : o.s.b); } });
+        g.addEventListener("mouseenter", function () { g.classList.add("hlb"); });
+        g.addEventListener("mouseleave", function () { g.classList.toggle("hlb", cur === o.s.b); });
+      } else if (o.crane) {
+        var m = sv("g", {}, sc);
+        box(CR.x - 1.6, CR.y - 1.6, 0, CR.x + 1.6, CR.y + 1.6, 1, m);
+        var A = P(CR.x - 0.8, CR.y + 0.8, 1), B = P(CR.x + 0.8, CR.y - 0.8, 1), At = P(CR.x - 0.8, CR.y + 0.8, CR.h), Bt = P(CR.x + 0.8, CR.y - 0.8, CR.h);
+        sv("line", { x1: A[0], y1: A[1], x2: At[0], y2: At[1], "class": "ln draw" }, m);
+        sv("line", { x1: B[0], y1: B[1], x2: Bt[0], y2: Bt[1], "class": "ln draw" }, m);
+        var zz = "";
+        for (var z = 1, k = 0; z < CR.h; z += 2.4, k++) { var p1 = P(CR.x - 0.8, CR.y + 0.8, z), p2 = P(CR.x + 0.8, CR.y - 0.8, z + 2.4); zz += (k % 2 ? "M" + p2[0] + " " + p1[1] + " L" + p1[0] + " " + p2[1] : "M" + p1[0] + " " + p1[1] + " L" + p2[0] + " " + p2[1]) + " "; }
+        sv("path", { d: zz, "class": "thin" }, m);
+      } else {
+        var og = sv("g", {}, sc), O = OFFICE;
+        box(O.x, O.y, 0, O.x + O.w, O.y + O.d, O.h, og);
+        poly([[O.x + 1, O.y + O.d, 0], [O.x + 3, O.y + O.d, 0], [O.x + 3, O.y + O.d, 2.4], [O.x + 1, O.y + O.d, 2.4]], "faceR", og);
+        [[5, 2], [8, 2]].forEach(function (w) { poly([[O.x + w[0], O.y + O.d, 1.2], [O.x + w[0] + w[1], O.y + O.d, 1.2], [O.x + w[0] + w[1], O.y + O.d, 2.4], [O.x + w[0], O.y + O.d, 2.4]], "thin", og); });
+        var sg = sv("g", { id: "sign" }, og);
+        poly([[O.x + 1.5, O.y + O.d, O.h + 0.3], [O.x + O.w - 1.5, O.y + O.d, O.h + 0.3], [O.x + O.w - 1.5, O.y + O.d, O.h + 2.3], [O.x + 1.5, O.y + O.d, O.h + 2.3]], "", sg);
+        var sp = P(O.x + O.w / 2, O.y + O.d, O.h + 0.85);
+        txt("ROEMANTARA", 0, 0, { "text-anchor": "middle", transform: "matrix(.866 .5 0 1 " + sp[0].toFixed(1) + " " + sp[1].toFixed(1) + ")" }, sg);
+        var lb = P(O.x + O.w / 2, O.y + O.d / 2, O.h + 6);
+        txt("DIREKSI KEET", lb[0], lb[1], { "class": "bstage", "text-anchor": "middle" }, og);
+        var b0 = P(O.x + O.w + 2, O.y + O.d + 1, 0), b1 = P(O.x + O.w + 2, O.y + O.d + 1, 7);
+        sv("line", { x1: b0[0], y1: b0[1], x2: b1[0], y2: b1[1], "class": "ln" }, og);
+        sv("circle", { id: "beacon", cx: b1[0], cy: b1[1] - 2, r: 2.2, fill: "var(--accent)" }, og);
       }
-      for (var by = 3; by >= 0; by--, n++) {
-        var y0 = by * 4 + 0.6, y1 = by * 4 + 3.4;
-        var wr = poly([[W, y1, z0 + 0.7], [W, y0, z0 + 0.7], [W, y0, z0 + 3.0], [W, y1, z0 + 3.0]], "win" + ((n * 7 + r.no * 3) % 5 === 0 ? " dim" : ""), fg);
-        wr.style.transitionDelay = (n * 40) + "ms";
-      }
-      var L = P(0, D, zm), R = P(W, 0, zm);
-      txt("LT" + String(r.no).padStart(2, "0"), L[0] - 7, L[1] + 3, { "class": "lvl", "text-anchor": "end" }, fg);
-      txt(r.b.toUpperCase(), R[0] + 7, R[1] + 3, { "font-size": "7" }, fg);
-      fg.addEventListener("click", function () { focusRow(r.no); });
-      fg.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); focusRow(r.no); } });
-      fg.addEventListener("mouseenter", function () { hl(r.no, true); });
-      fg.addEventListener("mouseleave", function () { hl(r.no, false); });
     });
 
-    /* atap: parapet, ruang mesin, papan nama, antena */
-    var rf = $("roof");
-    box(0, 0, ZT, W, D, ZR, rf);
-    poly([[0.8, 0.8, ZR], [W - 0.8, 0.8, ZR], [W - 0.8, D - 0.8, ZR], [0.8, D - 0.8, ZR]], "thin", rf);
-    pl([[0, D, ZT], [0, D, ZR]], "ln", rf);
-    box(7, 4, ZR, 17, 12, ZR + 4.2, rf);
-    for (var lv = 0; lv < 4; lv++) pl([[17, 5 + lv * 1.8, ZR + 0.8], [17, 5 + lv * 1.8, ZR + 3.4]], "thin", rf);
-    var sg = sv("g", { id: "sign" }, rf);
-    poly([[8, 12, ZR + 1.3], [16, 12, ZR + 1.3], [16, 12, ZR + 3.1], [8, 12, ZR + 3.1]], "", sg);
-    var sp = P(12, 12, ZR + 1.75);
-    txt("ROEMANTARA", 0, 0, { "text-anchor": "middle", transform: "matrix(.866 .5 0 1 " + sp[0].toFixed(1) + " " + sp[1].toFixed(1) + ")" }, sg);
-    var a0 = P(12, 8, ZR + 4.2), a1 = P(12, 8, ZR + 11);
-    sv("line", { x1: a0[0], y1: a0[1], x2: a1[0], y2: a1[1], "class": "ln draw" }, rf);
-    [8.5, 9.8].forEach(function (z) { var q = P(12, 8, ZR + z); sv("line", { x1: q[0] - 4, y1: q[1], x2: q[0] + 4, y2: q[1], "class": "ln" }, rf); });
-    sv("circle", { id: "beacon", cx: a1[0], cy: a1[1] - 2, r: 2.6, fill: "var(--accent)" }, rf);
-
-    /* dimensi */
-    var dm = $("dims");
-    dimLine([0, D + 2, 0], [W, D + 2, 0], [0, 7], "24.0", dm);
-    dimLine([W + 2, 0, 0], [W + 2, D, 0], [7, 0], "16.0", dm);
-    var rx = P(W + 2, -2, 0)[0] + 52;
-    vDim(rx, ZP, ZT, "54.0  ·  15 LT × 3.6", dm, [W, 0]);
-    vDim(rx, 0, ZP, "4.5", dm, [W + 2, -2]);
-
-    /* skala: pohon & orang */
-    [[W + 5.5, 3, 3.4], [W + 5.5, 10, 4.2]].forEach(function (t) {
-      var b0 = P(t[0], t[1], 0), c = P(t[0], t[1], t[2] + 2);
-      sv("line", { x1: b0[0], y1: b0[1], x2: c[0], y2: c[1], "class": "ln" }, dm);
-      sv("circle", { cx: c[0], cy: c[1] - 4, r: t[2] * 2.2, "class": "ln" }, dm);
-    });
-    var pp = P(-3, D + 5, 0);
-    sv("path", { d: "M" + pp[0] + " " + (pp[1] - 9) + " v6 m0 0 l-2.5 5 m2.5 -5 l2.5 5 M" + (pp[0] - 3) + " " + (pp[1] - 7) + " h6", "class": "ln" }, dm);
-    sv("circle", { cx: pp[0], cy: pp[1] - 11.5, r: 2, "class": "ln" }, dm);
-
-    /* gondola pembersih kaca di fasad kiri, dibangun pada z=0 lalu digeser naik */
-    var gw = $("gondolaWrap");
-    var cl = P(4, D + 0.9, ZR), cr = P(12, D + 0.9, ZR);
-    sv("rect", { "class": "cable", id: "cableL", x: (cl[0] - 0.6).toFixed(1), y: cl[1].toFixed(1), width: 1.2, height: 100, fill: "var(--ink)" }, gw);
-    sv("rect", { "class": "cable", id: "cableR", x: (cr[0] - 0.6).toFixed(1), y: cr[1].toFixed(1), width: 1.2, height: 100, fill: "var(--ink)" }, gw);
-    var go = sv("g", { id: "gondola" }, gw), gs = sv("g", { id: "gondolaSway" }, go);
-    var plat = [[3.4, D + 0.3, 0], [12.6, D + 0.3, 0], [12.6, D + 1.6, 0], [3.4, D + 1.6, 0]];
-    sv("polygon", { points: pts(plat), fill: "var(--accent)", stroke: "var(--accent)" }, gs);
-    sv("polygon", { points: pts([[3.4, D + 1.6, -0.5], [12.6, D + 1.6, -0.5], [12.6, D + 1.6, 0], [3.4, D + 1.6, 0]]), fill: "var(--accent)", "fill-opacity": ".75" }, gs);
-    pl([[3.4, D + 1.6, 1.1], [12.6, D + 1.6, 1.1]], "ln", gs);
-    [3.4, 8, 12.6].forEach(function (x) { pl([[x, D + 1.6, 0], [x, D + 1.6, 1.1]], "ln", gs); });
-    [[6, D + 1], [10, D + 1]].forEach(function (w) { var f = P(w[0], w[1], 0), h = P(w[0], w[1], 1.9); sv("line", { x1: f[0], y1: f[1], x2: h[0], y2: h[1] + 2, stroke: "var(--ink)", "stroke-width": 2.6 }, gs); sv("circle", { cx: h[0], cy: h[1], r: 1.9, fill: "var(--ink)" }, gs); });
+    /* crane: kabin, jib, troli, kait (diperbarui tiap frame) */
+    var ct = $("craneTop");
+    var cab = P(CR.x, CR.y, CR.h);
+    CRANE_EL.cab = sv("rect", { x: cab[0] - 5, y: cab[1] - 6, width: 10, height: 7, "class": "faceR" }, ct);
+    ["jibA", "jibB", "tieF", "tieB", "cable"].forEach(function (k) { CRANE_EL[k] = sv("line", { "class": k === "cable" ? "" : "ln", stroke: k === "cable" ? "var(--ink)" : null, "stroke-width": k === "cable" ? 1 : null }, ct); });
+    CRANE_EL.cw = sv("rect", { width: 9, height: 6, fill: "var(--line)", "fill-opacity": ".5", stroke: "var(--line)" }, ct);
+    CRANE_EL.trolley = sv("rect", { width: 7, height: 3.5, fill: "var(--accent)" }, ct);
+    CRANE_EL.hook = sv("g", { id: "hookLoad" }, ct);
+    sv("path", { d: "M0 0 v3 m0 0 a2.4 2.4 0 1 1 -2.4 2.4", fill: "none", stroke: "var(--ink)", "stroke-width": 1.2 }, CRANE_EL.hook);
+    sv("line", { x1: -1, y1: 3, x2: -12, y2: 11, stroke: "var(--ink)", "stroke-width": .6 }, CRANE_EL.hook);
+    sv("line", { x1: 1, y1: 3, x2: 12, y2: 11, stroke: "var(--ink)", "stroke-width": .6 }, CRANE_EL.hook);
+    sv("polygon", { points: "-14,11 14,11 16,14 -12,14", fill: "var(--accent)" }, CRANE_EL.hook);
+    
+    /* truk molen di jalan depan */
+    var tr = $("traffic"), tk = sv("g", { "class": "truck" }, tr);
+    var d0 = P(-10, 43.2, 0), d1 = P(66, 43.2, 0);
+    tk.style.setProperty("--dx", (d1[0] - d0[0]).toFixed(1) + "px");
+    tk.style.setProperty("--dy", (d1[1] - d0[1]).toFixed(1) + "px");
+    box(-10, 43.2, 0.4, -4.6, 45.6, 2.6, tk);
+    box(-4.2, 43.2, 0.4, -2, 45.6, 2.8, tk);
+    poly([[-3.9, 45.6, 1.6], [-2.3, 45.6, 1.6], [-2.3, 45.6, 2.5], [-3.9, 45.6, 2.5]], "lit", tk);
+    [-8.6, -6, -3].forEach(function (x) { var w = P(x, 45.6, 0.4); sv("circle", { cx: w[0], cy: w[1], r: 2.2, "class": "faceR" }, tk); });
+    var dr = P(-7.3, 44.4, 3.6); sv("ellipse", { cx: dr[0], cy: dr[1], rx: 11, ry: 6.5, "class": "faceL", transform: "rotate(30 " + dr[0].toFixed(1) + " " + dr[1].toFixed(1) + ")" }, tk);
   }
-  function moveGondola() {
-    var pending = ITEMS.filter(function (r) { return status(r.no) !== "Selesai"; })[0];
-    var svg = $("tower");
-    if (!pending) { svg.classList.add("topped"); return; }
-    svg.classList.remove("topped");
-    var z = ZP + (pending.no - 1) * FH + 0.25;
-    $("gondola").style.transform = "translateY(" + (-z * SC).toFixed(1) + "px)";
-    var top = P(4, D + 0.9, ZR)[1], bot = P(4, D + 0.9, z + 1.1)[1];
-    var k = "scaleY(" + ((bot - top) / 100).toFixed(3) + ")";
-    $("cableL").style.transform = k; $("cableR").style.transform = k;
+
+  /* ── animasi crane ── */
+  var CRANE_EL = {};
+  var cs = { th: -2.3, r: 14, hz: 12 }, ct0 = null, cTarget = null, cFrom = null, cStart = 0, RM = matchMedia("(prefers-reduced-motion:reduce)").matches;
+  function drawCrane(t) {
+    var c = Math.cos(cs.th), s = Math.sin(cs.th), E = CRANE_EL;
+    var apex = P(CR.x, CR.y, CR.jz + 5), je = P(CR.x + CR.L * c, CR.y + CR.L * s, CR.jz), jb = P(CR.x - CR.back * c, CR.y - CR.back * s, CR.jz);
+    var je2 = P(CR.x + CR.L * c, CR.y + CR.L * s, CR.jz + 1.3), jb2 = P(CR.x - CR.back * c, CR.y - CR.back * s, CR.jz + 1.3);
+    function L(el, a, b) { el.setAttribute("x1", a[0].toFixed(1)); el.setAttribute("y1", a[1].toFixed(1)); el.setAttribute("x2", b[0].toFixed(1)); el.setAttribute("y2", b[1].toFixed(1)); }
+    L(E.jibA, jb, je); L(E.jibB, jb2, je2); L(E.tieF, apex, je2); L(E.tieB, apex, jb2);
+    E.cw.setAttribute("x", (jb[0] - 4.5).toFixed(1)); E.cw.setAttribute("y", (jb[1] - 1).toFixed(1));
+    var tp = P(CR.x + cs.r * c, CR.y + cs.r * s, CR.jz), hp = P(CR.x + cs.r * c, CR.y + cs.r * s, cs.hz);
+    var sway = RM ? 0 : Math.sin((t || 0) / 700) * 1.4;
+    E.trolley.setAttribute("x", (tp[0] - 3.5).toFixed(1)); E.trolley.setAttribute("y", (tp[1] - 1).toFixed(1));
+    L(E.cable, [tp[0], tp[1] + 2.5], [hp[0] + sway, hp[1]]);
+    E.hook.setAttribute("transform", "translate(" + (hp[0] + sway).toFixed(1) + " " + hp[1].toFixed(1) + ")");
   }
+  function ease(k) { return k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2; }
+  function loop(t) {
+    if (cTarget) {
+      var k = Math.min(1, (t - cStart) / 1900), e = ease(k);
+      cs.th = cFrom.th + (cTarget.th - cFrom.th) * e;
+      cs.r = cFrom.r + (cTarget.r - cFrom.r) * e;
+      /* kait naik dulu, lalu turun ke target */
+      var lift = Math.sin(Math.PI * k) * 6;
+      cs.hz = Math.min(CR.jz - 3, cFrom.hz + (cTarget.hz - cFrom.hz) * e + lift);
+      if (k >= 1) cTarget = null;
+    }
+    drawCrane(t);
+    if (!RM || cTarget) requestAnimationFrame(loop);
+  }
+  function aimCrane(px, py, pz) {
+    var dx = px - CR.x, dy = py - CR.y, th = Math.atan2(dy, dx), r = Math.min(CR.L - 2, Math.max(6, Math.hypot(dx, dy)));
+    while (th - cs.th > Math.PI) th -= 2 * Math.PI;
+    while (th - cs.th < -Math.PI) th += 2 * Math.PI;
+    var tgt = { th: th, r: r, hz: Math.min(CR.jz - 4, pz + 3) };
+    if (RM) { cs = tgt; drawCrane(0); return; }
+    cFrom = { th: cs.th, r: cs.r, hz: cs.hz }; cTarget = tgt; cStart = performance.now();
+  }
+
   function paintTower() {
-    ITEMS.forEach(function (r) {
-      var f = q('.floor[data-no="' + r.no + '"]');
-      f.classList.remove("s-belum", "s-proses", "s-selesai");
-      f.classList.add("s-" + status(r.no).toLowerCase());
-    });
-    moveGondola();
+    var states = {};
+    SITES.forEach(function (s) { states[s.b] = drawSite(s, siteG[s.b]); });
+    var all = SITES.every(function (s) { var st = states[s.b]; return !st.T || st.fa === s.F; });
+    $("tower").classList.toggle("topped", all);
+    var pick = lastB && states[lastB] && states[lastB].T ? lastB : null;
+    if (!pick) { var open = SITES.filter(function (s) { var st = states[s.b]; return st.T && st.fa < s.F; }); open.sort(function (a, b) { return states[a.b].fa / a.F - states[b.b].fa / b.F; }); pick = open.length ? open[0].b : null; }
+    if (all || !pick) aimCrane(OFFICE.x + OFFICE.w / 2, OFFICE.y + OFFICE.d / 2, OFFICE.h + 4);
+    else { var s = SITES.filter(function (x) { return x.b === pick; })[0]; aimCrane(s.x + s.w / 2, s.y + s.d / 2, states[pick].top + 1); }
   }
+  var craneStarted = false;
+  function startCrane() { if (craneStarted) return; craneStarted = true; drawCrane(0); requestAnimationFrame(loop); }
 
   /* ── ringkasan ── */
   function renderHero() {
@@ -666,7 +743,7 @@ select.fld option{background:var(--paper);color:var(--ink)}
     var reg = $("reg");
     ITEMS.forEach(function (it) {
       var row = el("div", "row"); row.id = "row-" + it.no;
-      var no = el("div", "no", String(it.no).padStart(2, "0")); no.appendChild(el("small", "", "LANTAI")); row.appendChild(no);
+      var no = el("div", "no", String(it.no).padStart(2, "0")); no.appendChild(el("small", "", "NO")); row.appendChild(no);
       var nm = el("div"); nm.appendChild(el("div", "name", it.name));
       var tags = el("div", "tags"); tags.appendChild(el("span", "tag bd", it.b + (it.b2 ? " · " + it.b2 : "")));
       freqTags(it).forEach(function (t) { tags.appendChild(el("span", "tag", t)); });
@@ -677,7 +754,7 @@ select.fld option{background:var(--paper);color:var(--ink)}
       var sw = el("div", "seg-wrap"), seg = el("div", "seg"); seg.setAttribute("role", "group"); seg.setAttribute("aria-label", "Status " + it.name);
       OPTIONS.forEach(function (s) {
         var b = el("button", "", s); b.type = "button"; b.dataset.s = s.toLowerCase();
-        b.addEventListener("click", function () { if (status(it.no) === s) return; rec(it.no).status = s; save(); renderAll(); toast("Status diperbarui"); });
+        b.addEventListener("click", function () { if (status(it.no) === s) return; rec(it.no).status = s; lastB = it.b; save(); renderAll(); toast("Status diperbarui"); });
         seg.appendChild(b);
       });
       sw.appendChild(seg); row.appendChild(sw);
@@ -704,7 +781,7 @@ select.fld option{background:var(--paper);color:var(--ink)}
       row.querySelectorAll(".seg button").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.s === s.toLowerCase())); });
     });
   }
-  function hl(no, on) { $("row-" + no).classList.toggle("hl", on); q('.floor[data-no="' + no + '"]').classList.toggle("hl", on); }
+  function hl(no, on) { $("row-" + no).classList.toggle("hl", on); var it = ITEMS[no - 1], g = siteG[it.b]; if (g) g.classList.toggle("hlb", on || cur === it.b); }
   function focusRow(no) {
     setCur("Semua");
     var row = $("row-" + no);
@@ -787,7 +864,7 @@ select.fld option{background:var(--paper);color:var(--ink)}
       var r = rec(it.no);
       var card = el("section", "ac"), h = el("header"), t = el("div");
       t.appendChild(el("h3", "", it.name));
-      t.appendChild(el("p", "m", "LT" + String(it.no).padStart(2, "0") + " · " + it.b + " · " + freq(it)));
+      t.appendChild(el("p", "m", "No " + String(it.no).padStart(2, "0") + " · " + it.b + " · " + freq(it)));
       h.appendChild(t); h.appendChild(el("span", "cnt", r.att.length + " lampiran")); card.appendChild(h);
 
       var files = el("div", "files");
@@ -911,7 +988,7 @@ select.fld option{background:var(--paper);color:var(--ink)}
   }
 
   function renderAll() { renderHero(); renderBidang(); renderFilters(); paintRows(); paintTower(); renderLampiran(); renderJadwal(); }
-  function setCur(b) { cur = b; renderBidang(); renderFilters(); paintRows(); }
+  function setCur(b) { cur = b; renderBidang(); renderFilters(); paintRows(); SITES.forEach(function (x) { siteG[x.b].classList.toggle("hlb", cur === x.b); }); }
 
   /* ── menu ── */
   function setView(v) {
@@ -925,7 +1002,7 @@ select.fld option{background:var(--paper);color:var(--ink)}
   function tick() { $("clock").textContent = new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false }); }
   tick(); setInterval(tick, 1000);
 
-  buildTower(); buildRows(); buildCal(); renderAll(); setView("ringkasan");
+  buildTower(); buildRows(); buildCal(); renderAll(); startCrane(); setView("ringkasan");
 })();
 </script>
 <!--PAGE-END-->
