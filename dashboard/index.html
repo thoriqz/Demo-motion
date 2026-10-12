@@ -1636,6 +1636,9 @@ table.ht tbody tr:hover td{background:var(--grid)}
     /* minggu berjalan: Sabtu terdekat hari ini atau sesudahnya */
     var t = today.getTime(), w = PERIODS.filter(function (x) { return x.type === "W"; });
     var pick = w.filter(function (x) { return x.date.getTime() >= t; })[0] || w[w.length - 1];
+    /* minggu berjalan masih kosong: tampilkan minggu terakhir yang sudah berisi data */
+    function hasData(x) { var o = (st.p || {})[x.key] || {}; return Object.keys(o).some(function (k) { var r = o[k]; return r && (r.status && r.status !== "Belum" || r.link || (r.att && r.att.length)); }); }
+    if (pick && !hasData(pick)) { var prev = w.filter(function (x) { return x.date.getTime() < pick.date.getTime() && hasData(x); }); if (prev.length) pick = prev[prev.length - 1]; }
     return pick ? pick.key : PERIODS[0].key;
   }
   function setPer(key, quiet) {
