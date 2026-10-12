@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Divisi Umum — Roemantara</title>
+  <meta name="description" content="Webapp Divisi Umum Roemantara Indonesia: General Affairs, Administrasi, Finance & Accounting, Human Resources, dan Legal — bertema gambar kerja konstruksi arsitektur.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <!-- ============ LOADER : gambar denah tergambar ============ -->
+  <div class="loader" id="loader" aria-hidden="true">
+    <svg viewBox="0 0 200 160" class="loader__svg">
+      <rect x="20" y="40" width="160" height="100" pathLength="1" />
+      <line x1="20" y1="90" x2="110" y2="90" pathLength="1" />
+      <line x1="110" y1="40" x2="110" y2="140" pathLength="1" />
+      <line x1="140" y1="90" x2="180" y2="90" pathLength="1" />
+      <path d="M110 115 A25 25 0 0 1 135 90" pathLength="1" />
+      <polyline points="10,40 100,10 190,40" pathLength="1" />
+    </svg>
+    <div class="loader__text">
+      <span class="mono">MEMUAT GAMBAR KERJA</span>
+      <span class="loader__pct mono" id="loaderPct">000%</span>
+    </div>
+  </div>
+
+  <!-- Kursor CAD (crosshair) -->
+  <div class="cad" id="cad" aria-hidden="true">
+    <div class="cad__h"></div><div class="cad__v"></div>
+    <div class="cad__box"></div>
+    <div class="cad__coord mono" id="cadCoord">X 0000 · Y 0000</div>
+  </div>
+
+  <!-- ============ NAV ============ -->
+  <header class="topbar">
+    <a class="brand" href="#top" aria-label="Roemantara Indonesia — Divisi Umum">
+      <svg viewBox="0 0 40 40" class="brand__mark" aria-hidden="true">
+        <rect x="4" y="14" width="32" height="22" />
+        <polyline points="2,16 20,4 38,16" />
+        <line x1="20" y1="36" x2="20" y2="24" /><line x1="14" y1="24" x2="26" y2="24" />
+      </svg>
+      <span class="brand__text">
+        <strong>ROEMANTARA</strong>
+        <small class="mono">DIVISI UMUM</small>
+      </span>
+    </a>
+    <nav class="nav" id="nav" aria-label="Navigasi lantai">
+      <a href="#ga" data-floor="1"><span class="mono">LT.01</span> GA</a>
+      <a href="#adm" data-floor="2"><span class="mono">LT.02</span> Admin</a>
+      <a href="#fin" data-floor="3"><span class="mono">LT.03</span> Finance</a>
+      <a href="#hr" data-floor="4"><span class="mono">LT.04</span> HR</a>
+      <a href="#legal" data-floor="5"><span class="mono">LT.05</span> Legal</a>
+    </nav>
+    <button class="theme-toggle mono" id="themeToggle" type="button" aria-label="Ganti tema">
+      <span class="theme-toggle__dot"></span><span id="themeLabel">BLUEPRINT</span>
+    </button>
+  </header>
+
+  <!-- Indikator lantai / elevasi -->
+  <aside class="elevator" aria-hidden="true">
+    <div class="elevator__track"><div class="elevator__car" id="elevCar"></div></div>
+    <div class="elevator__label mono" id="elevLabel">±0.00</div>
+  </aside>
+
+  <main id="top">
+    <!-- ============ HERO : tampak depan gedung ============ -->
+    <section class="hero">
+      <div class="hero__copy">
+        <p class="eyebrow mono">PROYEK · DIVISI UMUM / GENERAL DEPARTMENT</p>
+        <h1 class="hero__title">
+          <span class="line"><span>Membangun</span></span>
+          <span class="line"><span>Fondasi Operasional</span></span>
+          <span class="line"><span class="accent">Roemantara.</span></span>
+        </h1>
+        <p class="hero__lead">Lima lantai, satu struktur. General Affairs, Administrasi, Finance &amp; Accounting, Human Resources, dan Legal — dirancang seperti gambar kerja: presisi, terukur, dan saling menopang.</p>
+        <div class="hero__cta">
+          <a href="#overview" class="btn btn--solid">Lihat Ringkasan</a>
+          <a href="#ga" class="btn btn--ghost">Naik ke Lt.01 ↑</a>
+        </div>
+      </div>
+
+      <div class="hero__drawing">
+        <svg viewBox="0 0 640 540" class="building" id="building" role="img" aria-label="Tampak depan gedung lima lantai, tiap lantai mewakili satu bidang Divisi Umum">
+          <!-- grid pondasi -->
+          <g class="b-ground">
+            <line x1="20" y1="480" x2="620" y2="480" pathLength="1" class="draw" />
+            <g class="hatch">
+              <line x1="140" y1="480" x2="128" y2="496" /><line x1="160" y1="480" x2="148" y2="496" />
+              <line x1="180" y1="480" x2="168" y2="496" /><line x1="200" y1="480" x2="188" y2="496" />
+              <line x1="220" y1="480" x2="208" y2="496" /><line x1="240" y1="480" x2="228" y2="496" />
+              <line x1="260" y1="480" x2="248" y2="496" /><line x1="280" y1="480" x2="268" y2="496" />
+              <line x1="300" y1="480" x2="288" y2="496" /><line x1="320" y1="480" x2="308" y2="496" />
+              <line x1="340" y1="480" x2="328" y2="496" /><line x1="360" y1="480" x2="348" y2="496" />
+              <line x1="380" y1="480" x2="368" y2="496" /><line x1="400" y1="480" x2="388" y2="496" />
+              <line x1="420" y1="480" x2="408" y2="496" /><line x1="440" y1="480" x2="428" y2="496" />
+            </g>
+          </g>
+
+          <!-- crane -->
+          <g class="crane">
+            <line x1="80" y1="480" x2="80" y2="60" pathLength="1" class="draw" />
+            <line x1="96" y1="480" x2="96" y2="60" pathLength="1" class="draw" />
+            <polyline class="draw" pathLength="1" points="80,460 96,430 80,400 96,370 80,340 96,310 80,280 96,250 80,220 96,190 80,160 96,130 80,100 96,70" />
+            <line x1="30" y1="60" x2="520" y2="60" pathLength="1" class="draw" />
+            <line x1="30" y1="74" x2="520" y2="74" pathLength="1" class="draw" />
+            <polyline class="draw" pathLength="1" points="110,74 125,60 140,74 155,60 170,74 185,60 200,74 215,60 230,74 245,60 260,74 275,60 290,74 305,60 320,74 335,60 350,74 365,60 380,74 395,60 410,74 425,60 440,74 455,60 470,74 485,60 500,74 515,60" />
+            <polyline class="draw" pathLength="1" points="88,60 88,24 30,60" />
+            <line x1="88" y1="24" x2="520" y2="60" pathLength="1" class="draw" />
+            <rect x="34" y="74" width="30" height="20" class="draw" pathLength="1" />
+            <g class="crane__hook">
+              <line x1="470" y1="74" x2="470" y2="86" class="cable" />
+              <path d="M464 86 h12 v4 a6 6 0 1 1 -12 0 z" class="hook" />
+              <rect x="430" y="100" width="80" height="7" class="beam" />
+            </g>
+          </g>
+
+          <!-- gedung: 5 lantai (lantai 1 di bawah) -->
+          <g class="floors">
+            <g class="floor" data-target="#legal" data-floor="5" tabindex="0" role="link" aria-label="Lantai 5 Legal">
+              <rect x="150" y="130" width="300" height="70" pathLength="1" class="draw floor__body" />
+              <g class="win"><rect x="170" y="148" width="36" height="34"/><rect x="226" y="148" width="36" height="34"/><rect x="282" y="148" width="36" height="34"/><rect x="338" y="148" width="36" height="34"/><rect x="394" y="148" width="36" height="34"/></g>
+            </g>
+            <g class="floor" data-target="#hr" data-floor="4" tabindex="0" role="link" aria-label="Lantai 4 Human Resources">
+              <rect x="150" y="200" width="300" height="70" pathLength="1" class="draw floor__body" />
+              <g class="win"><rect x="170" y="218" width="36" height="34"/><rect x="226" y="218" width="36" height="34"/><rect x="282" y="218" width="36" height="34"/><rect x="338" y="218" width="36" height="34"/><rect x="394" y="218" width="36" height="34"/></g>
+            </g>
+            <g class="floor" data-target="#fin" data-floor="3" tabindex="0" role="link" aria-label="Lantai 3 Finance and Accounting">
+              <rect x="150" y="270" width="300" height="70" pathLength="1" class="draw floor__body" />
+              <g class="win"><rect x="170" y="288" width="36" height="34"/><rect x="226" y="288" width="36" height="34"/><rect x="282" y="288" width="36" height="34"/><rect x="338" y="288" width="36" height="34"/><rect x="394" y="288" width="36" height="34"/></g>
+            </g>
+            <g class="floor" data-target="#adm" data-floor="2" tabindex="0" role="link" aria-label="Lantai 2 Administrasi">
+              <rect x="150" y="340" width="300" height="70" pathLength="1" class="draw floor__body" />
+              <g class="win"><rect x="170" y="358" width="36" height="34"/><rect x="226" y="358" width="36" height="34"/><rect x="282" y="358" width="36" height="34"/><rect x="338" y="358" width="36" height="34"/><rect x="394" y="358" width="36" height="34"/></g>
+            </g>
+            <g class="floor" data-target="#ga" data-floor="1" tabindex="0" role="link" aria-label="Lantai 1 General Affairs">
+              <rect x="150" y="410" width="300" height="70" pathLength="1" class="draw floor__body" />
+              <g class="win"><rect x="170" y="428" width="36" height="34"/><rect x="226" y="428" width="36" height="34"/><rect x="338" y="428" width="36" height="34"/><rect x="394" y="428" width="36" height="34"/></g>
+              <rect x="280" y="424" width="40" height="56" class="door" />
+            </g>
+            <!-- atap / parapet -->
+            <polyline class="draw" pathLength="1" points="140,130 140,116 460,116 460,130 140,130" />
+          </g>
+
+          <!-- label lantai + leader line -->
+          <g class="labels mono">
+            <g class="lbl" data-floor="5"><line x1="450" y1="165" x2="500" y2="165"/><circle cx="450" cy="165" r="3"/><text x="506" y="161">LT.05</text><text x="506" y="176" class="lbl__name">LEGAL</text></g>
+            <g class="lbl" data-floor="4"><line x1="450" y1="235" x2="500" y2="235"/><circle cx="450" cy="235" r="3"/><text x="506" y="231">LT.04</text><text x="506" y="246" class="lbl__name">HUMAN RES.</text></g>
+            <g class="lbl" data-floor="3"><line x1="450" y1="305" x2="500" y2="305"/><circle cx="450" cy="305" r="3"/><text x="506" y="301">LT.03</text><text x="506" y="316" class="lbl__name">FINANCE &amp; ACC.</text></g>
+            <g class="lbl" data-floor="2"><line x1="450" y1="375" x2="500" y2="375"/><circle cx="450" cy="375" r="3"/><text x="506" y="371">LT.02</text><text x="506" y="386" class="lbl__name">ADMINISTRASI</text></g>
+            <g class="lbl" data-floor="1"><line x1="450" y1="445" x2="500" y2="445"/><circle cx="450" cy="445" r="3"/><text x="506" y="441">LT.01</text><text x="506" y="456" class="lbl__name">GENERAL AFF.</text></g>
+          </g>
+
+          <!-- garis ukur (dimension) -->
+          <g class="dim mono">
+            <line x1="150" y1="516" x2="450" y2="516" pathLength="1" class="draw" />
+            <line x1="150" y1="508" x2="150" y2="524" /><line x1="450" y1="508" x2="450" y2="524" />
+            <line x1="145" y1="521" x2="155" y2="511" /><line x1="445" y1="521" x2="455" y2="511" />
+            <text x="300" y="510" text-anchor="middle">30.000</text>
+            <line x1="122" y1="130" x2="122" y2="480" pathLength="1" class="draw" />
+            <line x1="114" y1="130" x2="130" y2="130" /><line x1="114" y1="480" x2="130" y2="480" />
+            <text x="112" y="310" text-anchor="middle" transform="rotate(-90 112 310)">+17.50</text>
+          </g>
+        </svg>
+        <p class="hero__hint mono">↖ Klik salah satu lantai untuk menuju bidangnya</p>
+      </div>
+    </section>
+
+    <!-- ============ RINGKASAN ============ -->
+    <section class="section overview" id="overview">
+      <header class="sec-head reveal">
+        <p class="eyebrow mono">DENAH UTAMA · SKALA 1:100</p>
+        <h2>Ringkasan Divisi Umum</h2>
+        <div class="dimline"><span></span><em class="mono" data-date></em><span></span></div>
+      </header>
+      <div class="kpi-grid" id="kpiGrid"></div>
+    </section>
+
+    <!-- ============ LT.01 GENERAL AFFAIRS ============ -->
+    <section class="section floor-sec" id="ga" data-floor="1">
+      <header class="sec-head reveal">
+        <p class="eyebrow mono">LT.01 · ELV +0.00 · GBR GA-01</p>
+        <h2>General Affairs</h2>
+        <p class="sec-lead">Aset, fasilitas kantor, kendaraan operasional, dan dukungan logistik untuk kantor &amp; site proyek.</p>
+        <div class="dimline"><span></span><em class="mono">FASILITAS · ASET · LOGISTIK</em><span></span></div>
+      </header>
+      <div class="grid grid--3">
+        <article class="panel reveal" style="--d:0">
+          <h3 class="panel__title mono">A. INVENTARIS ASET</h3>
+          <div class="asset-list" id="assetList"></div>
+        </article>
+        <article class="panel reveal" style="--d:1">
+          <h3 class="panel__title mono">B. JADWAL PEMELIHARAAN</h3>
+          <ol class="timeline" id="maintList"></ol>
+        </article>
+        <article class="panel reveal" style="--d:2">
+          <h3 class="panel__title mono">C. STOK ATK &amp; LOGISTIK</h3>
+          <div class="bars" id="stockBars"></div>
+        </article>
+      </div>
+      <article class="panel panel--wide reveal">
+        <h3 class="panel__title mono">D. TIKET PERMINTAAN GA</h3>
+        <div class="tickets" id="gaTickets"></div>
+      </article>
+    </section>
+
+    <!-- ============ LT.02 ADMINISTRASI ============ -->
+    <section class="section floor-sec" id="adm" data-floor="2">
+      <header class="sec-head reveal">
+        <p class="eyebrow mono">LT.02 · ELV +3.50 · GBR ADM-01</p>
+        <h2>Administrasi</h2>
+        <p class="sec-lead">Persuratan, penomoran dokumen, arsip, dan agenda kantor — rapi seperti daftar gambar.</p>
+        <div class="dimline"><span></span><em class="mono">SURAT · ARSIP · AGENDA</em><span></span></div>
+      </header>
+      <div class="grid grid--2-1">
+        <article class="panel reveal">
+          <div class="panel__head">
+            <h3 class="panel__title mono">A. REGISTER SURAT</h3>
+            <div class="tabs" role="tablist" id="mailTabs">
+              <button role="tab" aria-selected="true" data-filter="all">Semua</button>
+              <button role="tab" aria-selected="false" data-filter="Masuk">Masuk</button>
+              <button role="tab" aria-selected="false" data-filter="Keluar">Keluar</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table class="table">
+              <thead><tr><th>No. Surat</th><th>Perihal</th><th>Pihak</th><th>Jenis</th><th>Tgl</th></tr></thead>
+              <tbody id="mailBody"></tbody>
+            </table>
+          </div>
+        </article>
+        <article class="panel reveal" style="--d:1">
+          <h3 class="panel__title mono">B. BUAT NOMOR SURAT</h3>
+          <form class="form" id="mailForm" autocomplete="off">
+            <label>Jenis
+              <select name="type"><option>Keluar</option><option>Masuk</option></select>
+            </label>
+            <label>Kode Bagian
+              <select name="code"><option value="ADM">ADM — Administrasi</option><option value="GA">GA — General Affairs</option><option value="FIN">FIN — Finance</option><option value="HR">HR — Human Resources</option><option value="LGL">LGL — Legal</option></select>
+            </label>
+            <label>Perihal<input name="subject" required placeholder="mis. Penawaran Desain Interior"></label>
+            <label>Pihak / Instansi<input name="party" required placeholder="mis. PT Klien Sejahtera"></label>
+            <output class="form__preview mono" id="mailPreview">—</output>
+            <button class="btn btn--solid" type="submit">Daftarkan Surat</button>
+          </form>
+        </article>
+      </div>
+      <article class="panel panel--wide reveal">
+        <h3 class="panel__title mono">C. AGENDA MINGGU INI</h3>
+        <div class="agenda" id="agenda"></div>
+      </article>
+    </section>
+
+    <!-- ============ LT.03 FINANCE ============ -->
+    <section class="section floor-sec" id="fin" data-floor="3">
+      <header class="sec-head reveal">
+        <p class="eyebrow mono">LT.03 · ELV +7.00 · GBR FIN-01</p>
+        <h2>Finance &amp; Accounting</h2>
+        <p class="sec-lead">Arus kas, anggaran vs realisasi per proyek, serta status tagihan (termin) klien.</p>
+        <div class="dimline"><span></span><em class="mono">KAS · ANGGARAN · TAGIHAN</em><span></span></div>
+      </header>
+      <div class="grid grid--2-1">
+        <article class="panel reveal">
+          <div class="panel__head">
+            <h3 class="panel__title mono">A. ARUS KAS 2026 (JUTA RP)</h3>
+            <div class="legend mono"><span class="lg lg--in"></span>Masuk <span class="lg lg--out"></span>Keluar</div>
+          </div>
+          <div class="chart" id="cashChart"></div>
+        </article>
+        <article class="panel reveal" style="--d:1">
+          <h3 class="panel__title mono">B. STATUS TERMIN</h3>
+          <div class="donut-wrap" id="invoiceDonut"></div>
+        </article>
+      </div>
+      <article class="panel panel--wide reveal">
+        <h3 class="panel__title mono">C. ANGGARAN vs REALISASI PROYEK</h3>
+        <div class="budget" id="budget"></div>
+      </article>
+    </section>
+
+    <!-- ============ LT.04 HR ============ -->
+    <section class="section floor-sec" id="hr" data-floor="4">
+      <header class="sec-head reveal">
+        <p class="eyebrow mono">LT.04 · ELV +10.50 · GBR HR-01</p>
+        <h2>Human Resources</h2>
+        <p class="sec-lead">Struktur tim, kehadiran, rekrutmen, dan pengembangan kompetensi — kantor maupun lapangan.</p>
+        <div class="dimline"><span></span><em class="mono">KARYAWAN · REKRUTMEN · PELATIHAN</em><span></span></div>
+      </header>
+      <div class="grid grid--3">
+        <article class="panel reveal">
+          <h3 class="panel__title mono">A. KOMPOSISI KARYAWAN</h3>
+          <div class="stack" id="headcount"></div>
+        </article>
+        <article class="panel reveal" style="--d:1">
+          <h3 class="panel__title mono">B. KEHADIRAN 4 MINGGU</h3>
+          <div class="heat" id="attendance"></div>
+          <p class="note mono" id="attNote"></p>
+        </article>
+        <article class="panel reveal" style="--d:2">
+          <h3 class="panel__title mono">C. PELATIHAN &amp; SERTIFIKASI</h3>
+          <ul class="checklist" id="training"></ul>
+        </article>
+      </div>
+      <article class="panel panel--wide reveal">
+        <div class="panel__head">
+          <h3 class="panel__title mono">D. PIPELINE REKRUTMEN</h3>
+          <span class="note mono">Klik kartu untuk memajukan tahap →</span>
+        </div>
+        <div class="kanban" id="kanban"></div>
+      </article>
+    </section>
+
+    <!-- ============ LT.05 LEGAL ============ -->
+    <section class="section floor-sec" id="legal" data-floor="5">
+      <header class="sec-head reveal">
+        <p class="eyebrow mono">LT.05 · ELV +14.00 · GBR LGL-01</p>
+        <h2>Legal</h2>
+        <p class="sec-lead">Perizinan usaha jasa konstruksi, kontrak proyek, dan kepatuhan — dipantau sebelum jatuh tempo.</p>
+        <div class="dimline"><span></span><em class="mono">PERIZINAN · KONTRAK · KEPATUHAN</em><span></span></div>
+      </header>
+      <div class="grid grid--2">
+        <article class="panel reveal">
+          <h3 class="panel__title mono">A. MASA BERLAKU PERIZINAN</h3>
+          <div class="licenses" id="licenses"></div>
+        </article>
+        <article class="panel reveal" style="--d:1">
+          <h3 class="panel__title mono">B. KONTRAK PROYEK</h3>
+          <div class="contracts" id="contracts"></div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ FOOTER : kop gambar (title block) ============ -->
+  <footer class="titleblock">
+    <div class="tb">
+      <div class="tb__cell tb__cell--brand">
+        <span class="mono">PEMILIK</span>
+        <strong>PT Roemantara Indonesia</strong>
+        <small>Jasa Konstruksi · Desain Arsitektur &amp; Interior</small>
+      </div>
+      <div class="tb__cell"><span class="mono">JUDUL GAMBAR</span><strong>Dashboard Divisi Umum</strong></div>
+      <div class="tb__cell"><span class="mono">DISETUJUI</span><strong>Head of General Dept.</strong></div>
+      <div class="tb__cell"><span class="mono">DIGAMBAR</span><strong>Admin Kantor</strong></div>
+      <div class="tb__cell"><span class="mono">TANGGAL</span><strong data-date></strong></div>
+      <div class="tb__cell"><span class="mono">NO. LEMBAR</span><strong>DU-00 / 05</strong></div>
+    </div>
+    <p class="tb__note mono">Data pada halaman ini adalah contoh (dummy) untuk demonstrasi.</p>
+  </footer>
+
+  <div class="toast mono" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
