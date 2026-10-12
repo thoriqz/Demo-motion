@@ -75,7 +75,7 @@
           <span class="line"><span>Fondasi Operasional</span></span>
           <span class="line"><span class="accent">Roemantara.</span></span>
         </h1>
-        <p class="hero__lead">Lima lantai, satu struktur. General Affairs, Administrasi, Finance &amp; Accounting, Human Resources, dan Legal — dirancang seperti gambar kerja: presisi, terukur, dan saling menopang.</p>
+        <p class="hero__lead">Lima lantai, enam belas modul kerja. General Affairs, Administrasi, Finance &amp; Accounting, Human Resources, dan Legal — dirancang seperti gambar kerja: presisi, terukur, dan saling menopang.</p>
         <div class="hero__cta">
           <a href="#overview" class="btn btn--solid">Lihat Ringkasan</a>
           <a href="#ga" class="btn btn--ghost">Naik ke Lt.01 ↑</a>
@@ -183,27 +183,111 @@
       <header class="sec-head reveal">
         <p class="eyebrow mono">LT.01 · ELV +0.00 · GBR GA-01</p>
         <h2>General Affairs</h2>
-        <p class="sec-lead">Aset, fasilitas kantor, kendaraan operasional, dan dukungan logistik untuk kantor &amp; site proyek.</p>
-        <div class="dimline"><span></span><em class="mono">FASILITAS · ASET · LOGISTIK</em><span></span></div>
+        <p class="sec-lead">Pengadaan, aset, vendor &amp; subkon, layanan kantor, layanan klien, dan jadwal kegiatan.</p>
+        <div class="dimline"><span></span><em class="mono">6 MODUL</em><span></span></div>
       </header>
-      <div class="grid grid--3">
-        <article class="panel reveal" style="--d:0">
-          <h3 class="panel__title mono">A. INVENTARIS ASET</h3>
-          <div class="asset-list" id="assetList"></div>
-        </article>
-        <article class="panel reveal" style="--d:1">
-          <h3 class="panel__title mono">B. JADWAL PEMELIHARAAN</h3>
-          <ol class="timeline" id="maintList"></ol>
-        </article>
-        <article class="panel reveal" style="--d:2">
-          <h3 class="panel__title mono">C. STOK ATK &amp; LOGISTIK</h3>
-          <div class="bars" id="stockBars"></div>
+      <div class="modtabs reveal" role="tablist" aria-label="Modul General Affairs">
+        <button role="tab" data-panel="ga-proc"><span class="mono">01</span>Procurement &amp; Purchasing</button>
+        <button role="tab" data-panel="ga-asset"><span class="mono">02</span>Aset &amp; Inventaris</button>
+        <button role="tab" data-panel="ga-vendor"><span class="mono">03</span>Vendor &amp; Subkon</button>
+        <button role="tab" data-panel="ga-serv"><span class="mono">04</span>Pelayanan Umum</button>
+        <button role="tab" data-panel="ga-client"><span class="mono">05</span>Layanan Klien</button>
+        <button role="tab" data-panel="ga-cal"><span class="mono">06</span>Kalender</button>
+      </div>
+
+      <div class="modpanel" id="ga-proc" role="tabpanel">
+        <div class="stat-row" id="procStats"></div>
+        <div class="grid grid--2-1">
+          <article class="panel">
+            <div class="panel__head">
+              <h3 class="panel__title mono">A. PERMINTAAN (PR) &amp; PEMBELIAN (PO)</h3>
+              <input class="search" type="search" id="procSearch" placeholder="Cari barang, proyek, vendor…" aria-label="Cari pengadaan">
+            </div>
+            <div class="table-wrap"><table class="table">
+              <thead><tr><th>No.</th><th>Barang / Jasa</th><th>Proyek</th><th>Vendor</th><th class="num">Nilai</th><th>Tahap</th><th></th></tr></thead>
+              <tbody id="procBody"></tbody>
+            </table></div>
+            <p class="note mono">Tekan "Lanjut" untuk memajukan tahap: PR → Approval → PO → Dikirim → Diterima.</p>
+          </article>
+          <article class="panel">
+            <h3 class="panel__title mono">B. AJUKAN PR BARU</h3>
+            <form class="form" id="procForm" autocomplete="off">
+              <label for="procItem">Barang / Jasa<input id="procItem" name="item" required placeholder="mis. Semen 50 sak"></label>
+              <label for="procProject">Proyek / Unit
+                <select id="procProject" name="project"><option>Kantor</option><option>Rumah Kemang</option><option>Gudang Cikarang</option><option>Fit-out Kafe Senopati</option><option>Showroom Arunika</option></select>
+              </label>
+              <label for="procVendor">Calon Vendor<input id="procVendor" name="vendor" placeholder="opsional"></label>
+              <label for="procValue">Estimasi Nilai (Rp)<input id="procValue" name="value" type="number" min="0" step="1000" required placeholder="mis. 12500000"></label>
+              <output class="form__preview mono" id="procPreview">—</output>
+              <button class="btn btn--solid" type="submit">Ajukan PR</button>
+            </form>
+          </article>
+        </div>
+      </div>
+
+      <div class="modpanel" id="ga-asset" role="tabpanel" hidden>
+        <div class="grid grid--3">
+          <article class="panel"><h3 class="panel__title mono">A. INVENTARIS ASET</h3><div class="asset-list" id="assetList"></div></article>
+          <article class="panel"><h3 class="panel__title mono">B. JADWAL PEMELIHARAAN</h3><ol class="timeline" id="maintList"></ol></article>
+          <article class="panel"><h3 class="panel__title mono">C. STOK ATK &amp; LOGISTIK</h3><div class="bars" id="stockBars"></div></article>
+        </div>
+      </div>
+
+      <div class="modpanel" id="ga-vendor" role="tabpanel" hidden>
+        <article class="panel panel--wide">
+          <div class="panel__head">
+            <h3 class="panel__title mono">DAFTAR VENDOR &amp; SUBKONTRAKTOR</h3>
+            <div class="chips" id="vendorChips" role="group" aria-label="Filter kategori vendor"></div>
+          </div>
+          <div class="vendor-grid" id="vendorGrid"></div>
         </article>
       </div>
-      <article class="panel panel--wide reveal">
-        <h3 class="panel__title mono">D. TIKET PERMINTAAN GA</h3>
-        <div class="tickets" id="gaTickets"></div>
-      </article>
+
+      <div class="modpanel" id="ga-serv" role="tabpanel" hidden>
+        <article class="panel panel--wide">
+          <div class="panel__head">
+            <h3 class="panel__title mono">TIKET PELAYANAN UMUM</h3>
+            <span class="note mono">Klik tiket untuk memindahkan ke tahap berikutnya →</span>
+          </div>
+          <div class="kanban kanban--3" id="servBoard"></div>
+        </article>
+      </div>
+
+      <div class="modpanel" id="ga-client" role="tabpanel" hidden>
+        <div class="grid grid--2-1">
+          <article class="panel">
+            <h3 class="panel__title mono">A. PERMINTAAN KLIEN HARI INI</h3>
+            <div class="table-wrap"><table class="table">
+              <thead><tr><th>Klien</th><th>Permintaan</th><th>Kanal</th><th>Masuk</th><th>Waktu Respons</th><th>Status</th></tr></thead>
+              <tbody id="clientBody"></tbody>
+            </table></div>
+          </article>
+          <article class="panel">
+            <h3 class="panel__title mono">B. KINERJA RESPONS</h3>
+            <div id="slaBox"></div>
+          </article>
+        </div>
+      </div>
+
+      <div class="modpanel" id="ga-cal" role="tabpanel" hidden>
+        <div class="grid grid--2-1">
+          <article class="panel">
+            <div class="panel__head">
+              <h3 class="panel__title mono" id="calTitle">A. KALENDER</h3>
+              <div class="tabs" role="group" id="calFilter" aria-label="Filter jenis agenda">
+                <button type="button" aria-pressed="true" data-filter="all">Semua</button>
+                <button type="button" aria-pressed="false" data-filter="Internal">Internal</button>
+                <button type="button" aria-pressed="false" data-filter="Eksternal">Eksternal</button>
+              </div>
+            </div>
+            <div class="cal" id="calGrid"></div>
+          </article>
+          <article class="panel">
+            <h3 class="panel__title mono">B. AGENDA MENDATANG</h3>
+            <ol class="timeline" id="calUpcoming"></ol>
+          </article>
+        </div>
+      </div>
     </section>
 
     <!-- ============ LT.02 ADMINISTRASI ============ -->
@@ -211,46 +295,69 @@
       <header class="sec-head reveal">
         <p class="eyebrow mono">LT.02 · ELV +3.50 · GBR ADM-01</p>
         <h2>Administrasi</h2>
-        <p class="sec-lead">Persuratan, penomoran dokumen, arsip, dan agenda kantor — rapi seperti daftar gambar.</p>
-        <div class="dimline"><span></span><em class="mono">SURAT · ARSIP · AGENDA</em><span></span></div>
+        <p class="sec-lead">Surat-menyurat (SPK, SPH, Invoice, BA), arsip internal &amp; eksternal, dan notulen rapat.</p>
+        <div class="dimline"><span></span><em class="mono">3 MODUL</em><span></span></div>
       </header>
-      <div class="grid grid--2-1">
-        <article class="panel reveal">
-          <div class="panel__head">
-            <h3 class="panel__title mono">A. REGISTER SURAT</h3>
-            <div class="tabs" role="tablist" id="mailTabs">
-              <button role="tab" aria-selected="true" data-filter="all">Semua</button>
-              <button role="tab" aria-selected="false" data-filter="Masuk">Masuk</button>
-              <button role="tab" aria-selected="false" data-filter="Keluar">Keluar</button>
+      <div class="modtabs reveal" role="tablist" aria-label="Modul Administrasi">
+        <button role="tab" data-panel="adm-letter"><span class="mono">01</span>Surat-Menyurat</button>
+        <button role="tab" data-panel="adm-arch"><span class="mono">02</span>Pengarsipan</button>
+        <button role="tab" data-panel="adm-mom"><span class="mono">03</span>Notulen Rapat</button>
+      </div>
+
+      <div class="modpanel" id="adm-letter" role="tabpanel">
+        <div class="grid grid--2-1">
+          <article class="panel">
+            <div class="panel__head">
+              <h3 class="panel__title mono">A. REGISTER SURAT</h3>
+              <div class="tabs" role="group" id="letterTabs" aria-label="Filter jenis surat"></div>
             </div>
+            <div class="table-wrap"><table class="table">
+              <thead><tr><th>No. Surat</th><th>Jenis</th><th>Perihal</th><th>Pihak</th><th class="num">Nilai</th><th>Tgl</th><th>Status</th></tr></thead>
+              <tbody id="letterBody"></tbody>
+            </table></div>
+          </article>
+          <article class="panel">
+            <h3 class="panel__title mono">B. BUAT SURAT BARU</h3>
+            <form class="form" id="letterForm" autocomplete="off">
+              <label for="letterType">Jenis Surat<select id="letterType" name="type"></select></label>
+              <label for="letterSubject">Perihal<input id="letterSubject" name="subject" required placeholder="mis. Penawaran desain dapur"></label>
+              <label for="letterParty">Kepada / Pihak<input id="letterParty" name="party" required placeholder="mis. Ibu Larasati"></label>
+              <label for="letterValue">Nilai (Rp)<input id="letterValue" name="value" type="number" min="0" step="1000" placeholder="opsional, untuk SPK/SPH/Invoice"></label>
+              <output class="form__preview mono" id="letterPreview">—</output>
+              <button class="btn btn--solid" type="submit">Daftarkan Surat</button>
+            </form>
+          </article>
+        </div>
+      </div>
+
+      <div class="modpanel" id="adm-arch" role="tabpanel" hidden>
+        <div class="folder-row" id="archFolders"></div>
+        <article class="panel panel--wide">
+          <div class="panel__head">
+            <div class="tabs" role="group" id="archScope" aria-label="Lingkup arsip">
+              <button type="button" aria-pressed="true" data-scope="all">Semua</button>
+              <button type="button" aria-pressed="false" data-scope="Internal">Internal</button>
+              <button type="button" aria-pressed="false" data-scope="Eksternal">Eksternal</button>
+            </div>
+            <input class="search" type="search" id="archSearch" placeholder="Cari judul atau kode arsip…" aria-label="Cari arsip">
           </div>
-          <div class="table-wrap">
-            <table class="table">
-              <thead><tr><th>No. Surat</th><th>Perihal</th><th>Pihak</th><th>Jenis</th><th>Tgl</th></tr></thead>
-              <tbody id="mailBody"></tbody>
-            </table>
-          </div>
-        </article>
-        <article class="panel reveal" style="--d:1">
-          <h3 class="panel__title mono">B. BUAT NOMOR SURAT</h3>
-          <form class="form" id="mailForm" autocomplete="off">
-            <label>Jenis
-              <select name="type"><option>Keluar</option><option>Masuk</option></select>
-            </label>
-            <label>Kode Bagian
-              <select name="code"><option value="ADM">ADM — Administrasi</option><option value="GA">GA — General Affairs</option><option value="FIN">FIN — Finance</option><option value="HR">HR — Human Resources</option><option value="LGL">LGL — Legal</option></select>
-            </label>
-            <label>Perihal<input name="subject" required placeholder="mis. Penawaran Desain Interior"></label>
-            <label>Pihak / Instansi<input name="party" required placeholder="mis. PT Klien Sejahtera"></label>
-            <output class="form__preview mono" id="mailPreview">—</output>
-            <button class="btn btn--solid" type="submit">Daftarkan Surat</button>
-          </form>
+          <div class="table-wrap"><table class="table">
+            <thead><tr><th>Kode</th><th>Judul Dokumen</th><th>Kategori</th><th>Lingkup</th><th>Tanggal</th><th>Lokasi (Fisik · Digital)</th></tr></thead>
+            <tbody id="archBody"></tbody>
+          </table></div>
+          <p class="note mono" id="archNote"></p>
         </article>
       </div>
-      <article class="panel panel--wide reveal">
-        <h3 class="panel__title mono">C. AGENDA MINGGU INI</h3>
-        <div class="agenda" id="agenda"></div>
-      </article>
+
+      <div class="modpanel" id="adm-mom" role="tabpanel" hidden>
+        <div class="grid grid--1-2">
+          <article class="panel">
+            <h3 class="panel__title mono">A. DAFTAR NOTULEN</h3>
+            <div class="mom-list" id="momList"></div>
+          </article>
+          <article class="panel" id="momDetail" aria-live="polite"></article>
+        </div>
+      </div>
     </section>
 
     <!-- ============ LT.03 FINANCE ============ -->
@@ -258,26 +365,62 @@
       <header class="sec-head reveal">
         <p class="eyebrow mono">LT.03 · ELV +7.00 · GBR FIN-01</p>
         <h2>Finance &amp; Accounting</h2>
-        <p class="sec-lead">Arus kas, anggaran vs realisasi per proyek, serta status tagihan (termin) klien.</p>
-        <div class="dimline"><span></span><em class="mono">KAS · ANGGARAN · TAGIHAN</em><span></span></div>
+        <p class="sec-lead">Rekonsiliasi bank, laporan keuangan harian/mingguan/bulanan, dan proses tutup buku.</p>
+        <div class="dimline"><span></span><em class="mono">3 MODUL</em><span></span></div>
       </header>
-      <div class="grid grid--2-1">
-        <article class="panel reveal">
+      <div class="modtabs reveal" role="tablist" aria-label="Modul Finance">
+        <button role="tab" data-panel="fin-recon"><span class="mono">01</span>Rekonsiliasi Bank</button>
+        <button role="tab" data-panel="fin-report"><span class="mono">02</span>Laporan Keuangan</button>
+        <button role="tab" data-panel="fin-close"><span class="mono">03</span>Tutup Buku</button>
+      </div>
+
+      <div class="modpanel" id="fin-recon" role="tabpanel">
+        <article class="panel panel--wide">
           <div class="panel__head">
-            <h3 class="panel__title mono">A. ARUS KAS 2026 (JUTA RP)</h3>
+            <h3 class="panel__title mono">REKONSILIASI · OKTOBER 2026</h3>
+            <div class="tabs" role="group" id="bankTabs" aria-label="Pilih rekening"></div>
+          </div>
+          <div class="stat-row stat-row--3" id="reconStats"></div>
+          <div class="table-wrap"><table class="table">
+            <thead><tr><th>Tgl</th><th>Keterangan</th><th class="num">Mutasi Bank</th><th class="num">Catatan Buku</th><th>Status</th><th></th></tr></thead>
+            <tbody id="reconBody"></tbody>
+          </table></div>
+        </article>
+      </div>
+
+      <div class="modpanel" id="fin-report" role="tabpanel" hidden>
+        <div class="panel__head panel__head--bare">
+          <div class="tabs" role="group" id="periodTabs" aria-label="Periode laporan"></div>
+          <span class="note mono" id="periodNote"></span>
+        </div>
+        <div class="stat-row stat-row--3" id="reportStats"></div>
+        <article class="panel panel--wide">
+          <div class="panel__head">
+            <h3 class="panel__title mono" id="chartTitle">ARUS KAS</h3>
             <div class="legend mono"><span class="lg lg--in"></span>Masuk <span class="lg lg--out"></span>Keluar</div>
           </div>
           <div class="chart" id="cashChart"></div>
         </article>
-        <article class="panel reveal" style="--d:1">
-          <h3 class="panel__title mono">B. STATUS TERMIN</h3>
-          <div class="donut-wrap" id="invoiceDonut"></div>
+        <article class="panel panel--wide" id="budgetPanel">
+          <h3 class="panel__title mono">ANGGARAN (RAB) vs REALISASI PROYEK</h3>
+          <div class="budget" id="budget"></div>
         </article>
       </div>
-      <article class="panel panel--wide reveal">
-        <h3 class="panel__title mono">C. ANGGARAN vs REALISASI PROYEK</h3>
-        <div class="budget" id="budget"></div>
-      </article>
+
+      <div class="modpanel" id="fin-close" role="tabpanel" hidden>
+        <div class="grid grid--2-1">
+          <article class="panel">
+            <h3 class="panel__title mono" id="closeTitle">A. DAFTAR PERIKSA TUTUP BUKU</h3>
+            <ul class="checklist checklist--pic" id="closeList"></ul>
+          </article>
+          <article class="panel">
+            <h3 class="panel__title mono">B. STATUS PERIODE</h3>
+            <div id="closeStatus"></div>
+            <h3 class="panel__title mono panel__title--sub">C. RIWAYAT TUTUP BUKU</h3>
+            <ol class="timeline" id="closeHistory"></ol>
+          </article>
+        </div>
+      </div>
     </section>
 
     <!-- ============ LT.04 HR ============ -->
@@ -285,31 +428,65 @@
       <header class="sec-head reveal">
         <p class="eyebrow mono">LT.04 · ELV +10.50 · GBR HR-01</p>
         <h2>Human Resources</h2>
-        <p class="sec-lead">Struktur tim, kehadiran, rekrutmen, dan pengembangan kompetensi — kantor maupun lapangan.</p>
-        <div class="dimline"><span></span><em class="mono">KARYAWAN · REKRUTMEN · PELATIHAN</em><span></span></div>
+        <p class="sec-lead">Database karyawan, database freelancer, dan absensi harian kantor maupun lapangan.</p>
+        <div class="dimline"><span></span><em class="mono">3 MODUL</em><span></span></div>
       </header>
-      <div class="grid grid--3">
-        <article class="panel reveal">
-          <h3 class="panel__title mono">A. KOMPOSISI KARYAWAN</h3>
-          <div class="stack" id="headcount"></div>
-        </article>
-        <article class="panel reveal" style="--d:1">
-          <h3 class="panel__title mono">B. KEHADIRAN 4 MINGGU</h3>
-          <div class="heat" id="attendance"></div>
-          <p class="note mono" id="attNote"></p>
-        </article>
-        <article class="panel reveal" style="--d:2">
-          <h3 class="panel__title mono">C. PELATIHAN &amp; SERTIFIKASI</h3>
-          <ul class="checklist" id="training"></ul>
+      <div class="modtabs reveal" role="tablist" aria-label="Modul Human Resources">
+        <button role="tab" data-panel="hr-emp"><span class="mono">01</span>Database Karyawan</button>
+        <button role="tab" data-panel="hr-free"><span class="mono">02</span>Database Freelancer</button>
+        <button role="tab" data-panel="hr-att"><span class="mono">03</span>Absensi</button>
+      </div>
+
+      <div class="modpanel" id="hr-emp" role="tabpanel">
+        <article class="panel panel--wide"><h3 class="panel__title mono">A. KOMPOSISI KARYAWAN</h3><div class="stack stack--row" id="headcount"></div></article>
+        <article class="panel panel--wide">
+          <div class="panel__head">
+            <h3 class="panel__title mono">B. DATA KARYAWAN</h3>
+            <div class="toolbar">
+              <select id="empDiv" class="select" aria-label="Filter divisi"><option value="all">Semua divisi</option></select>
+              <input class="search" type="search" id="empSearch" placeholder="Cari nama, NIK, jabatan…" aria-label="Cari karyawan">
+            </div>
+          </div>
+          <div class="table-wrap"><table class="table">
+            <thead><tr><th>NIK</th><th>Nama</th><th>Jabatan</th><th>Divisi</th><th>Status</th><th>Bergabung</th><th>Masa Kerja</th></tr></thead>
+            <tbody id="empBody"></tbody>
+          </table></div>
+          <p class="note mono" id="empNote"></p>
         </article>
       </div>
-      <article class="panel panel--wide reveal">
-        <div class="panel__head">
-          <h3 class="panel__title mono">D. PIPELINE REKRUTMEN</h3>
-          <span class="note mono">Klik kartu untuk memajukan tahap →</span>
+
+      <div class="modpanel" id="hr-free" role="tabpanel" hidden>
+        <article class="panel panel--wide">
+          <div class="panel__head">
+            <h3 class="panel__title mono">DATABASE FREELANCER</h3>
+            <div class="tabs" role="group" id="freeTabs" aria-label="Filter ketersediaan">
+              <button type="button" aria-pressed="true" data-filter="all">Semua</button>
+              <button type="button" aria-pressed="false" data-filter="Tersedia">Tersedia</button>
+              <button type="button" aria-pressed="false" data-filter="Bertugas">Bertugas</button>
+            </div>
+          </div>
+          <div class="vendor-grid" id="freeGrid"></div>
+        </article>
+      </div>
+
+      <div class="modpanel" id="hr-att" role="tabpanel" hidden>
+        <div class="stat-row stat-row--5" id="attStats"></div>
+        <div class="grid grid--2-1">
+          <article class="panel">
+            <h3 class="panel__title mono" id="attTitle">A. ABSENSI HARI INI</h3>
+            <div class="table-wrap"><table class="table">
+              <thead><tr><th>Nama</th><th>Masuk</th><th>Pulang</th><th>Lokasi</th><th>Status</th></tr></thead>
+              <tbody id="attBody"></tbody>
+            </table></div>
+            <p class="note mono">Menampilkan sebagian karyawan (contoh).</p>
+          </article>
+          <article class="panel">
+            <h3 class="panel__title mono">B. TINGKAT KEHADIRAN 4 MINGGU</h3>
+            <div class="heat" id="attendance"></div>
+            <p class="note mono" id="attNote"></p>
+          </article>
         </div>
-        <div class="kanban" id="kanban"></div>
-      </article>
+      </div>
     </section>
 
     <!-- ============ LT.05 LEGAL ============ -->
@@ -317,19 +494,25 @@
       <header class="sec-head reveal">
         <p class="eyebrow mono">LT.05 · ELV +14.00 · GBR LGL-01</p>
         <h2>Legal</h2>
-        <p class="sec-lead">Perizinan usaha jasa konstruksi, kontrak proyek, dan kepatuhan — dipantau sebelum jatuh tempo.</p>
-        <div class="dimline"><span></span><em class="mono">PERIZINAN · KONTRAK · KEPATUHAN</em><span></span></div>
+        <p class="sec-lead">Arsip seluruh dokumen eksternal: perizinan, kontrak, akta, asuransi, dan sertifikat — lengkap dengan pengingat masa berlaku.</p>
+        <div class="dimline"><span></span><em class="mono">PENGARSIPAN EKSTERNAL</em><span></span></div>
       </header>
-      <div class="grid grid--2">
-        <article class="panel reveal">
-          <h3 class="panel__title mono">A. MASA BERLAKU PERIZINAN</h3>
-          <div class="licenses" id="licenses"></div>
-        </article>
-        <article class="panel reveal" style="--d:1">
-          <h3 class="panel__title mono">B. KONTRAK PROYEK</h3>
-          <div class="contracts" id="contracts"></div>
-        </article>
-      </div>
+      <div class="stat-row stat-row--3 reveal" id="legalStats"></div>
+      <article class="panel panel--wide reveal">
+        <h3 class="panel__title mono">A. SEGERA JATUH TEMPO (≤ 90 HARI)</h3>
+        <div class="licenses licenses--row" id="licenses"></div>
+      </article>
+      <article class="panel panel--wide reveal">
+        <div class="panel__head">
+          <h3 class="panel__title mono">B. ARSIP DOKUMEN EKSTERNAL</h3>
+          <input class="search" type="search" id="legalSearch" placeholder="Cari dokumen, nomor, pihak…" aria-label="Cari dokumen legal">
+        </div>
+        <div class="chips chips--wrap" id="legalChips" role="group" aria-label="Filter kategori dokumen"></div>
+        <div class="table-wrap"><table class="table">
+          <thead><tr><th>No. Dokumen</th><th>Nama Dokumen</th><th>Kategori</th><th>Pihak / Penerbit</th><th>Terbit</th><th>Berlaku s.d.</th><th>Lokasi Arsip</th></tr></thead>
+          <tbody id="legalBody"></tbody>
+        </table></div>
+      </article>
     </section>
   </main>
 

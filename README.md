@@ -3,13 +3,13 @@
 Webapp motion untuk Divisi Umum dengan tema **gambar kerja / blueprint konstruksi arsitektur**.
 Divisi digambarkan sebagai gedung 5 lantai — tiap lantai satu bidang:
 
-| Lantai | Bidang | Isi |
+| Lantai | Bidang | Modul |
 |---|---|---|
-| LT.01 | General Affairs | Inventaris aset, jadwal pemeliharaan, stok ATK & APD, tiket permintaan GA |
-| LT.02 | Administrasi | Register surat masuk/keluar, generator nomor surat (`042/RMT-ADM/X/2026`), agenda mingguan |
-| LT.03 | Finance & Accounting | Grafik arus kas, status termin, anggaran (RAB) vs realisasi per proyek |
-| LT.04 | Human Resources | Komposisi karyawan, heatmap kehadiran, checklist pelatihan/SKK, pipeline rekrutmen |
-| LT.05 | Legal | Masa berlaku perizinan (NIB, SBU, SKK, ISO) + peringatan, progres kontrak proyek |
+| LT.01 | General Affairs | Procurement & Purchasing (PR → Approval → PO → Dikirim → Diterima, form PR baru) · Aset & Inventaris · Vendor & Subkon (rating, status, filter kategori) · Pelayanan Umum (papan tiket) · Layanan Klien (waktu respons & target SLA 30 menit) · Kalender Internal & Eksternal |
+| LT.02 | Administrasi | Surat-menyurat SPK/SPH/Invoice/BA/Umum dengan penomoran otomatis (`022/SPH/RMT/X/2026`) · Pengarsipan internal & eksternal (surat, company profile, portofolio) · Notulen rapat + tindak lanjut |
+| LT.03 | Finance & Accounting | Rekonsiliasi bank per rekening · Laporan keuangan harian/mingguan/bulanan + anggaran vs realisasi · Daftar periksa tutup buku + kunci periode |
+| LT.04 | Human Resources | Database karyawan (cari & filter divisi, masa kerja otomatis) · Database freelancer · Absensi harian + rekap 4 minggu |
+| LT.05 | Legal | Arsip semua dokumen eksternal (perizinan, kontrak, akta, asuransi, sertifikat) + pengingat jatuh tempo |
 
 ## Motion & interaksi
 - Loader denah yang tergambar garis demi garis, lalu gedung + tower crane digambar ala CAD
@@ -27,8 +27,9 @@ python3 -m http.server 8000   # lalu buka http://localhost:8000
 ```
 
 ## Mengganti data
-Semua data contoh (dummy) ada di `assets/js/data.js`. Surat baru, centang pelatihan,
-dan posisi kandidat tersimpan di `localStorage` browser masing-masing.
+Semua data contoh (dummy) ada di `assets/js/data.js`. Isian yang dibuat di halaman (PR baru, surat baru,
+tahap tiket, rekonsiliasi, centang tutup buku & notulen, tab terakhir) tersimpan di `localStorage`
+browser masing-masing, belum dibagikan antar pengguna.
 
 ## Opsi desain
 `design-options.html` berisi 9 arah desain bermotion untuk dibandingkan:
