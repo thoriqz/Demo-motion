@@ -1,0 +1,621 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Opsi Desain Divisi Umum</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Barlow+Condensed:wght@600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,500;1,6..96,500&family=IBM+Plex+Mono:wght@400;500&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* Layout: lembar studio — tiap opsi = satu baris (pratinjau hidup kiri, spesifikasi kanan), lalu tabel perbandingan */
+:root {
+  --bg: #eceef1;
+  --surface: #ffffff;
+  --fg: #16191e;
+  --muted: #5b6270;
+  --line: #d3d8df;
+  --accent: #b97f00;
+  --accent-soft: #f6ead0;
+  --f-display: "Archivo", "Arial Narrow", system-ui, sans-serif;
+  --f-body: "Archivo", system-ui, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111317; --surface: #191c22; --fg: #e9ecf1; --muted: #9aa2b1; --line: #2c313a;
+    --accent: #f5b301; --accent-soft: #3a2f12; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111317; --surface: #191c22; --fg: #e9ecf1; --muted: #9aa2b1; --line: #2c313a;
+  --accent: #f5b301; --accent-soft: #3a2f12; color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font: 400 15px/1.6 var(--f-body); margin: 0; }
+.wrap { max-width: 1240px; margin: 0 auto; padding-inline: clamp(16px, 4vw, 40px); padding-block: 40px 80px; }
+.mono { font-family: var(--f-mono); letter-spacing: .05em; }
+h1, h2, h3 { font-family: var(--f-display); font-stretch: 112%; text-wrap: balance; margin: 0; }
+
+/* header */
+.intro { display: grid; grid-template-columns: 1.3fr 1fr; gap: 32px; align-items: end; padding-bottom: 28px; border-bottom: 1px solid var(--line); }
+.intro .eyebrow { font-size: 11px; color: var(--accent); text-transform: uppercase; margin: 0 0 10px; }
+.intro h1 { font-size: clamp(34px, 5vw, 58px); line-height: 1; font-weight: 800; font-stretch: 118%; }
+.intro p { color: var(--muted); margin: 0; max-width: 60ch; }
+.jump { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+.jump a { text-decoration: none; color: var(--fg); border: 1px solid var(--line); background: var(--surface); padding: 6px 12px; font: 500 12px var(--f-mono); }
+.jump a:hover, .jump a:focus-visible { border-color: var(--accent); outline: none; }
+
+/* option row */
+.opt { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 28px; padding-block: 44px; border-bottom: 1px solid var(--line); scroll-margin-top: 12px; }
+.opt__head { grid-column: 1 / -1; display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+.opt__letter { font: 800 15px var(--f-mono); color: var(--bg); background: var(--fg); padding: 2px 9px; }
+.opt__head h2 { font-size: clamp(26px, 3.2vw, 36px); font-weight: 800; }
+.opt__tag { color: var(--muted); font-size: 15px; }
+.badge { font: 500 10px var(--f-mono); letter-spacing: .08em; text-transform: uppercase; padding: 3px 8px; background: var(--accent-soft); color: var(--accent); }
+
+.frame { container-type: inline-size; position: relative; min-width: 0; align-self: start; }
+.replay {
+  position: absolute; right: 10px; bottom: 10px; z-index: 5; font: 500 11px var(--f-mono);
+  background: rgba(0,0,0,.72); color: #fff; border: 0; padding: 6px 10px; cursor: pointer;
+}
+.replay:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.spec { display: grid; gap: 18px; align-content: start; min-width: 0; }
+.spec h3 { font: 500 11px var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; font-stretch: 100%; }
+.swatches { display: flex; gap: 6px; flex-wrap: wrap; }
+.sw { display: grid; gap: 4px; font: 10px var(--f-mono); color: var(--muted); }
+.sw i { display: block; width: 44px; height: 30px; border: 1px solid var(--line); }
+.type-pair { display: grid; gap: 2px; }
+.type-pair span { font-size: 22px; line-height: 1.2; }
+.type-pair small { color: var(--muted); font: 11px var(--f-mono); }
+.motion-list { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+.motion-list li { padding-left: 18px; position: relative; }
+.motion-list li::before { content: ""; position: absolute; left: 0; top: .62em; width: 8px; height: 2px; background: var(--accent); }
+.scores { display: grid; gap: 7px; }
+.score { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; font-size: 14px; }
+.dots { display: flex; gap: 3px; }
+.dots i { width: 18px; height: 6px; background: var(--line); }
+.dots i.on { background: var(--fg); }
+.fit { background: var(--surface); border: 1px solid var(--line); padding: 12px 14px; font-size: 14px; }
+.fit b { display: block; font: 500 11px var(--f-mono); color: var(--accent); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 2px; }
+
+/* compare table */
+.compare { padding-top: 48px; }
+.compare h2 { font-size: clamp(26px, 3.2vw, 36px); font-weight: 800; margin-bottom: 18px; }
+.table-scroll { overflow-x: auto; border: 1px solid var(--line); background: var(--surface); }
+table { border-collapse: collapse; width: 100%; min-width: 760px; font-size: 14px; }
+th, td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+thead th { font: 500 11px var(--f-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+tbody th { font-weight: 600; width: 170px; }
+tr:last-child td, tr:last-child th { border-bottom: 0; }
+.rec { margin-top: 28px; display: grid; grid-template-columns: auto 1fr; gap: 18px; padding: 20px; background: var(--accent-soft); border-left: 4px solid var(--accent); }
+.rec b.k { font: 500 11px var(--f-mono); letter-spacing: .08em; color: var(--accent); text-transform: uppercase; }
+.rec p { margin: 0 0 8px; max-width: 75ch; }
+.rec p:last-child { margin: 0; }
+
+/* =====================================================
+   PRATINJAU — tiap opsi sengaja punya palet sendiri (tidak ikut tema)
+   ===================================================== */
+.pv { position: relative; aspect-ratio: 16 / 10; overflow: hidden; width: 100%; max-width: 100%; }
+@container (max-width: 560px) { .pv { aspect-ratio: 4 / 5; } }
+.play .an { animation-play-state: running; }
+
+/* ---------- A. BLUEPRINT CAD ---------- */
+.pv-a {
+  --a-bg: #0a2342; --a-line: #bcd8ff; --a-soft: rgba(188,216,255,.28); --a-acc: #f5b301; --a-or: #ff7a3d;
+  background-color: var(--a-bg); color: #eaf2ff;
+  background-image: linear-gradient(rgba(150,195,255,.13) 1px, transparent 1px), linear-gradient(90deg, rgba(150,195,255,.13) 1px, transparent 1px),
+    linear-gradient(rgba(150,195,255,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(150,195,255,.06) 1px, transparent 1px);
+  background-size: 10cqw 10cqw, 10cqw 10cqw, 2cqw 2cqw, 2cqw 2cqw;
+  display: grid; grid-template-rows: auto 1fr auto; padding: 3cqw 3.4cqw; gap: 1cqw;
+}
+.a-top { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--a-soft); padding-bottom: 1.4cqw; }
+.a-brand { font: 700 clamp(11px, 2cqw, 18px) "Barlow Condensed", sans-serif; letter-spacing: .14em; }
+.a-mono { font: clamp(8px, 1.15cqw, 11px) var(--f-mono); color: #8eaed6; letter-spacing: .06em; }
+.a-body { display: grid; grid-template-columns: 1fr 1.25fr; align-items: center; min-height: 0; }
+.a-copy h4 { margin: .6cqw 0; font: 700 clamp(30px, 8.4cqw, 82px)/.9 "Barlow Condensed", sans-serif; text-transform: uppercase; }
+.a-copy h4 span { display: block; overflow: hidden; }
+.a-copy h4 span i { display: block; font-style: normal; animation: aRise .9s cubic-bezier(.2,.8,.2,1) both; }
+.a-copy h4 span:nth-child(2) i { animation-delay: .12s; color: var(--a-acc); }
+.a-eye { color: var(--a-acc); }
+.a-lead { margin: 0; font-size: clamp(10px, 1.5cqw, 14px); color: #8eaed6; }
+@keyframes aRise { from { transform: translateY(105%); } }
+.a-bld { width: 100%; height: 100%; max-height: 100%; overflow: visible; }
+.a-bld * { fill: none; stroke: var(--a-line); stroke-width: 1.3; vector-effect: non-scaling-stroke; }
+.a-bld .d { stroke-dasharray: 1; animation: draw 1.3s cubic-bezier(.2,.8,.2,1) both; animation-delay: calc(var(--i, 0) * .14s); }
+.a-bld .win { stroke: var(--a-soft); animation: fade .5s both 1.3s; }
+.a-bld .door { stroke: var(--a-acc); animation: fade .5s both 1.5s; }
+.a-bld .lbl line, .a-bld .lbl circle { stroke: var(--a-soft); }
+.a-bld .lbl text { fill: #eaf2ff; stroke: none; font: 500 10px var(--f-mono); }
+.a-bld .lbl { animation: aSlide .6s both; animation-delay: calc(1.2s + var(--i) * .1s); }
+.a-bld .hook { transform-origin: 250px 28px; animation: swing 3.6s ease-in-out infinite; }
+.a-bld .hook rect { stroke: var(--a-or); fill: rgba(255,122,61,.2); }
+.a-bld .hook path { stroke: var(--a-acc); }
+@keyframes draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes fade { from { opacity: 0; } }
+@keyframes aSlide { from { opacity: 0; transform: translateX(-6px); } }
+@keyframes swing { 0%, 100% { rotate: -3deg; } 50% { rotate: 3deg; } }
+.a-kpi { display: grid; grid-template-columns: repeat(5, 1fr); border: 1px solid var(--a-soft); }
+.a-kpi div { padding: 1.2cqw 1.4cqw; border-right: 1px solid var(--a-soft); animation: aUp .6s both; animation-delay: calc(1.4s + var(--i) * .08s); min-width: 0; }
+.a-kpi div:last-child { border-right: 0; }
+.a-kpi span { display: block; font: clamp(7px, 1cqw, 10px) var(--f-mono); color: var(--a-acc); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.a-kpi b { font: 700 clamp(16px, 3.6cqw, 34px)/1 "Barlow Condensed", sans-serif; }
+.a-kpi small { font: clamp(7px, 1cqw, 10px) var(--f-mono); color: #8eaed6; margin-left: 3px; }
+@keyframes aUp { from { opacity: 0; transform: translateY(8px); } }
+.a-scan { position: absolute; left: 0; right: 0; height: 1px; top: 0; background: var(--a-acc); opacity: .55; box-shadow: 0 0 10px var(--a-acc); animation: scan 5s linear infinite 1.8s; pointer-events: none; }
+@keyframes scan { 0% { transform: translateY(0); opacity: 0; } 5% { opacity: .55; } 95% { opacity: .55; } 100% { transform: translateY(100cqh); opacity: 0; } }
+.pv-a { container-type: size; }
+@container (max-width: 560px) {
+  .a-body { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+  .a-kpi { grid-template-columns: repeat(3, 1fr); }
+  .a-kpi div:nth-child(3) { border-right: 0; }
+  .a-kpi div:nth-child(-n+3) { border-bottom: 1px solid var(--a-soft); }
+}
+
+/* ---------- B. BETON BRUTALIS ---------- */
+.pv-b {
+  --b-ink: #111; --b-or: #ff5a1f; --b-con: #bdbab3;
+  background-color: var(--b-con); color: var(--b-ink);
+  background-image:
+    radial-gradient(rgba(0,0,0,.14) 1px, transparent 1.4px),
+    radial-gradient(rgba(255,255,255,.35) 1px, transparent 1.6px),
+    linear-gradient(180deg, #c9c6bf, #aeaba4);
+  background-size: 7px 7px, 11px 11px, 100% 100%;
+  background-position: 0 0, 3px 5px, 0 0;
+  display: grid; grid-template-columns: 1fr 1.15fr; grid-template-rows: auto 1fr auto; column-gap: 3cqw;
+  font-family: "Archivo", sans-serif;
+}
+.b-head { grid-column: 1 / -1; display: flex; justify-content: space-between; padding: 2.4cqw 3cqw 0; font: 600 clamp(8px, 1.2cqw, 12px) var(--f-mono); letter-spacing: .08em; }
+.b-head span:last-child { background: var(--b-ink); color: var(--b-con); padding: .2cqw .8cqw; }
+.b-title { align-self: end; margin: 0; padding: 0 0 2cqw 3cqw; font: 900 clamp(34px, 10.5cqw, 104px)/.82 "Archivo", sans-serif; font-stretch: 62%; text-transform: uppercase; letter-spacing: -.01em; }
+.b-title span { display: block; animation: bStamp .5s cubic-bezier(.3,1.6,.5,1) both; }
+.b-title span:nth-child(2) { animation-delay: .15s; }
+.b-title em { font-style: normal; color: var(--b-or); }
+.b-meta { display: block; font: 600 clamp(8px, 1.2cqw, 12px) var(--f-mono); letter-spacing: .06em; margin-top: 1.6cqw; font-stretch: 100%; }
+@keyframes bStamp { from { opacity: 0; transform: scale(1.35); } }
+.b-slabs { align-self: end; display: grid; gap: .6cqw; padding: 0 3cqw 2cqw 0; }
+.slab {
+  display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 1.4cqw;
+  background: var(--b-ink); color: #eee; padding: 1.3cqw 1.6cqw; position: relative;
+  box-shadow: 0 .6cqw 0 rgba(0,0,0,.25);
+  animation: bDrop .65s cubic-bezier(.5,0,.75,0) both, bLand .35s ease-out both;
+  animation-delay: calc(.4s + var(--f) * .28s), calc(1.05s + var(--f) * .28s);
+}
+.slab:nth-child(odd) { margin-right: 4cqw; }
+.slab em { font: 900 clamp(14px, 3cqw, 30px)/1 "Archivo", sans-serif; font-stretch: 62%; color: var(--b-or); font-style: normal; }
+.slab span { font: 800 clamp(10px, 1.9cqw, 19px) "Archivo", sans-serif; font-stretch: 75%; text-transform: uppercase; letter-spacing: .02em; }
+.slab b { font: 500 clamp(8px, 1.25cqw, 12px) var(--f-mono); color: #bbb; white-space: nowrap; }
+.slab.hot { background: var(--b-or); color: var(--b-ink); }
+.slab.hot em { color: var(--b-ink); }
+.slab.hot b { color: var(--b-ink); }
+@keyframes bDrop { from { transform: translateY(-160cqh); } }
+@keyframes bLand { 0% { transform: translateY(0); } 40% { transform: translateY(.5cqw); } 100% { transform: translateY(0); } }
+.b-tape { grid-column: 1 / -1; overflow: hidden; background: repeating-linear-gradient(-45deg, var(--b-ink) 0 14px, #f5c400 14px 28px); padding: .7cqw 0; }
+.b-tape div { display: flex; width: max-content; animation: marquee 14s linear infinite; }
+.b-tape span { background: var(--b-ink); color: #f5c400; font: 700 clamp(8px, 1.3cqw, 13px) var(--f-mono); letter-spacing: .12em; padding: .3cqw 1.4cqw; margin-right: 3cqw; white-space: nowrap; }
+@keyframes marquee { to { transform: translateX(-50%); } }
+@container (max-width: 560px) {
+  .pv-b { grid-template-columns: 1fr; grid-template-rows: auto auto 1fr auto; }
+  .b-title { padding: 2cqw 3cqw; }
+  .b-slabs { padding: 0 3cqw 3cqw; }
+  .slab { padding: 2cqw 2.4cqw; }
+}
+
+/* ---------- C. MATERIAL BOARD (INTERIOR) ---------- */
+.pv-c {
+  --c-bg: #e3e5dd; --c-ink: #252a24; --c-wal: #6b4a33; --c-brass: #b48a4a; --c-sage: #8a9a7b;
+  background: var(--c-bg); color: var(--c-ink);
+  display: grid; grid-template-columns: 1fr 1.3fr; gap: 3cqw; padding: 3.4cqw;
+}
+.c-left { display: flex; flex-direction: column; justify-content: space-between; min-width: 0; }
+.c-mono { font: clamp(8px, 1.1cqw, 11px) var(--f-mono); letter-spacing: .1em; text-transform: uppercase; color: #5d6458; }
+.c-left h4 { margin: 0; font: 500 clamp(26px, 6.2cqw, 60px)/1.02 "Bodoni Moda", Georgia, serif; letter-spacing: -.01em; }
+.c-left h4 span { display: block; animation: cIn 1.3s cubic-bezier(.16,1,.3,1) both; }
+.c-left h4 span:nth-child(2) { animation-delay: .18s; font-style: italic; color: var(--c-wal); }
+@keyframes cIn { from { opacity: 0; transform: translateY(30%); filter: blur(6px); } }
+.c-sub { font-size: clamp(10px, 1.45cqw, 14px); color: #4d5449; margin: 1.4cqw 0 0; }
+.c-rule { height: 1px; background: var(--c-ink); transform-origin: left; animation: cRule 1.6s cubic-bezier(.16,1,.3,1) both .5s; margin-bottom: 1cqw; }
+@keyframes cRule { from { transform: scaleX(0); } }
+.c-foot { display: flex; justify-content: space-between; }
+.c-board { display: grid; grid-template-columns: 1.2fr 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 1.2cqw; min-height: 0; }
+.tile { position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; padding: 1.4cqw; min-width: 0;
+  animation: cMask 1.2s cubic-bezier(.77,0,.18,1) both; animation-delay: calc(.35s + var(--i) * .13s); }
+.tile:first-child { grid-row: span 2; }
+.tile::before { content: ""; position: absolute; inset: 0; background: inherit; animation: cZoom 1.8s cubic-bezier(.16,1,.3,1) both; animation-delay: inherit; z-index: 0; }
+.tile::after { content: ""; position: absolute; inset: 0; background: linear-gradient(105deg, transparent 35%, rgba(255,255,255,.35) 50%, transparent 65%); transform: translateX(-120%); animation: sheen 6s ease-in-out infinite; animation-delay: calc(2.4s + var(--i) * .5s); z-index: 1; }
+.tile > * { position: relative; z-index: 2; }
+.tile em { font: italic 500 clamp(12px, 2.2cqw, 22px) "Bodoni Moda", serif; }
+.tile b { font: 600 clamp(9px, 1.35cqw, 13px) var(--f-body); display: block; }
+.tile small { font: clamp(8px, 1.05cqw, 10px) var(--f-mono); letter-spacing: .06em; opacity: .85; }
+.t-terrazzo { color: var(--c-ink); background:
+  radial-gradient(circle at 20% 30%, #a3765a 0 3%, transparent 3.5%), radial-gradient(circle at 70% 20%, #4f5d4a 0 2%, transparent 2.5%),
+  radial-gradient(circle at 40% 70%, #c8a46a 0 2.5%, transparent 3%), radial-gradient(circle at 85% 60%, #a3765a 0 1.8%, transparent 2.3%),
+  radial-gradient(circle at 15% 85%, #4f5d4a 0 2.2%, transparent 2.7%), radial-gradient(circle at 60% 45%, #7e8a79 0 1.5%, transparent 2%),
+  radial-gradient(circle at 30% 50%, #fff 0 1%, transparent 1.5%), #d9d3c7; background-size: 60% 40%; }
+.t-wood { color: #f5ece2; background: repeating-linear-gradient(92deg, #6e4a31 0 2px, #7d553a 2px 6px, #664329 6px 7px, #84603f 7px 12px); }
+.t-marble { color: var(--c-ink); background:
+  linear-gradient(115deg, transparent 40%, rgba(120,120,115,.35) 41%, transparent 43%),
+  linear-gradient(160deg, transparent 60%, rgba(120,120,115,.25) 61%, transparent 62%),
+  linear-gradient(80deg, transparent 20%, rgba(150,150,140,.2) 21%, transparent 23%), #efeee9; }
+.t-linen { color: #f1f3ec; background: repeating-linear-gradient(0deg, rgba(255,255,255,.08) 0 1px, transparent 1px 3px), repeating-linear-gradient(90deg, rgba(0,0,0,.07) 0 1px, transparent 1px 3px), var(--c-sage); }
+.t-brass { color: #2a2112; background: linear-gradient(135deg, #8c6a36, #d9b871 45%, #a17d44 70%, #d0ad66); }
+@keyframes cMask { from { clip-path: inset(100% 0 0 0); } to { clip-path: inset(0 0 0 0); } }
+@keyframes cZoom { from { transform: scale(1.25); } }
+@keyframes sheen { 0%, 70% { transform: translateX(-120%); } 100% { transform: translateX(120%); } }
+@container (max-width: 560px) {
+  .pv-c { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+  .c-foot { display: none; }
+}
+
+/* ---------- D. MAKET ISOMETRIK ---------- */
+.pv-d {
+  --d-bg: #f1f4fb; --d-ink: #0f1530; --d-cob: #2f4bff; --d-cor: #ff6b5b;
+  background: radial-gradient(120% 90% at 30% 70%, #ffffff 0%, var(--d-bg) 60%); color: var(--d-ink);
+  display: grid; grid-template-columns: 1.15fr 1fr; grid-template-rows: auto 1fr; padding: 2.8cqw 3.2cqw; font-family: "Sora", sans-serif;
+}
+.d-top { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center; }
+.d-logo { font: 700 clamp(10px, 1.7cqw, 16px) "Sora", sans-serif; display: flex; align-items: center; gap: .8cqw; }
+.d-logo i { width: 1.4cqw; height: 1.4cqw; min-width: 8px; min-height: 8px; border-radius: 50%; background: var(--d-cob); }
+.d-pill { font: 600 clamp(8px, 1.15cqw, 11px) "Sora", sans-serif; background: #fff; border-radius: 99px; padding: .6cqw 1.4cqw; box-shadow: 0 2px 10px rgba(47,75,255,.12); }
+.d-iso { width: 100%; height: 100%; overflow: visible; min-height: 0; }
+.d-iso .fl { animation: dRise .8s cubic-bezier(.34,1.56,.64,1) both; animation-delay: calc(.3s + var(--i) * .17s); transition: transform .3s; }
+.d-iso .fl.hot { transform: translateX(-8px); }
+.d-iso .fl.hot .top { fill: var(--d-cor); }
+.d-iso .fl.hot .l { fill: #e2493a; }
+.d-iso .fl.hot .r { fill: #c93a2d; }
+.d-iso .stack { animation: float 4s ease-in-out infinite 1.6s; }
+.d-iso .shadow { fill: rgba(15,21,48,.12); animation: shadowP 4s ease-in-out infinite 1.6s; transform-origin: 150px 222px; }
+.d-iso text { font: 600 9px "Sora", sans-serif; fill: var(--d-ink); }
+@keyframes dRise { from { opacity: 0; transform: translateY(-40px); } }
+@keyframes float { 50% { transform: translateY(-4px); } }
+@keyframes shadowP { 50% { transform: scale(.94); } }
+.d-side { display: flex; flex-direction: column; justify-content: center; gap: 1.6cqw; min-width: 0; }
+.d-side h4 { margin: 0; font: 700 clamp(20px, 4.4cqw, 42px)/1.05 "Sora", sans-serif; letter-spacing: -.03em; animation: aUp .7s both .2s; }
+.d-side h4 span { color: var(--d-cob); }
+.d-list { list-style: none; margin: 0; padding: 0; display: grid; gap: .8cqw; }
+.d-list li { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 1cqw; background: #fff; border-radius: 1.2cqw; padding: .9cqw 1.3cqw;
+  box-shadow: 0 2px 12px rgba(15,21,48,.06); font-size: clamp(9px, 1.35cqw, 13px); cursor: default;
+  animation: dPop .55s cubic-bezier(.34,1.56,.64,1) both; animation-delay: calc(1.1s + var(--i) * .09s); transition: transform .25s, box-shadow .25s; }
+.d-list li:hover { transform: translateX(-4px); box-shadow: 0 4px 16px rgba(255,107,91,.25); }
+.d-list i { width: 1cqw; height: 1cqw; min-width: 7px; min-height: 7px; border-radius: 3px; background: var(--d-cob); }
+.d-list b { font-weight: 700; font-variant-numeric: tabular-nums; }
+@keyframes dPop { from { opacity: 0; transform: scale(.85); } }
+@container (max-width: 560px) {
+  .pv-d { grid-template-columns: 1fr; grid-template-rows: auto 1fr auto; }
+  .d-list { grid-template-columns: 1fr 1fr; }
+  .d-side h4 { display: none; }
+}
+
+/* responsive shell */
+@media (max-width: 900px) {
+  .intro, .opt { grid-template-columns: 1fr; }
+  .rec { grid-template-columns: 1fr; gap: 6px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pv *, .pv *::before, .pv *::after { animation: none !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="intro">
+    <div>
+      <p class="eyebrow mono">Roemantara Indonesia · Divisi Umum · Studi Desain</p>
+      <h1>Empat arah desain untuk webapp Divisi Umum</h1>
+    </div>
+    <div>
+      <p>Setiap opsi memakai isi yang sama: lima bidang (GA, Administrasi, Finance, HR, Legal) dengan satu angka utama masing-masing. Yang berbeda hanya rupa dan gerakannya. Tekan <b>Putar ulang</b> untuk melihat animasi pembukanya lagi.</p>
+      <nav class="jump" aria-label="Lompat ke opsi">
+        <a href="#opsi-a">A · Blueprint CAD</a><a href="#opsi-b">B · Beton Brutalis</a><a href="#opsi-c">C · Material Board</a><a href="#opsi-d">D · Maket Isometrik</a><a href="#banding">Perbandingan</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ================= A ================= -->
+  <section class="opt" id="opsi-a">
+    <div class="opt__head"><span class="opt__letter">A</span><h2>Blueprint CAD</h2><span class="opt__tag">Gambar kerja teknis yang tergambar garis demi garis.</span><span class="badge">Versi saat ini</span></div>
+    <div class="frame">
+      <div class="pv pv-a" data-pv>
+        <div class="a-top"><span class="a-brand">ROEMANTARA</span><span class="a-mono">GBR DU-00 · SKALA 1:100</span></div>
+        <div class="a-body">
+          <div class="a-copy">
+            <p class="a-mono a-eye">LT.01 — LT.05 · ELV +17.50</p>
+            <h4><span><i>Divisi</i></span><span><i>Umum.</i></span></h4>
+            <p class="a-lead">Fondasi operasional kantor &amp; proyek.</p>
+          </div>
+          <svg class="a-bld" viewBox="0 0 300 230" aria-hidden="true">
+            <line class="d" pathLength="1" x1="10" y1="210" x2="290" y2="210"/>
+            <line class="d" pathLength="1" x1="60" y1="210" x2="60" y2="20"/>
+            <line class="d" pathLength="1" x1="70" y1="210" x2="70" y2="20"/>
+            <polyline class="d" pathLength="1" points="60,200 70,185 60,170 70,155 60,140 70,125 60,110 70,95 60,80 70,65 60,50 70,35"/>
+            <line class="d" pathLength="1" x1="28" y1="20" x2="272" y2="20"/>
+            <line class="d" pathLength="1" x1="28" y1="28" x2="272" y2="28"/>
+            <polyline class="d" pathLength="1" points="80,28 88,20 96,28 104,20 112,28 120,20 128,28 136,20 144,28 152,20 160,28 168,20 176,28 184,20 192,28 200,20 208,28 216,20 224,28 232,20 240,28 248,20 256,28 264,20 272,28"/>
+            <polyline class="d" pathLength="1" points="65,20 65,4 28,20"/>
+            <line class="d" pathLength="1" x1="65" y1="4" x2="272" y2="20"/>
+            <g class="hook"><line x1="250" y1="28" x2="250" y2="36"/><path d="M246 36h8v3a4 4 0 1 1-8 0z"/><rect x="230" y="44" width="40" height="5"/></g>
+            <rect class="d" pathLength="1" style="--i:1" x="110" y="178" width="120" height="32"/>
+            <rect class="d" pathLength="1" style="--i:2" x="110" y="146" width="120" height="32"/>
+            <rect class="d" pathLength="1" style="--i:3" x="110" y="114" width="120" height="32"/>
+            <rect class="d" pathLength="1" style="--i:4" x="110" y="82" width="120" height="32"/>
+            <rect class="d" pathLength="1" style="--i:5" x="110" y="50" width="120" height="32"/>
+            <polyline class="d" pathLength="1" style="--i:6" points="105,50 105,44 235,44 235,50"/>
+            <g class="win">
+              <rect x="120" y="186" width="16" height="16"/><rect x="144" y="186" width="16" height="16"/><rect x="204" y="186" width="16" height="16"/>
+              <rect x="120" y="154" width="16" height="16"/><rect x="144" y="154" width="16" height="16"/><rect x="180" y="154" width="16" height="16"/><rect x="204" y="154" width="16" height="16"/>
+              <rect x="120" y="122" width="16" height="16"/><rect x="144" y="122" width="16" height="16"/><rect x="180" y="122" width="16" height="16"/><rect x="204" y="122" width="16" height="16"/>
+              <rect x="120" y="90" width="16" height="16"/><rect x="144" y="90" width="16" height="16"/><rect x="180" y="90" width="16" height="16"/><rect x="204" y="90" width="16" height="16"/>
+              <rect x="120" y="58" width="16" height="16"/><rect x="144" y="58" width="16" height="16"/><rect x="180" y="58" width="16" height="16"/><rect x="204" y="58" width="16" height="16"/>
+            </g>
+            <rect class="door" x="172" y="186" width="18" height="24"/>
+            <g class="lbl" style="--i:5"><line x1="230" y1="66" x2="246" y2="66"/><circle cx="230" cy="66" r="2"/><text x="250" y="69">LGL</text></g>
+            <g class="lbl" style="--i:4"><line x1="230" y1="98" x2="246" y2="98"/><circle cx="230" cy="98" r="2"/><text x="250" y="101">HR</text></g>
+            <g class="lbl" style="--i:3"><line x1="230" y1="130" x2="246" y2="130"/><circle cx="230" cy="130" r="2"/><text x="250" y="133">FIN</text></g>
+            <g class="lbl" style="--i:2"><line x1="230" y1="162" x2="246" y2="162"/><circle cx="230" cy="162" r="2"/><text x="250" y="165">ADM</text></g>
+            <g class="lbl" style="--i:1"><line x1="230" y1="194" x2="246" y2="194"/><circle cx="230" cy="194" r="2"/><text x="250" y="197">GA</text></g>
+          </svg>
+        </div>
+        <div class="a-kpi">
+          <div style="--i:0"><span>LT.01 · GA</span><b data-count="248">248</b><small>aset</small></div>
+          <div style="--i:1"><span>LT.02 · ADMINISTRASI</span><b data-count="64">64</b><small>surat</small></div>
+          <div style="--i:2"><span>LT.03 · FINANCE</span><b data-count="72">72</b><small>% serap</small></div>
+          <div style="--i:3"><span>LT.04 · HR</span><b data-count="58">58</b><small>orang</small></div>
+          <div style="--i:4"><span>LT.05 · LEGAL</span><b data-count="9">9</b><small>izin</small></div>
+        </div>
+        <div class="a-scan"></div>
+      </div>
+      <button class="replay" type="button">↻ Putar ulang</button>
+    </div>
+    <div class="spec">
+      <div><h3>Palet</h3><div class="swatches">
+        <span class="sw"><i style="background:#0a2342"></i>Navy</span><span class="sw"><i style="background:#bcd8ff"></i>Garis</span>
+        <span class="sw"><i style="background:#f5b301"></i>Safety</span><span class="sw"><i style="background:#ff7a3d"></i>Oranye</span></div></div>
+      <div><h3>Tipografi</h3><div class="type-pair"><span style="font-family:'Barlow Condensed',sans-serif;font-weight:700">BARLOW CONDENSED</span><small>+ IBM Plex Mono untuk label teknis</small></div></div>
+      <div><h3>Ciri gerakan</h3><ul class="motion-list"><li>Garis gedung &amp; crane tergambar seperti plotter CAD</li><li>Garis pindai (scan) menyapu lembar gambar</li><li>Beban crane berayun pelan, angka naik bertahap</li></ul></div>
+      <div><h3>Penilaian</h3><div class="scores">
+        <div class="score">Kesan profesional<span class="dots" data-score="4"></span></div>
+        <div class="score">Nuansa arsitektur<span class="dots" data-score="5"></span></div>
+        <div class="score">Keterbacaan data<span class="dots" data-score="4"></span></div>
+        <div class="score">Ringan di HP/laptop lama<span class="dots" data-score="4"></span></div></div></div>
+      <div class="fit"><b>Paling cocok untuk</b>Dashboard harian internal. Identitas "kantor konsultan" langsung terasa.</div>
+    </div>
+  </section>
+
+  <!-- ================= B ================= -->
+  <section class="opt" id="opsi-b">
+    <div class="opt__head"><span class="opt__letter">B</span><h2>Beton Brutalis</h2><span class="opt__tag">Tekstur beton ekspos, huruf tebal, pelat lantai dipasang satu per satu.</span></div>
+    <div class="frame">
+      <div class="pv pv-b" data-pv>
+        <div class="b-head"><span>RMT / DU-2026</span><span>STRUKTUR 05 LANTAI</span></div>
+        <h4 class="b-title"><span>Divisi</span><span>Umum<em>.</em></span><span class="b-meta">GA · ADM · FIN · HR · LGL</span></h4>
+        <div class="b-slabs">
+          <div class="slab" style="--f:4"><em>05</em><span>Legal</span><b>9 IZIN</b></div>
+          <div class="slab" style="--f:3"><em>04</em><span>Human Resources</span><b>58 ORANG</b></div>
+          <div class="slab hot" style="--f:2"><em>03</em><span>Finance &amp; Acc.</span><b>72% SERAP</b></div>
+          <div class="slab" style="--f:1"><em>02</em><span>Administrasi</span><b>64 SURAT</b></div>
+          <div class="slab" style="--f:0"><em>01</em><span>General Affairs</span><b>248 ASET</b></div>
+        </div>
+        <div class="b-tape" aria-hidden="true"><div>
+          <span>K3 · UTAMAKAN KESELAMATAN</span><span>AREA KERJA DIVISI UMUM</span><span>PAKAI APD LENGKAP</span><span>ROEMANTARA INDONESIA</span>
+          <span>K3 · UTAMAKAN KESELAMATAN</span><span>AREA KERJA DIVISI UMUM</span><span>PAKAI APD LENGKAP</span><span>ROEMANTARA INDONESIA</span>
+        </div></div>
+      </div>
+      <button class="replay" type="button">↻ Putar ulang</button>
+    </div>
+    <div class="spec">
+      <div><h3>Palet</h3><div class="swatches">
+        <span class="sw"><i style="background:#bdbab3"></i>Beton</span><span class="sw"><i style="background:#111"></i>Hitam</span>
+        <span class="sw"><i style="background:#ff5a1f"></i>Oranye</span><span class="sw"><i style="background:#f5c400"></i>Kuning K3</span></div></div>
+      <div><h3>Tipografi</h3><div class="type-pair"><span style="font-family:Archivo,sans-serif;font-weight:900;font-stretch:62%">ARCHIVO CONDENSED BLACK</span><small>+ IBM Plex Mono untuk kode &amp; status</small></div></div>
+      <div><h3>Ciri gerakan</h3><ul class="motion-list"><li>Pelat lantai jatuh dan "mendarat" berat, dari Lt.01 ke Lt.05</li><li>Judul muncul seperti dicap</li><li>Pita K3 bergaris kuning-hitam berjalan terus</li></ul></div>
+      <div><h3>Penilaian</h3><div class="scores">
+        <div class="score">Kesan profesional<span class="dots" data-score="3"></span></div>
+        <div class="score">Nuansa arsitektur<span class="dots" data-score="4"></span></div>
+        <div class="score">Keterbacaan data<span class="dots" data-score="3"></span></div>
+        <div class="score">Ringan di HP/laptop lama<span class="dots" data-score="5"></span></div></div></div>
+      <div class="fit"><b>Paling cocok untuk</b>Sisi kontraktor &amp; lapangan: K3, logistik site, papan info proyek. Kesannya tegas dan berani.</div>
+    </div>
+  </section>
+
+  <!-- ================= C ================= -->
+  <section class="opt" id="opsi-c">
+    <div class="opt__head"><span class="opt__letter">C</span><h2>Material Board</h2><span class="opt__tag">Papan material desain interior: teraso, kayu, marmer, linen, kuningan.</span></div>
+    <div class="frame">
+      <div class="pv pv-c" data-pv>
+        <div class="c-left">
+          <span class="c-mono">Roemantara — Studio Divisi Umum</span>
+          <div>
+            <h4><span>Ruang kerja</span><span>yang tertata.</span></h4>
+            <p class="c-sub">Lima bidang, satu palet material.</p>
+          </div>
+          <div><div class="c-rule"></div><div class="c-foot c-mono"><span>Okt 2026</span><span>Lembar 01/05</span></div></div>
+        </div>
+        <div class="c-board">
+          <div class="tile t-terrazzo" style="--i:0"><em>01</em><b>General Affairs</b><small>248 ASET · TERASO</small></div>
+          <div class="tile t-wood" style="--i:1"><em>02</em><b>Administrasi</b><small>64 SURAT · WALNUT</small></div>
+          <div class="tile t-marble" style="--i:2"><em>03</em><b>Finance</b><small>72% SERAP · MARMER</small></div>
+          <div class="tile t-linen" style="--i:3"><em>04</em><b>Human Resources</b><small>58 ORANG · LINEN</small></div>
+          <div class="tile t-brass" style="--i:4"><em>05</em><b>Legal</b><small>9 IZIN · KUNINGAN</small></div>
+        </div>
+      </div>
+      <button class="replay" type="button">↻ Putar ulang</button>
+    </div>
+    <div class="spec">
+      <div><h3>Palet</h3><div class="swatches">
+        <span class="sw"><i style="background:#e3e5dd"></i>Batu</span><span class="sw"><i style="background:#8a9a7b"></i>Sage</span>
+        <span class="sw"><i style="background:#6b4a33"></i>Walnut</span><span class="sw"><i style="background:#b48a4a"></i>Kuningan</span></div></div>
+      <div><h3>Tipografi</h3><div class="type-pair"><span style="font-family:'Bodoni Moda',serif;font-style:italic">Bodoni Moda Italic</span><small>+ Archivo &amp; IBM Plex Mono untuk data</small></div></div>
+      <div><h3>Ciri gerakan</h3><ul class="motion-list"><li>Sampel material terbuka dengan masker dari bawah</li><li>Judul muncul lembut dari blur, ritme pelan</li><li>Kilau cahaya sesekali melintas di permukaan material</li></ul></div>
+      <div><h3>Penilaian</h3><div class="scores">
+        <div class="score">Kesan profesional<span class="dots" data-score="5"></span></div>
+        <div class="score">Nuansa arsitektur<span class="dots" data-score="4"></span></div>
+        <div class="score">Keterbacaan data<span class="dots" data-score="3"></span></div>
+        <div class="score">Ringan di HP/laptop lama<span class="dots" data-score="4"></span></div></div></div>
+      <div class="fit"><b>Paling cocok untuk</b>Menonjolkan sisi desain interior. Bagus dipresentasikan ke direksi atau dipakai sebagai wajah perusahaan.</div>
+    </div>
+  </section>
+
+  <!-- ================= D ================= -->
+  <section class="opt" id="opsi-d">
+    <div class="opt__head"><span class="opt__letter">D</span><h2>Maket Isometrik</h2><span class="opt__tag">Maket gedung 3D yang tersusun lantai demi lantai, bersih dan modern.</span></div>
+    <div class="frame">
+      <div class="pv pv-d" data-pv>
+        <div class="d-top"><span class="d-logo"><i></i>roemantara</span><span class="d-pill">Maket Divisi Umum</span></div>
+        <svg class="d-iso" viewBox="0 0 300 240" aria-hidden="true" id="isoSvg"></svg>
+        <div class="d-side">
+          <h4>5 lantai,<br><span>1 struktur.</span></h4>
+          <ul class="d-list" id="isoList">
+            <li style="--i:4" data-fl="4"><i style="background:#ff6b5b"></i>Legal<b>9 izin</b></li>
+            <li style="--i:3" data-fl="3"><i></i>Human Resources<b>58</b></li>
+            <li style="--i:2" data-fl="2"><i></i>Finance &amp; Acc.<b>72%</b></li>
+            <li style="--i:1" data-fl="1"><i></i>Administrasi<b>64</b></li>
+            <li style="--i:0" data-fl="0"><i></i>General Affairs<b>248</b></li>
+          </ul>
+        </div>
+      </div>
+      <button class="replay" type="button">↻ Putar ulang</button>
+    </div>
+    <div class="spec">
+      <div><h3>Palet</h3><div class="swatches">
+        <span class="sw"><i style="background:#f1f4fb"></i>Putih</span><span class="sw"><i style="background:#2f4bff"></i>Kobalt</span>
+        <span class="sw"><i style="background:#ff6b5b"></i>Koral</span><span class="sw"><i style="background:#0f1530"></i>Tinta</span></div></div>
+      <div><h3>Tipografi</h3><div class="type-pair"><span style="font-family:Sora,sans-serif;font-weight:700;letter-spacing:-.02em">Sora Bold</span><small>Sans geometris, angka tegas</small></div></div>
+      <div><h3>Ciri gerakan</h3><ul class="motion-list"><li>Blok lantai turun dan memantul ke posisinya</li><li>Maket melayang pelan dengan bayangan bernapas</li><li>Arahkan kursor ke daftar: lantai terkait menyala koral</li></ul></div>
+      <div><h3>Penilaian</h3><div class="scores">
+        <div class="score">Kesan profesional<span class="dots" data-score="4"></span></div>
+        <div class="score">Nuansa arsitektur<span class="dots" data-score="4"></span></div>
+        <div class="score">Keterbacaan data<span class="dots" data-score="5"></span></div>
+        <div class="score">Ringan di HP/laptop lama<span class="dots" data-score="3"></span></div></div></div>
+      <div class="fit"><b>Paling cocok untuk</b>Laporan ke manajemen dan layar TV kantor. Paling mudah dibaca orang non-teknis.</div>
+    </div>
+  </section>
+
+  <!-- ================= PERBANDINGAN ================= -->
+  <section class="compare" id="banding">
+    <h2>Perbandingan singkat</h2>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Kriteria</th><th>A · Blueprint CAD</th><th>B · Beton Brutalis</th><th>C · Material Board</th><th>D · Maket Isometrik</th></tr></thead>
+        <tbody>
+          <tr><th>Karakter</th><td>Teknis, presisi, khas konsultan</td><td>Tegas, industrial, khas kontraktor</td><td>Tenang, elegan, khas studio interior</td><td>Bersih, modern, ramah</td></tr>
+          <tr><th>Motion utama</th><td>Garis tergambar, scan, crane</td><td>Pelat jatuh, cap, pita K3</td><td>Masker material, blur, kilau</td><td>Blok memantul, melayang</td></tr>
+          <tr><th>Tema terang/gelap</th><td>Keduanya (Blueprint &amp; Kalkir)</td><td>Terang saja</td><td>Terang, bisa versi gelap walnut</td><td>Terang, bisa versi gelap</td></tr>
+          <tr><th>Kepadatan data</th><td>Tinggi: tabel, grafik, banyak panel</td><td>Sedang: angka besar, sedikit detail</td><td>Sedang: lebih banyak ruang kosong</td><td>Tinggi: kartu &amp; grafik jelas</td></tr>
+          <tr><th>Usaha pengembangan</th><td>Sudah jadi</td><td>Rendah</td><td>Sedang</td><td>Sedang–tinggi (grafik 3D)</td></tr>
+          <tr><th>Yang perlu dijaga</th><td>Teks kecil di layar gelap</td><td>Bisa terasa "keras" untuk HR &amp; Legal</td><td>Jangan sampai kalah fungsi oleh estetika</td><td>Animasi 3D lebih berat di HP lama</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="rec">
+      <b class="k">Rekomendasi</b>
+      <div>
+        <p><b>Untuk dashboard harian Divisi Umum, tetap di Opsi A (Blueprint CAD).</b> Isinya paling padat, sudah berfungsi, dan temanya paling dekat dengan bidang konstruksi-arsitektur.</p>
+        <p>Kalau webapp ini juga mau ditunjukkan ke direksi atau klien, ambil <b>maket gedung dari Opsi D</b> sebagai halaman pembuka, atau <b>palet material dari Opsi C</b> untuk menonjolkan sisi interior. Opsi B lebih cocok untuk papan informasi K3 di site daripada dashboard kantor.</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // Titik penilaian
+  document.querySelectorAll(".dots").forEach(function (el) {
+    var n = +el.dataset.score, html = "";
+    for (var i = 1; i <= 5; i++) html += '<i class="' + (i <= n ? "on" : "") + '"></i>';
+    el.innerHTML = html;
+    el.setAttribute("aria-label", n + " dari 5");
+    el.setAttribute("role", "img");
+  });
+
+  // Maket isometrik (opsi D)
+  var svg = document.getElementById("isoSvg");
+  if (svg) {
+    var cx = 140, base = 205, a = 82, b = 41, h = 26, out = "";
+    var tops = ["#8fa0ff", "#7a8dff", "#6378ff", "#4e66ff", "#3a55ff"];
+    var lefts = ["#4b63ff", "#3f58f5", "#344ee8", "#2a43d8", "#2038c4"];
+    var rights = ["#2f45d6", "#283cc4", "#2134b2", "#1b2ca0", "#16258c"];
+    var names = ["GA", "ADM", "FIN", "HR", "LGL"];
+    var p = function (pts) { return pts.map(function (q) { return q[0] + "," + q[1]; }).join(" "); };
+    out += '<ellipse class="shadow" cx="' + cx + '" cy="' + (base + 14) + '" rx="' + (a + 18) + '" ry="' + (b - 6) + '"/>';
+    out += '<g class="stack">';
+    for (var i = 0; i < 5; i++) {
+      var by = base - i * h, ty = by - h + 4;
+      out += '<g class="fl" data-fl="' + i + '" style="--i:' + i + '">' +
+        '<polygon class="l" fill="' + lefts[i] + '" points="' + p([[cx - a, ty], [cx, ty + b], [cx, by + b], [cx - a, by]]) + '"/>' +
+        '<polygon class="r" fill="' + rights[i] + '" points="' + p([[cx, ty + b], [cx + a, ty], [cx + a, by], [cx, by + b]]) + '"/>' +
+        '<polygon class="top" fill="' + tops[i] + '" points="' + p([[cx - a, ty], [cx, ty - b], [cx + a, ty], [cx, ty + b]]) + '"/>' +
+        '<g fill="rgba(255,255,255,.55)">' +
+          [0.2, 0.45, 0.7].map(function (t) {
+            var x = cx - a + a * t, y1 = ty + b * t + 6;
+            return '<polygon points="' + p([[x, y1], [x + 10, y1 + 5], [x + 10, y1 + 15], [x, y1 + 10]]) + '"/>';
+          }).join("") +
+        '</g>' +
+        '<text x="' + (cx + a + 8) + '" y="' + (by - h / 2 + 4) + '">' + names[i] + '</text>' +
+        '</g>';
+    }
+    out += "</g>";
+    svg.innerHTML = out;
+    var setHot = function (n, on) {
+      var fl = svg.querySelector('.fl[data-fl="' + n + '"]');
+      if (fl) fl.classList.toggle("hot", on);
+    };
+    setHot(4, true);
+    document.querySelectorAll("#isoList li").forEach(function (li) {
+      li.addEventListener("mouseenter", function () { svg.querySelectorAll(".fl.hot").forEach(function (f) { f.classList.remove("hot"); }); setHot(li.dataset.fl, true); });
+    });
+  }
+
+  // Penghitung angka (opsi A)
+  function countUp(pv) {
+    if (reduce) return;
+    pv.querySelectorAll("[data-count]").forEach(function (el) {
+      var to = +el.dataset.count, t0 = null, delay = 1400;
+      el.textContent = "0";
+      var tick = function (now) {
+        if (!t0) t0 = now + delay;
+        var k = Math.max(0, Math.min(1, (now - t0) / 1100));
+        el.textContent = Math.round(to * (1 - Math.pow(1 - k, 3)));
+        if (k < 1) requestAnimationFrame(tick); else el.textContent = to;
+      };
+      requestAnimationFrame(tick);
+    });
+  }
+
+  // Putar ulang animasi pratinjau
+  function replay(pv) {
+    pv.querySelectorAll("*").forEach(function (el) {
+      if (getComputedStyle(el).animationName === "none") return;
+      el.style.animation = "none";
+      void el.offsetWidth;
+      el.style.animation = "";
+    });
+    countUp(pv);
+  }
+  document.querySelectorAll(".replay").forEach(function (btn) {
+    btn.addEventListener("click", function () { replay(btn.parentElement.querySelector("[data-pv]")); });
+  });
+
+  // Saat pertama terlihat, putar ulang supaya animasi pembuka tidak terlewat
+  if (!reduce && "IntersectionObserver" in window) {
+    var seen = new WeakSet();
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting || seen.has(e.target)) return;
+        seen.add(e.target);
+        if (e.boundingClientRect.top > 40) replay(e.target);
+        io.unobserve(e.target);
+      });
+    }, { threshold: 0.45 });
+    document.querySelectorAll("[data-pv]").forEach(function (pv) { io.observe(pv); });
+  }
+})();
+</script>
+</body>
+</html>

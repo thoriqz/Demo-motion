@@ -29,3 +29,6 @@ python3 -m http.server 8000   # lalu buka http://localhost:8000
 ## Mengganti data
 Semua data contoh (dummy) ada di `assets/js/data.js`. Surat baru, centang pelatihan,
 dan posisi kandidat tersimpan di `localStorage` browser masing-masing.
+
+## Opsi desain
+`design-options.html` berisi 4 arah desain bermotion untuk dibandingkan: Blueprint CAD (versi saat ini), Beton Brutalis, Material Board, dan Maket Isometrik.
