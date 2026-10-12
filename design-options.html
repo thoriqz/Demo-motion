@@ -6,7 +6,7 @@
 <title>Opsi Desain Divisi Umum</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Barlow+Condensed:wght@600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,500;1,6..96,500&family=IBM+Plex+Mono:wght@400;500&family=Sora:wght@400;600;700&family=Schibsted+Grotesk:wght@500;800&family=Plus+Jakarta+Sans:wght@600;700;800&family=Instrument+Serif:ital@0;1&family=Bricolage+Grotesque:opsz,wght@12..96,600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Barlow+Condensed:wght@600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,500;1,6..96,500&family=IBM+Plex+Mono:wght@400;500&family=Sora:wght@400;600;700&family=Schibsted+Grotesk:wght@500;800&family=Plus+Jakarta+Sans:wght@600;700;800&family=Instrument+Serif:ital@0;1&family=Outfit:wght@400;500;600&family=Bricolage+Grotesque:opsz,wght@12..96,600;800&display=swap" rel="stylesheet">
 <style>
 /* Layout: lembar studio — tiap opsi = satu baris (pratinjau hidup kiri, spesifikasi kanan), lalu tabel perbandingan */
 :root {
@@ -452,6 +452,139 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
   .h-cols { height: 45%; }
 }
 
+/* ---------- I. SAGE SOFT DASHBOARD (dari referensi) ---------- */
+.pv-i {
+  --i-bg: #ebeae6; --i-card: #ffffff; --i-ink: #1d1f1c; --i-mut: #8a8d87; --i-sage: #5e8a72; --i-sage-d: #3f6b55; --i-sage-l: #e1ebe4; --i-sand: #f1e7d6;
+  --i-up: #2f7a4e; --i-upbg: #e3f1e6; --i-dn: #c93c3c; --i-dnbg: #fbe3e3;
+  aspect-ratio: 3 / 2; background: var(--i-bg); color: var(--i-ink); font-family: "Outfit", system-ui, sans-serif;
+  display: grid; grid-template-columns: 5.4cqw 1fr; grid-template-rows: auto 1fr; gap: 1.6cqw 2cqw; padding: 2.4cqw;
+}
+.pv-i svg { overflow: visible; }
+.i-logo { width: 5.4cqw; height: 5.4cqw; align-self: center; }
+.i-logo g { transform-origin: 50% 50%; transform-box: fill-box; animation: iSpin 1.4s cubic-bezier(.16,1,.3,1) both; }
+.i-logo line { stroke: var(--i-sage-d); stroke-width: 3.2; stroke-linecap: round; }
+@keyframes iSpin { from { transform: rotate(-180deg) scale(.3); opacity: 0; } }
+.i-head { display: flex; align-items: center; justify-content: space-between; gap: 2cqw; min-width: 0; animation: fUp .8s cubic-bezier(.16,1,.3,1) both .1s; }
+.i-head h4 { margin: 0; font: 500 clamp(13px, 2.4cqw, 24px)/1.1 "Outfit", sans-serif; }
+.i-head p { margin: .3cqw 0 0; font-size: clamp(8px, 1.15cqw, 12px); color: #4b4e49; }
+.i-tools { display: flex; gap: .8cqw; align-items: center; }
+.i-search { display: flex; align-items: center; justify-content: space-between; gap: 2cqw; background: var(--i-card); border-radius: 99px; padding: .5cqw .5cqw .5cqw 1.6cqw; font-size: clamp(8px, 1.1cqw, 11px); color: var(--i-mut); width: 22cqw; }
+.i-search b { width: 3.2cqw; height: 3.2cqw; border-radius: 50%; background: var(--i-ink); display: grid; place-items: center; }
+.i-ic { width: 4.2cqw; height: 4.2cqw; border-radius: 50%; background: var(--i-card); display: grid; place-items: center; position: relative; }
+.i-ic svg, .i-search svg { width: 45%; height: 45%; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.i-search b svg { stroke: #fff; width: 50%; height: 50%; }
+.i-bell svg { transform-origin: 50% 10%; animation: ring 3s ease-in-out infinite 2s; }
+.i-ic.dot::after { content: ""; position: absolute; top: 22%; right: 24%; width: .8cqw; height: .8cqw; min-width: 5px; min-height: 5px; border-radius: 50%; background: #e5484d; }
+@keyframes ring { 0%, 70%, 100% { rotate: 0deg; } 74% { rotate: 14deg; } 80% { rotate: -12deg; } 86% { rotate: 8deg; } 92% { rotate: -4deg; } }
+.i-side { background: var(--i-card); border-radius: 99px; display: flex; flex-direction: column; align-items: center; gap: 1.5cqw; padding: .8cqw 0; animation: fUp .8s cubic-bezier(.16,1,.3,1) both .15s; }
+.i-side span { width: 4cqw; height: 4cqw; display: grid; place-items: center; border-radius: 50%; color: #3b3e39; }
+.i-side span.on { background: var(--i-ink); color: #fff; animation: iPulse 3s ease-in-out infinite 1.5s; }
+.i-side span svg { width: 46%; height: 46%; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.i-side .push { margin-top: auto; }
+.i-side .me { width: 4cqw; height: 4cqw; border-radius: 50%; background: #2a2c29; color: #fff; font-size: clamp(7px, 1cqw, 10px); font-weight: 600; }
+@keyframes iPulse { 50% { box-shadow: 0 0 0 .8cqw rgba(29,31,28,.08); } }
+.i-main { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-rows: auto 1fr 1fr; gap: 1.6cqw; min-height: 0; min-width: 0; }
+.ic { background: var(--i-card); border-radius: 1.8cqw; padding: 1.4cqw 1.6cqw; min-width: 0; min-height: 0; position: relative; overflow: hidden;
+  animation: fUp .8s cubic-bezier(.16,1,.3,1) both; animation-delay: calc(.25s + var(--i) * .07s); }
+.ic h5 { margin: 0; font: 600 clamp(10px, 1.55cqw, 16px) "Outfit", sans-serif; }
+.ic .lb { font-size: clamp(7px, 1.05cqw, 11px); color: #5c5f5a; }
+.ic .big { font: 600 clamp(13px, 2.4cqw, 24px)/1.1 "Outfit", sans-serif; letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
+.kp { display: flex; align-items: center; gap: 1cqw; }
+.kp > div { min-width: 0; flex: 1; }
+.kp .lb { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.kp .circ { flex: none; width: 4.4cqw; height: 4.4cqw; border-radius: 50%; background: var(--i-sage-l); display: grid; place-items: center; color: var(--i-sage-d); }
+.kp .circ.sand { background: var(--i-sand); color: #a07a3c; }
+.kp .circ svg { width: 48%; height: 48%; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.kp .mini { margin-left: auto; flex: none; width: 6cqw; height: 3.6cqw; }
+.mini-bars { display: flex; align-items: flex-end; gap: .4cqw; margin-left: auto; height: 4cqw; }
+.mini-bars i { width: .7cqw; min-width: 3px; background: var(--i-sage-d); border-radius: 99px; height: var(--h); transform-origin: bottom; animation: grow .9s cubic-bezier(.34,1.5,.5,1) both; animation-delay: calc(.8s + var(--k) * .08s); }
+.mini-bars i.lo { background: var(--i-sage-l); }
+.sq { fill: none; stroke: var(--i-sage); stroke-width: 2; stroke-linecap: round; stroke-dasharray: 1; animation: draw 1.4s ease both 1s; }
+.ic.dark { background: linear-gradient(135deg, #6e9a82, #3f6b55); color: #fff; }
+.ic.dark .lb { color: rgba(255,255,255,.8); }
+.ic.dark .sq { stroke: #fff; stroke-width: 2.6; }
+.c-bal { grid-column: span 2; display: flex; flex-direction: column; }
+.c-bal .hd { display: flex; align-items: center; gap: .8cqw; }
+.c-bal .ok { font-size: clamp(7px, 1.05cqw, 11px); color: var(--i-up); font-weight: 600; display: inline-flex; align-items: center; gap: .3cqw; }
+.c-bal .ok::before { content: "✓"; display: grid; place-items: center; width: 1.3cqw; height: 1.3cqw; min-width: 9px; min-height: 9px; border-radius: 50%; background: var(--i-up); color: #fff; font-size: .7em; }
+.c-bal .per { margin-left: auto; font-size: clamp(7px, 1cqw, 10px); color: var(--i-mut); }
+.chips { display: flex; gap: 1.4cqw; margin-top: .8cqw; position: relative; z-index: 1; }
+.chip { background: #fff; border-radius: 1cqw; padding: .6cqw 1cqw; box-shadow: 0 .6cqw 1.6cqw rgba(0,0,0,.07); animation: fUp .7s both; animation-delay: calc(1s + var(--k) * .12s); }
+.chip .lb { display: block; color: #7d8db3; }
+.chip b { font: 600 clamp(10px, 1.6cqw, 16px) "Outfit", sans-serif; }
+.pill { display: inline-block; font-size: clamp(6px, .9cqw, 9px); font-weight: 600; padding: .15cqw .6cqw; border-radius: 99px; margin-left: .5cqw; vertical-align: middle; }
+.pill.up { color: var(--i-up); background: var(--i-upbg); }
+.pill.dn { color: var(--i-dn); background: var(--i-dnbg); }
+.c-bal svg.wave { flex: 1; width: 100%; min-height: 0; margin-top: -1cqw; }
+.wave .ln { fill: none; stroke: var(--i-sage); stroke-width: 2; stroke-dasharray: 1; animation: draw 2s cubic-bezier(.45,0,.2,1) both .9s; vector-effect: non-scaling-stroke; }
+.wave .ar { fill: url(#iFade); animation: fade 1s both 2s; }
+.c-gau { display: flex; flex-direction: column; }
+.c-gau .big { color: var(--i-sage-d); margin: .4cqw 0 .2cqw; }
+.c-gau svg { width: 80%; margin: auto auto 0; }
+.gau .tr { fill: none; stroke: var(--i-sage-l); stroke-width: 14; }
+.gau .vl { fill: none; stroke: url(#iGau); stroke-width: 14; stroke-dasharray: 0 100; animation: gau 1.8s cubic-bezier(.16,1,.3,1) both 1s; }
+.gau line { stroke: var(--i-sage-d); stroke-width: 2.4; stroke-linecap: round; transform-origin: 50px 50px; animation: needle 1.8s cubic-bezier(.16,1,.3,1) both 1s; }
+.gau text { font: 600 15px "Outfit", sans-serif; fill: var(--i-ink); text-anchor: middle; }
+@keyframes gau { to { stroke-dasharray: 80 100; } }
+@keyframes needle { from { transform: rotate(-144deg); } }
+.c-pro { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: .5cqw; }
+.c-pro .av { width: 6.4cqw; height: 6.4cqw; border-radius: 50%; background: var(--i-sand); display: grid; place-items: center; font: 600 clamp(11px, 2cqw, 20px) "Outfit", sans-serif; color: #7c5a26; animation: pop .8s cubic-bezier(.34,1.8,.5,1) both 1s; }
+.c-pro h5 { margin-top: .4cqw; }
+.c-pro .st { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1cqw; width: 100%; margin-top: .6cqw; }
+.c-pro .st b { display: block; font: 600 clamp(11px, 1.9cqw, 19px) "Outfit", sans-serif; }
+.c-stack { grid-column: span 2; display: grid; grid-template-columns: 1fr 1.1fr; gap: 1cqw; }
+.c-stack p { font-size: clamp(7px, 1.05cqw, 11px); color: var(--i-mut); margin: .6cqw 0 1cqw; line-height: 1.45; }
+.btn-i { display: inline-block; background: var(--i-sage-d); color: #fff; font-size: clamp(7px, 1.05cqw, 11px); font-weight: 600; border-radius: .9cqw; padding: .7cqw 1.3cqw; }
+.iso { position: relative; background: #e8eee9; border-radius: 1.2cqw; perspective: 900px; overflow: hidden; }
+.iso .cd { position: absolute; left: 14%; width: 72%; height: 42%; border-radius: 1.2cqw; padding: 1cqw 1.4cqw; color: #fff; font: 600 clamp(6px, 1cqw, 10px) "Outfit", sans-serif; letter-spacing: .04em;
+  transform: rotateX(52deg) rotateZ(-28deg); box-shadow: 0 1.2cqw 2cqw rgba(0,0,0,.18);
+  animation: cdIn .9s cubic-bezier(.34,1.4,.5,1) both, cdFloat 4s ease-in-out infinite; animation-delay: calc(1s + var(--k) * .18s), calc(2.4s + var(--k) * .3s); transition: translate .4s cubic-bezier(.34,1.4,.5,1); }
+.iso .cd small { display: block; font-weight: 400; opacity: .8; margin-top: .3cqw; letter-spacing: .1em; }
+.iso .cd:nth-child(1) { top: 46%; background: linear-gradient(135deg, #2b2e2b, #444845); }
+.iso .cd:nth-child(2) { top: 30%; background: linear-gradient(135deg, #5f8c74, #86ad96); }
+.iso .cd:nth-child(3) { top: 14%; background: linear-gradient(135deg, rgba(255,255,255,.75), rgba(220,228,222,.6)); color: #44534a; -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.iso:hover .cd:nth-child(1) { translate: 0 10%; }
+.iso:hover .cd:nth-child(3) { translate: 0 -14%; }
+@keyframes cdIn { from { opacity: 0; transform: rotateX(52deg) rotateZ(-28deg) translateY(-60%); } }
+@keyframes cdFloat { 50% { margin-top: -.6cqw; } }
+.c-list h5 { margin-bottom: .8cqw; }
+.c-list ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .9cqw; }
+.c-list li { display: grid; grid-template-columns: .45cqw 1fr auto; gap: .9cqw; align-items: center; animation: aSlide .6s both; animation-delay: calc(1.3s + var(--k) * .12s); }
+.c-list li::before { content: ""; align-self: stretch; background: var(--i-sage-d); border-radius: 99px; min-width: 2px; }
+.c-list li b { display: block; font-size: clamp(8px, 1.2cqw, 12px); font-weight: 500; line-height: 1.25; }
+.c-list li small { font-size: clamp(6px, .9cqw, 9px); color: var(--i-mut); }
+.c-list li > div { min-width: 0; }
+.c-list li .pill { margin: 0; white-space: nowrap; }
+.pill { white-space: nowrap; }
+.c-sec { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: .5cqw; }
+.c-sec svg { width: 6cqw; height: 6cqw; fill: none; stroke: var(--i-sage); stroke-width: 1.6; stroke-linecap: round; }
+.c-sec svg path { stroke-dasharray: 1; animation: draw 1.6s ease both; animation-delay: calc(1.2s + var(--k) * .12s); }
+.c-sec h5 { font-size: clamp(11px, 1.8cqw, 18px); }
+.c-sec .btn-i { margin-top: .6cqw; animation: iPulse 2.4s ease-in-out infinite 2.4s; }
+@container (max-width: 560px) {
+  .pv-i { aspect-ratio: auto; grid-template-columns: 1fr; padding: 3.4cqw; gap: 3cqw; }
+  .i-logo, .i-side, .i-search, .c-pro, .c-stack { display: none; }
+  .i-head h4 { font-size: 5.4cqw; }
+  .i-head p { font-size: 3cqw; }
+  .i-ic { width: 9cqw; height: 9cqw; }
+  .i-main { grid-template-columns: 1fr 1fr; grid-template-rows: none; gap: 2.6cqw; }
+  .ic { border-radius: 4cqw; padding: 3cqw 3.4cqw; }
+  .ic .lb { font-size: 2.8cqw; }
+  .ic .big { font-size: 5.2cqw; }
+  .ic h5 { font-size: 3.8cqw; }
+  .kp .circ, .kp .mini, .mini-bars { display: none; }
+  .c-bal { grid-column: 1 / -1; min-height: 46cqw; }
+  .chip .lb, .c-list li small { font-size: 2.6cqw; }
+  .chip b { font-size: 3.8cqw; }
+  .pill { font-size: 2.4cqw; }
+  .c-gau, .c-list, .c-sec { grid-column: 1 / -1; }
+  .c-gau svg { width: 55%; }
+  .c-list li b { font-size: 3.2cqw; }
+  .c-list ul { gap: 2.4cqw; }
+  .c-sec svg { width: 14cqw; height: 14cqw; }
+  .btn-i { font-size: 3cqw; padding: 1.6cqw 3cqw; border-radius: 2cqw; }
+}
+
 /* responsive shell */
 @media (max-width: 900px) {
   .intro, .opt { grid-template-columns: 1fr; }
@@ -468,12 +601,12 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
   <header class="intro">
     <div>
       <p class="eyebrow mono">Roemantara Indonesia · Divisi Umum · Studi Desain</p>
-      <h1>Delapan arah desain untuk webapp Divisi Umum</h1>
+      <h1>Sembilan arah desain untuk webapp Divisi Umum</h1>
     </div>
     <div>
-      <p>Empat opsi bertema konstruksi (A–D) dan empat opsi di luar tema konstruksi (E–H). Setiap opsi memakai isi yang sama: lima bidang (GA, Administrasi, Finance, HR, Legal) dengan satu angka utama masing-masing. Yang berbeda hanya rupa dan gerakannya. Tekan <b>Putar ulang</b> untuk melihat animasi pembukanya lagi.</p>
+      <p>Empat opsi bertema konstruksi (A–D) dan lima opsi di luar tema konstruksi (E–I), termasuk satu dari gambar referensi Anda. Setiap opsi memakai isi yang sama: lima bidang (GA, Administrasi, Finance, HR, Legal) dengan satu angka utama masing-masing. Yang berbeda hanya rupa dan gerakannya. Tekan <b>Putar ulang</b> untuk melihat animasi pembukanya lagi.</p>
       <nav class="jump" aria-label="Lompat ke opsi">
-        <a href="#opsi-a">A · Blueprint CAD</a><a href="#opsi-b">B · Beton Brutalis</a><a href="#opsi-c">C · Material Board</a><a href="#opsi-d">D · Maket Isometrik</a><a href="#opsi-e">E · Swiss Grid</a><a href="#opsi-f">F · Aurora Glass</a><a href="#opsi-g">G · Nusantara Kawung</a><a href="#opsi-h">H · Bento Pop</a><a href="#banding">Perbandingan</a>
+        <a href="#opsi-a">A · Blueprint CAD</a><a href="#opsi-b">B · Beton Brutalis</a><a href="#opsi-c">C · Material Board</a><a href="#opsi-d">D · Maket Isometrik</a><a href="#opsi-e">E · Swiss Grid</a><a href="#opsi-f">F · Aurora Glass</a><a href="#opsi-g">G · Nusantara Kawung</a><a href="#opsi-h">H · Bento Pop</a><a href="#opsi-i">I · Sage Soft</a><a href="#banding">Perbandingan</a>
       </nav>
     </div>
   </header>
@@ -663,9 +796,9 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
   </section>
 
   <div class="group-head" id="luar-konstruksi">
-    <p class="eyebrow mono">Kelompok 2 · E–H</p>
+    <p class="eyebrow mono">Kelompok 2 · E–I</p>
     <h2>Di luar tema konstruksi</h2>
-    <p>Empat arah yang tidak memakai unsur bangunan sama sekali. Isi dan angkanya tetap sama supaya adil dibandingkan dengan A–D.</p>
+    <p>Lima arah yang tidak memakai unsur bangunan sama sekali. Isi dan angkanya tetap sama supaya adil dibandingkan dengan A–D.</p>
   </div>
 
   <!-- ================= E ================= -->
@@ -805,6 +938,91 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
     </div>
   </section>
 
+  <!-- ================= I ================= -->
+  <section class="opt" id="opsi-i">
+    <div class="opt__head"><span class="opt__letter">I</span><h2>Sage Soft Dashboard</h2><span class="opt__tag">Kartu putih membulat, hijau sage yang tenang, ikon tipis. Dari gambar referensi Anda.</span><span class="badge">Dari referensi</span></div>
+    <div class="frame">
+      <div class="pv pv-i" data-pv>
+        <svg class="i-logo" viewBox="0 0 40 40" aria-hidden="true"><g>
+          <line x1="20" y1="3" x2="20" y2="12"/><line x1="20" y1="28" x2="20" y2="37"/><line x1="3" y1="20" x2="12" y2="20"/><line x1="28" y1="20" x2="37" y2="20"/>
+          <line x1="8" y1="8" x2="14.3" y2="14.3"/><line x1="25.7" y1="25.7" x2="32" y2="32"/><line x1="32" y1="8" x2="25.7" y2="14.3"/><line x1="14.3" y1="25.7" x2="8" y2="32"/>
+          <line x1="13.5" y1="4.3" x2="16.9" y2="12.6"/><line x1="23.1" y1="27.4" x2="26.5" y2="35.7"/><line x1="35.7" y1="13.5" x2="27.4" y2="16.9"/><line x1="12.6" y1="23.1" x2="4.3" y2="26.5"/>
+        </g></svg>
+        <div class="i-head">
+          <div><h4>Halo, Divisi Umum!</h4><p>Pantau informasi dan aktivitas operasional kantor &amp; proyek</p></div>
+          <div class="i-tools">
+            <span class="i-search">Cari dokumen…<b><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></b></span>
+            <span class="i-ic dot"><svg viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg></span>
+            <span class="i-ic i-bell"><svg viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 21h4"/></svg></span>
+          </div>
+        </div>
+        <nav class="i-side" aria-hidden="true">
+          <span class="on"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg></span>
+          <span><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 10h6M7 14h10"/></svg></span>
+          <span><svg viewBox="0 0 24 24"><path d="M6 20V12M12 20V5M18 20v-9"/></svg></span>
+          <span><svg viewBox="0 0 24 24"><path d="M5 21V8l7-4 7 4v13M9 12h.01M15 12h.01M9 16h.01M15 16h.01"/></svg></span>
+          <span><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0"/><circle cx="17" cy="9" r="2.4"/><path d="M16 14a5 5 0 0 1 5 5"/></svg></span>
+          <span><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg></span>
+          <span class="push"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg></span>
+          <span class="me">HG</span>
+        </nav>
+        <div class="i-main">
+          <div class="ic kp" style="--i:0"><div><span class="lb">Pengeluaran GA</span><div class="big">Rp 68,2 jt</div></div>
+            <span class="mini-bars"><i style="--h:80%;--k:0"></i><i style="--h:55%;--k:1" class="lo"></i><i style="--h:70%;--k:2"></i><i style="--h:95%;--k:3"></i><i style="--h:30%;--k:4"></i></span></div>
+          <div class="ic kp" style="--i:1"><span class="circ"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span><div><span class="lb">Surat bulan ini</span><div class="big" data-count="64">64</div></div></div>
+          <div class="ic kp" style="--i:2"><span class="circ sand"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0"/><circle cx="17" cy="9" r="2.4"/><path d="M16 14a5 5 0 0 1 5 5"/></svg></span><div><span class="lb">Karyawan aktif</span><div class="big" data-count="58">58</div></div></div>
+          <div class="ic kp dark" style="--i:3"><div><span class="lb">Realisasi anggaran</span><div class="big">72%</div></div>
+            <svg class="mini" viewBox="0 0 70 22"><path class="sq" pathLength="1" d="M0 20 C 6 20, 8 2, 16 4 S 22 20, 30 16 S 40 2, 50 6 S 62 4, 70 2"/></svg></div>
+
+          <div class="ic c-bal" style="--i:4">
+            <div class="hd"><h5>Arus Kas</h5><span class="ok">Sesuai rencana</span><span class="per">Bulanan ▾</span></div>
+            <div class="chips">
+              <div class="chip" style="--k:0"><span class="lb">Serapan</span><b>72,0%</b><span class="pill up">+2,4%</span></div>
+              <div class="chip" style="--k:1"><span class="lb">Saldo kas</span><b>Rp 1,04 M</b><span class="pill dn">−4,7%</span></div>
+            </div>
+            <svg class="wave" viewBox="0 0 300 80" preserveAspectRatio="none" aria-hidden="true">
+              <defs><linearGradient id="iFade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5e8a72" stop-opacity=".18"/><stop offset="1" stop-color="#5e8a72" stop-opacity="0"/></linearGradient></defs>
+              <path class="ar" d="M0 62 C 15 62, 20 48, 30 50 S 45 66, 55 60 S 70 40, 78 30 S 92 58, 100 55 S 115 60, 125 46 S 135 25, 145 28 S 160 50, 170 45 S 190 40, 200 38 S 215 30, 230 33 S 260 28, 300 26 L300 80 L0 80 Z"/>
+              <path class="ln" pathLength="1" d="M0 62 C 15 62, 20 48, 30 50 S 45 66, 55 60 S 70 40, 78 30 S 92 58, 100 55 S 115 60, 125 46 S 135 25, 145 28 S 160 50, 170 45 S 190 40, 200 38 S 215 30, 230 33 S 260 28, 300 26"/>
+            </svg>
+          </div>
+          <div class="ic c-gau" style="--i:5"><h5>Tagihan Termin</h5><span class="lb">Total tertagih</span><div class="big">Rp 6,07 M</div><span class="lb">Naik 34% dari bulan lalu</span>
+            <svg class="gau" viewBox="0 0 100 58" aria-hidden="true">
+              <defs><linearGradient id="iGau" x1="0" x2="1"><stop offset="0" stop-color="#86ad96"/><stop offset="1" stop-color="#3f6b55"/></linearGradient></defs>
+              <path class="tr" d="M10 50 A40 40 0 0 1 90 50"/><path class="vl" pathLength="100" d="M10 50 A40 40 0 0 1 90 50"/>
+              <line x1="74.3" y1="32.4" x2="88.8" y2="21.8"/><text x="50" y="50">80%</text>
+            </svg></div>
+          <div class="ic c-pro" style="--i:6"><span class="av">HG</span><h5>Head of General Dept.</h5><span class="lb">GA · Admin · Finance · HR · Legal</span>
+            <div class="st"><div><span class="lb">Proyek</span><b>5</b></div><div><span class="lb">Tim</span><b>2</b></div><div><span class="lb">Tugas</span><b>26</b></div></div></div>
+
+          <div class="ic c-stack" style="--i:7"><div><h5>Kontrak Aktif di Arsip</h5><p>Tiga kontrak proyek sedang berjalan. Arahkan kursor ke tumpukan untuk melihatnya terbuka.</p><span class="btn-i">Tambah Kontrak +</span></div>
+            <div class="iso"><div class="cd" style="--k:0">GUDANG CIKARANG<small>RP 5,4 M · ADDENDUM</small></div><div class="cd" style="--k:1">RUMAH KEMANG<small>RP 3,2 M · BERJALAN</small></div><div class="cd" style="--k:2">KAFE SENOPATI<small>RP 780 JT · BAST</small></div></div></div>
+          <div class="ic c-list" style="--i:8"><h5>Aktivitas Terbaru</h5><ul>
+            <li style="--k:0"><div><b>Termin 3 dari CV Arunika</b><small>Hari ini, 09.12</small></div><span class="pill up">+Rp 420 jt</span></li>
+            <li style="--k:1"><div><b>Sewa scaffolding dibayar</b><small>Hari ini, 11.40</small></div><span class="pill dn">−Rp 36 jt</span></li>
+            <li style="--k:2"><div><b>Surat dari Dinas PUPR</b><small>Hari ini, 14.05</small></div><span class="pill up">Masuk</span></li></ul></div>
+          <div class="ic c-sec" style="--i:9">
+            <svg viewBox="0 0 48 48" aria-hidden="true"><path pathLength="1" style="--k:0" d="M24 4 L40 10 V22 C40 33 33 41 24 44 C15 41 8 33 8 22 V10 Z"/><path pathLength="1" style="--k:1" d="M17 24 l5 5 l9 -10"/></svg>
+            <h5>Izin tetap aman</h5><span class="lb">SKK berakhir dalam 12 hari</span><span class="btn-i">Perpanjang Izin</span></div>
+        </div>
+      </div>
+      <button class="replay" type="button">↻ Putar ulang</button>
+    </div>
+    <div class="spec">
+      <div><h3>Palet</h3><div class="swatches">
+        <span class="sw"><i style="background:#ebeae6"></i>Abu hangat</span><span class="sw"><i style="background:#ffffff"></i>Putih</span>
+        <span class="sw"><i style="background:#5e8a72"></i>Sage</span><span class="sw"><i style="background:#3f6b55"></i>Sage tua</span><span class="sw"><i style="background:#f1e7d6"></i>Pasir</span></div></div>
+      <div><h3>Tipografi</h3><div class="type-pair"><span style="font-family:Outfit,sans-serif;font-weight:600">Outfit</span><small>Sans geometris yang bulat dan bersahabat</small></div></div>
+      <div><h3>Ciri gerakan</h3><ul class="motion-list"><li>Kartu naik bergiliran dari blur, logo berputar masuk</li><li>Grafik arus kas tergambar, jarum meteran berayun ke 80%</li><li>Tumpukan kontrak 3D jatuh, melayang, dan terbuka saat disentuh kursor</li></ul></div>
+      <div><h3>Penilaian</h3><div class="scores">
+        <div class="score">Kesan profesional<span class="dots" data-score="5"></span></div>
+        <div class="score">Keunikan identitas<span class="dots" data-score="3"></span></div>
+        <div class="score">Keterbacaan data<span class="dots" data-score="5"></span></div>
+        <div class="score">Ringan di HP/laptop lama<span class="dots" data-score="4"></span></div></div></div>
+      <div class="fit"><b>Paling cocok untuk</b>Dashboard kerja harian semua bidang. Paling terasa seperti aplikasi siap pakai, nyaman dipakai berjam-jam.</div>
+    </div>
+  </section>
+
   <!-- ================= PERBANDINGAN ================= -->
   <section class="compare" id="banding">
     <h2>Perbandingan singkat</h2>
@@ -825,14 +1043,14 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
     <h3 class="tbl-cap mono">Kelompok 2 · di luar tema konstruksi</h3>
     <div class="table-scroll">
       <table>
-        <thead><tr><th>Kriteria</th><th>E · Swiss Grid</th><th>F · Aurora Glass</th><th>G · Nusantara Kawung</th><th>H · Bento Pop</th></tr></thead>
+        <thead><tr><th>Kriteria</th><th>E · Swiss Grid</th><th>F · Aurora Glass</th><th>G · Nusantara Kawung</th><th>H · Bento Pop</th><th>I · Sage Soft</th></tr></thead>
         <tbody>
-          <tr><th>Karakter</th><td>Korporat, rapi, tak lekang waktu</td><td>Lembut, modern, menenangkan</td><td>Berkelas, khas Indonesia</td><td>Ceria, santai, akrab</td></tr>
-          <tr><th>Motion utama</th><td>Odometer angka, judul meluncur, sorotan merah</td><td>Cahaya bergeser, kartu dari blur, miring 3D</td><td>Motif mekar bergelombang, garis emas</td><td>Kotak meletup, stiker berputar, goyang</td></tr>
-          <tr><th>Tema terang/gelap</th><td>Terang, mudah dibuat versi gelap</td><td>Terang, bisa versi malam</td><td>Gelap (nila)</td><td>Terang saja</td></tr>
-          <tr><th>Kepadatan data</th><td>Tinggi: tabel &amp; angka sangat jelas</td><td>Sedang–tinggi: kartu ringkas</td><td>Sedang: lebih banyak ruang hias</td><td>Sedang: kartu besar-besar</td></tr>
-          <tr><th>Usaha pengembangan</th><td>Rendah</td><td>Sedang</td><td>Sedang</td><td>Rendah</td></tr>
-          <tr><th>Yang perlu dijaga</th><td>Bisa terasa kaku tanpa sentuhan merek</td><td>Efek blur berat di HP/laptop lama</td><td>Motif jangan sampai mengganggu angka</td><td>Kurang cocok untuk laporan Finance &amp; Legal</td></tr>
+          <tr><th>Karakter</th><td>Korporat, rapi, tak lekang waktu</td><td>Lembut, modern, menenangkan</td><td>Berkelas, khas Indonesia</td><td>Ceria, santai, akrab</td><td>Tenang, rapi, seperti aplikasi siap pakai</td></tr>
+          <tr><th>Motion utama</th><td>Odometer angka, judul meluncur, sorotan merah</td><td>Cahaya bergeser, kartu dari blur, miring 3D</td><td>Motif mekar bergelombang, garis emas</td><td>Kotak meletup, stiker berputar, goyang</td><td>Kartu naik dari blur, grafik tergambar, tumpukan kontrak 3D</td></tr>
+          <tr><th>Tema terang/gelap</th><td>Terang, mudah dibuat versi gelap</td><td>Terang, bisa versi malam</td><td>Gelap (nila)</td><td>Terang saja</td><td>Terang, mudah dibuat versi gelap</td></tr>
+          <tr><th>Kepadatan data</th><td>Tinggi: tabel &amp; angka sangat jelas</td><td>Sedang–tinggi: kartu ringkas</td><td>Sedang: lebih banyak ruang hias</td><td>Sedang: kartu besar-besar</td><td>Tinggi: banyak kartu, tetap lega</td></tr>
+          <tr><th>Usaha pengembangan</th><td>Rendah</td><td>Sedang</td><td>Sedang</td><td>Rendah</td><td>Sedang</td></tr>
+          <tr><th>Yang perlu dijaga</th><td>Bisa terasa kaku tanpa sentuhan merek</td><td>Efek blur berat di HP/laptop lama</td><td>Motif jangan sampai mengganggu angka</td><td>Kurang cocok untuk laporan Finance &amp; Legal</td><td>Gaya ini umum dipakai, perlu sentuhan khas Roemantara</td></tr>
         </tbody>
       </table>
     </div>
@@ -842,7 +1060,7 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
       <div>
         <p><b>Untuk dashboard harian Divisi Umum, tetap di Opsi A (Blueprint CAD).</b> Isinya paling padat, sudah berfungsi, dan temanya paling dekat dengan bidang konstruksi-arsitektur.</p>
         <p>Kalau webapp ini juga mau ditunjukkan ke direksi atau klien, ambil <b>maket gedung dari Opsi D</b> sebagai halaman pembuka, atau <b>palet material dari Opsi C</b> untuk menonjolkan sisi interior. Opsi B lebih cocok untuk papan informasi K3 di site daripada dashboard kantor.</p>
-        <p><b>Kalau ingin keluar dari tema konstruksi, pilih Opsi E (Swiss Grid).</b> Paling mudah dibaca, paling ringan, dan cocok untuk data Finance dan Legal yang padat. Pilih <b>Opsi G (Nusantara Kawung)</b> bila ingin identitas Indonesia yang kuat. Opsi F nyaman dilihat tetapi berat di perangkat lama, dan Opsi H lebih pas untuk portal pengumuman karyawan daripada dashboard kerja.</p>
+        <p><b>Kalau ingin keluar dari tema konstruksi, pilih Opsi I (Sage Soft) dari referensi Anda.</b> Paling mudah dibaca, paling terasa seperti aplikasi siap pakai, dan semua bidang muat dalam satu layar. Agar tidak terlihat seperti template umum, beri sentuhan khas Roemantara, misalnya logo, warna perusahaan, atau tumpukan kontrak 3D seperti di pratinjau. Opsi E (Swiss Grid) cocok untuk laporan resmi yang padat angka. Pilih <b>Opsi G (Nusantara Kawung)</b> bila ingin identitas Indonesia yang kuat. Opsi F nyaman dilihat tetapi berat di perangkat lama, dan Opsi H lebih pas untuk portal pengumuman karyawan daripada dashboard kerja.</p>
       </div>
     </div>
   </section>
