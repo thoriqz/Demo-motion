@@ -36,3 +36,9 @@ halaman; pemilik (atau Editor) mengubah data lalu klik **Terbitkan ke semua**, d
 yang sama diperbarui untuk semua orang (yang sedang membuka ikut dimuat ulang otomatis).
 Pengunjung lain melihat dalam **Mode lihat** dan tidak bisa mengubah data.
 Bila file `index.html` dibuka langsung (tanpa claude.ai), dashboard tetap memakai localStorage.
+
+## Periode laporan
+Status, tautan sumber, dan lampiran disimpan per periode: mingguan (setiap Sabtu sesuai tabel C
+di Excel) dan bulanan (tanggal 25). Pilih periode di bilah "Periode laporan" di atas Ringkasan
+dan Lampiran; laporan untuk Sabtu yang sudah lewat tetap bisa diisi. Data lama (sebelum ada
+periode) dipindah ke periode pertama (Mgg 1 · Sab 10 Okt, atau Bulanan Okt untuk tugas bulanan).
