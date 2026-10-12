@@ -113,6 +113,13 @@ svg.tower{display:block;width:100%;height:auto;max-height:640px}
 .titleblock .main p{margin:8px 0 0;color:var(--muted);max-width:52ch}
 .titleblock b{display:block;font:600 14px/1.3 var(--body);margin-top:4px}
 .titleblock>div:nth-last-child(-n+2){border-bottom:0}
+.titleblock>div:nth-last-child(3){border-bottom:0}
+.titleblock>div.upd{grid-column:1/-1;border-right:0;border-top:1px solid var(--line);background:var(--grid)}
+.titleblock>div.upd b{font-weight:500;font-size:13px}
+.titleblock>div.upd b em{font-style:normal;color:var(--accent);font-weight:600}
+.row.flash{animation:flash 2.4s ease-out 1}
+@keyframes flash{0%,30%{background:rgba(226,112,31,.18)}100%{background:transparent}}
+.newtag{display:inline-block;font:600 9px var(--mono);letter-spacing:.08em;background:var(--accent);color:#fff;padding:2px 5px;margin-left:6px;vertical-align:3px}
 
 .meter{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
 .meter .m{border-top:3px solid var(--c);padding-top:8px}
@@ -388,6 +395,7 @@ table.ht tbody tr:hover td{background:var(--grid)}
         <div><span class="eyebrow">PIC</span><b>Divisi Umum</b></div>
         <div><span class="eyebrow">Lingkup</span><b>GA · Finance · HR · Admin · Legal</b></div>
         <div><span class="eyebrow">No. lembar</span><b>A-01 / 15 item</b></div>
+        <div class="upd"><span class="eyebrow">Pembaruan terakhir</span><b id="tbUpd">–</b></div>
       </div>
 
       <div>
@@ -545,6 +553,7 @@ table.ht tbody tr:hover td{background:var(--grid)}
   function ofBidang(b) { return ITEMS.filter(function (i) { return inBidang(i, b); }); }
   function counts(list) { var c = { Belum: 0, Proses: 0, Selesai: 0 }; list.forEach(function (it) { c[status(it.no)]++; }); return c; }
   function save() {
+    st._upd = Date.now();
     try { localStorage.setItem(KEY, JSON.stringify(st)); return true; }
     catch (e) { toast("Penyimpanan peramban penuh. Hapus lampiran lama atau gunakan tautan."); return false; }
   }
@@ -780,7 +789,26 @@ table.ht tbody tr:hover td{background:var(--grid)}
   function startCrane() { if (craneStarted) return; craneStarted = true; drawCrane(0); requestAnimationFrame(loop); }
 
   /* ── ringkasan ── */
+  var CHANGED = {};
+  function ago(t) {
+    var m = Math.round((Date.now() - t) / 60000);
+    return m < 1 ? "baru saja" : m < 60 ? m + " menit lalu" : m < 1440 ? Math.round(m / 60) + " jam lalu" : Math.round(m / 1440) + " hari lalu";
+  }
+  function stamp(t) { return new Date(t).toLocaleString("id-ID", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); }
+  function renderStamp() {
+    var b = $("tbUpd"); b.innerHTML = "";
+    b.appendChild(document.createTextNode("Angka hasil: "));
+    if (HS.importedAt) { b.appendChild(el("em", "", stamp(HS.importedAt) + " (" + ago(HS.importedAt) + ")")); b.appendChild(document.createTextNode(" dari " + HS.source)); }
+    else b.appendChild(document.createTextNode("data awal dari " + HS.source + ", belum pernah diimpor"));
+    b.appendChild(document.createTextNode(" · Status & tautan: "));
+    if (st._upd) b.appendChild(el("em", "", stamp(st._upd) + " (" + ago(st._upd) + ")")); else b.appendChild(document.createTextNode("belum pernah diubah"));
+  }
+  setInterval(function () { renderStamp(); }, 60000);
+  function flashRows() {
+    Object.keys(CHANGED).forEach(function (no) { var r = $("row-" + no); if (!r) return; r.classList.remove("flash"); void r.offsetWidth; r.classList.add("flash"); });
+  }
   function renderHero() {
+    renderStamp();
     var c = counts(ITEMS), T = ITEMS.length;
     $("nDone").textContent = c.Selesai; $("nWip").textContent = c.Proses; $("nTodo").textContent = c.Belum;
     $("barD").style.width = (c.Selesai / T * 100) + "%"; $("barP").style.width = (c.Proses / T * 100) + "%";
@@ -995,6 +1023,7 @@ table.ht tbody tr:hover td{background:var(--grid)}
       var h = hasilOf(it), w = el("div");
       var rv = el("div", "rv" + (h.v == null ? " none" : ""), fmtV(h.v, h.u));
       if (h.v != null && unitLbl(h.u)) rv.appendChild(el("small", "", unitLbl(h.u)));
+      if (CHANGED[it.no]) rv.appendChild(el("span", "newtag", "BARU"));
       w.appendChild(rv); w.appendChild(el("div", "rm", h.lbl)); box.appendChild(w);
       if (h.bars) {
         var mx = Math.max.apply(null, h.bars.map(function (v) { return Math.abs(v || 0); }).concat([1]));
@@ -1151,9 +1180,14 @@ table.ht tbody tr:hover td{background:var(--grid)}
     var ap = el("button", "xbtn solid", "Terapkan data hasil"); ap.type = "button";
     ap.addEventListener("click", function () {
       if (!pendingH) return;
-      pendingH.importedAt = Date.now(); HS = pendingH; pendingH = null;
+      pendingH.importedAt = Date.now();
+      var before = {}; ITEMS.forEach(function (it) { before[it.no] = hasilOf(it).v; });
+      HS = pendingH; pendingH = null;
+      CHANGED = {}; var nch = 0;
+      ITEMS.forEach(function (it) { if (hasilOf(it).v !== before[it.no]) { CHANGED[it.no] = true; nch++; } });
       try { localStorage.setItem(HKEY, JSON.stringify(HS)); } catch (e) { toast("Data hasil diterapkan, tapi tidak bisa disimpan di peramban ini."); }
-      box.hidden = true; renderAll(); toast("Data hasil kegiatan diperbarui");
+      box.hidden = true; renderAll(); flashRows();
+      toast(nch ? nch + " angka hasil berubah · ditandai BARU di Daftar Laporan" : "Data hasil diimpor · tidak ada angka yang berubah");
     });
     var cn = el("button", "xbtn", "Batal"); cn.type = "button"; cn.addEventListener("click", function () { pendingH = null; box.hidden = true; });
     act.appendChild(ap); act.appendChild(cn); box.appendChild(act);
@@ -1261,12 +1295,13 @@ table.ht tbody tr:hover td{background:var(--grid)}
   function applyImport() {
     if (!pending) return;
     var n = pending.length;
-    pending.forEach(function (c) { var r = rec(c.no); if (c.to) { r.status = c.to; lastB = c.b; } if (c.link != null) r.link = c.link; });
+    CHANGED = {};
+    pending.forEach(function (c) { var r = rec(c.no); CHANGED[c.no] = true; if (c.to) { r.status = c.to; lastB = c.b; } if (c.link != null) r.link = c.link; });
     pending = null;
     if (!save()) return;
     ITEMS.forEach(function (it) { var inp = $("lk-" + it.no); if (inp) { inp.value = rec(it.no).link || ""; inp.dispatchEvent(new Event("input")); } });
     $("xlPrev").hidden = true;
-    renderAll(); toast(n + " laporan diperbarui dari Excel");
+    renderAll(); flashRows(); toast(n + " laporan diperbarui dari Excel · ditandai BARU");
   }
   function excelUp(file) {
     if (!file || !xlsxReady()) return;
