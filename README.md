@@ -19,6 +19,11 @@ Divisi digambarkan sebagai gedung 5 lantai — tiap lantai satu bidang:
 - Tema **Blueprint** (gelap) / **Kalkir** (terang)
 - Responsif mobile & menghormati `prefers-reduced-motion`
 
+## Dua tampilan
+- `index.html` — tampilan **Blueprint CAD** (gambar kerja, gelap/kalkir).
+- `sage.html` — tampilan **Sage Soft** (Opsi I): sidebar, Beranda ringkas, satu bidang per halaman,
+  pencarian modul, dan notifikasi. Isi dan logika 16 modul sama persis (`assets/js/app.js`).
+
 ## Menjalankan
 Tanpa build. Buka `index.html` di browser, atau:
 

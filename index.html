@@ -273,7 +273,7 @@
         <div class="grid grid--2-1">
           <article class="panel">
             <div class="panel__head">
-              <h3 class="panel__title mono" id="calTitle">A. KALENDER</h3>
+              <h3 class="panel__title mono">A. KALENDER · <span id="calMonth"></span></h3>
               <div class="tabs" role="group" id="calFilter" aria-label="Filter jenis agenda">
                 <button type="button" aria-pressed="true" data-filter="all">Semua</button>
                 <button type="button" aria-pressed="false" data-filter="Internal">Internal</button>
@@ -396,7 +396,7 @@
         <div class="stat-row stat-row--3" id="reportStats"></div>
         <article class="panel panel--wide">
           <div class="panel__head">
-            <h3 class="panel__title mono" id="chartTitle">ARUS KAS</h3>
+            <h3 class="panel__title mono">ARUS KAS <span id="chartPeriod"></span> (JUTA RP)</h3>
             <div class="legend mono"><span class="lg lg--in"></span>Masuk <span class="lg lg--out"></span>Keluar</div>
           </div>
           <div class="chart" id="cashChart"></div>
@@ -410,7 +410,7 @@
       <div class="modpanel" id="fin-close" role="tabpanel" hidden>
         <div class="grid grid--2-1">
           <article class="panel">
-            <h3 class="panel__title mono" id="closeTitle">A. DAFTAR PERIKSA TUTUP BUKU</h3>
+            <h3 class="panel__title mono">A. DAFTAR PERIKSA TUTUP BUKU · <span id="closePeriod"></span></h3>
             <ul class="checklist checklist--pic" id="closeList"></ul>
           </article>
           <article class="panel">
@@ -473,7 +473,7 @@
         <div class="stat-row stat-row--5" id="attStats"></div>
         <div class="grid grid--2-1">
           <article class="panel">
-            <h3 class="panel__title mono" id="attTitle">A. ABSENSI HARI INI</h3>
+            <h3 class="panel__title mono">A. ABSENSI · <span id="attDate"></span></h3>
             <div class="table-wrap"><table class="table">
               <thead><tr><th>Nama</th><th>Masuk</th><th>Pulang</th><th>Lokasi</th><th>Status</th></tr></thead>
               <tbody id="attBody"></tbody>

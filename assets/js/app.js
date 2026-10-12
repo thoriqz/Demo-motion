@@ -21,6 +21,9 @@
   };
   const signed = (n) => (n == null ? "—" : (n < 0 ? "−" : "+") + rp(Math.abs(n)).replace("Rp ", "Rp "));
   const norm = (s) => String(s).toLowerCase();
+  /* Tampilan Blueprint memakai huruf kapital teknis; tampilan lain (mis. Sage) memakai huruf biasa */
+  const SKIN = document.body.dataset.skin || "blueprint";
+  const up = (s) => (SKIN === "blueprint" ? String(s).toUpperCase() : String(s));
 
   const store = {
     get(k, fallback) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : fallback; } catch (e) { return fallback; } },
@@ -88,6 +91,7 @@
 
   /* ---------------- LOADER ---------------- */
   function boot() {
+    if (!$("#loader")) { document.body.classList.add("is-ready"); return; }
     document.body.classList.add("is-loading");
     const pct = $("#loaderPct");
     const dur = reduceMotion ? 1 : 1300;
@@ -107,6 +111,7 @@
   function initTheme() {
     const root = document.documentElement;
     const label = $("#themeLabel");
+    if (!label) return;
     const apply = (t) => {
       if (t === "light") root.setAttribute("data-theme", "light"); else root.removeAttribute("data-theme");
       label.textContent = t === "light" ? "KALKIR" : "BLUEPRINT";
@@ -121,7 +126,7 @@
 
   /* ---------------- KURSOR CAD ---------------- */
   function initCad() {
-    if (reduceMotion || !window.matchMedia("(pointer: fine)").matches) return;
+    if (!$("#cad") || reduceMotion || !window.matchMedia("(pointer: fine)").matches) return;
     const cad = $("#cad"), h = $(".cad__h", cad), v = $(".cad__v", cad), box = $(".cad__box", cad), coord = $("#cadCoord");
     document.body.classList.add("has-cad");
     let x = 0, y = 0, raf = 0;
@@ -167,6 +172,7 @@
   /* ---------------- SCROLL: nav aktif, elevator, crane ---------------- */
   function initScroll() {
     const car = $("#elevCar"), label = $("#elevLabel"), hook = $(".crane__hook");
+    if (!car) return;
     const secs = $$(".floor-sec");
     const navLinks = $$(".nav a");
     let ticking = false;
@@ -245,6 +251,7 @@
       { label: "Dokumen Jatuh Tempo ≤90 hr", value: expiring, unit: "dok", floor: "LT.05 · LGL", href: "#legal" }
     ];
     const grid = $("#kpiGrid");
+    if (!grid) return;
     grid.innerHTML = kpi.map((k, i) => `
       <a class="kpi reveal" style="--d:${i}" href="${k.href}">
         <span class="kpi__floor mono">${k.floor}</span>
@@ -255,7 +262,8 @@
   }
   function refreshKpi() {
     renderKpi();
-    $$(".kpi", $("#kpiGrid")).forEach((el) => el.classList.add("is-in"));
+    $$(".kpi").forEach((el) => el.classList.add("is-in"));
+    document.dispatchEvent(new CustomEvent("du:change"));
   }
 
   /* =========================================================
@@ -282,7 +290,7 @@
         <tr class="${p.no === highlight ? "is-new" : ""}">
           <td>${esc(p.no)}</td><td>${esc(p.item)}</td><td>${esc(p.project)}</td><td>${esc(p.vendor || "—")}</td>
           <td class="num">${rp(p.value)}</td>
-          <td><div class="pstep" title="${steps[p.step]}">${steps.map((s, i) => `<i class="${i <= p.step ? "on" : ""}"></i>`).join("")}</div><small class="mono">${steps[p.step].toUpperCase()}</small></td>
+          <td><div class="pstep" title="${steps[p.step]}">${steps.map((s, i) => `<i class="${i <= p.step ? "on" : ""}"></i>`).join("")}</div><small class="mono">${up(steps[p.step])}</small></td>
           <td>${p.step < steps.length - 1 ? `<button class="mini-btn" type="button" data-no="${esc(p.no)}">Lanjut →</button>` : pill("Selesai", "ok")}</td>
         </tr>`).join("") || `<tr><td colspan="7" class="empty">Tidak ada data yang cocok.</td></tr>`;
     };
@@ -323,7 +331,7 @@
     }).join("");
     $("#maintList").innerHTML = D.maintenance.map((m) => `
       <li class="${m.status === "selesai" ? "done" : ""}">
-        <span class="t-date">${esc(m.date)} · ${m.status.toUpperCase()}</span>
+        <span class="t-date">${esc(m.date)} · ${up(m.status)}</span>
         <span class="t-title">${esc(m.title)}<span class="tag">${esc(m.tag)}</span></span>
       </li>`).join("");
     $("#stockBars").innerHTML = D.stock.map((s) => {
@@ -360,7 +368,7 @@
     const draw = () => {
       board.innerHTML = st.map((s, si) => {
         const list = items.filter((x) => x.stage === si);
-        return `<div class="kanban__col"><h4>${s.toUpperCase()} <b>${list.length}</b></h4>
+        return `<div class="kanban__col"><h4>${up(s)} <b>${list.length}</b></h4>
           ${list.map((x) => `<button class="cand ${si === st.length - 1 ? "final" : ""}" type="button" data-id="${esc(x.id)}">
             <span class="mono cand__id">${esc(x.id)} · ${esc(x.cat)}</span>${esc(x.title)}<small>Pemohon: ${esc(x.by)}</small></button>`).join("")}</div>`;
       }).join("");
@@ -394,9 +402,9 @@
     $("#slaBox").innerHTML = `
       <div class="sla">
         ${ring(pct / 100, pct >= 80 ? "ok" : "warn", pct + "%", 96)}
-        <div><span class="mono note">DALAM TARGET ${sla} MENIT</span><b class="big-num">${avg}<small> mnt</small></b><span class="note">rata-rata waktu respons</span></div>
+        <div><span class="mono note">${up("Dalam target " + sla + " menit")}</span><b class="big-num">${avg}<small> mnt</small></b><span class="note">rata-rata waktu respons</span></div>
       </div>
-      <h4 class="mini-title mono">PERMINTAAN PER KANAL</h4>
+      <h4 class="mini-title mono">${up("Permintaan per kanal")}</h4>
       <div class="bars">${Object.entries(byCh).map(([k, v]) => `<div class="bar-row"><span>${esc(k)}</span><b>${v}</b><div class="meter"><i data-w="${(v / reqs.length) * 100}"></i></div></div>`).join("")}</div>`;
   }
 
@@ -406,7 +414,7 @@
     const days = new Date(year, month + 1, 0).getDate();
     const lead = (first.getDay() + 6) % 7;
     const isThisMonth = today.getFullYear() === year && today.getMonth() === month;
-    $("#calTitle").textContent = "A. KALENDER · " + fmtDate(first, { month: "long", year: "numeric" }).toUpperCase();
+    $("#calMonth").textContent = up(fmtDate(first, { month: "long", year: "numeric" }));
     const grid = $("#calGrid");
     const draw = (filter) => {
       let html = ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"].map((d) => `<div class="cal__hd mono">${d}</div>`).join("");
@@ -473,7 +481,7 @@
     let scope = "all", cat = "all";
     folders.innerHTML = cats.map((c, i) => `<button class="folder" type="button" data-cat="${esc(c)}" style="--d:${i}" aria-pressed="false">
       <svg viewBox="0 0 40 30" aria-hidden="true"><path d="M2 6h12l3 4h21v18H2z" pathLength="1"/></svg>
-      <b>${esc(c)}</b><small class="mono">${docs.filter((d) => d.cat === c).length} DOKUMEN</small></button>`).join("");
+      <b>${esc(c)}</b><small class="mono">${docs.filter((d) => d.cat === c).length} ${up("dokumen")}</small></button>`).join("");
     const draw = () => {
       const q = norm(search.value);
       const rows = docs.filter((d) => (scope === "all" || d.scope === scope) && (cat === "all" || d.cat === cat) && (!q || norm(d.code + d.title).includes(q)));
@@ -511,14 +519,14 @@
       const m = moms.find((x) => x.id === current);
       detail.innerHTML = `
         <div class="mom">
-          <div class="mom__head"><span class="mono eyebrow">${esc(m.id)} · NOTULEN RAPAT</span><h3>${esc(m.title)}</h3>
+          <div class="mom__head"><span class="mono eyebrow">${esc(m.id)} · ${up("Notulen rapat")}</span><h3>${esc(m.title)}</h3>
             <dl class="mom__meta"><div><dt>Tanggal</dt><dd>${esc(m.date)}, ${esc(m.time)}</dd></div><div><dt>Tempat</dt><dd>${esc(m.place)}</dd></div><div><dt>Pimpinan</dt><dd>${esc(m.lead)}</dd></div></dl>
             <div class="mom__people">${m.attendees.map((a) => `<span class="tag tag--plain">${esc(a)}</span>`).join("")}</div></div>
           <div class="mom__body">
-            <section><h4 class="mini-title mono">PEMBAHASAN</h4><ol>${m.points.map((p) => `<li>${esc(p)}</li>`).join("")}</ol></section>
-            <section><h4 class="mini-title mono">KEPUTUSAN</h4><ul>${m.decisions.map((p) => `<li>${esc(p)}</li>`).join("")}</ul></section>
+            <section><h4 class="mini-title mono">${up("Pembahasan")}</h4><ol>${m.points.map((p) => `<li>${esc(p)}</li>`).join("")}</ol></section>
+            <section><h4 class="mini-title mono">${up("Keputusan")}</h4><ul>${m.decisions.map((p) => `<li>${esc(p)}</li>`).join("")}</ul></section>
           </div>
-          <h4 class="mini-title mono">TINDAK LANJUT</h4>
+          <h4 class="mini-title mono">${up("Tindak lanjut")}</h4>
           <ul class="checklist checklist--pic">${m.actions.map((a, i) => `
             <li class="${a.done ? "done" : ""}" data-i="${i}" role="checkbox" aria-checked="${a.done}" tabindex="0">
               <span class="box"><svg viewBox="0 0 16 16"><polyline points="3,8 7,12 13,4" pathLength="1"/></svg></span>
@@ -645,7 +653,7 @@
         stat("Pengeluaran", rpShort(tout * 1e6), `${Math.round((tout / Math.max(tin, 1)) * 100)}% dari pemasukan`) +
         stat("Arus kas bersih", rpShort(net * 1e6), net >= 0 ? "surplus" : "defisit", net >= 0 ? "ok" : "danger");
       $("#periodNote").textContent = "Laporan " + p.toLowerCase();
-      $("#chartTitle").textContent = "ARUS KAS " + p.toUpperCase() + " (JUTA RP)";
+      $("#chartPeriod").textContent = up(p.toLowerCase());
       $("#budgetPanel").hidden = p !== "Bulanan";
       drawChart(p);
       if (p === "Bulanan") animateIn($("#budgetPanel"));
@@ -657,7 +665,7 @@
     $("#budget").innerHTML = D.budget.map((b) => {
       const pct = Math.round((b.actual / b.budget) * 100), over = b.actual > b.budget;
       return `<div class="budget__row">
-        <div class="budget__name">${esc(b.project)}<small>${esc(b.type).toUpperCase()} · PROGRES FISIK ${b.progress}%</small></div>
+        <div class="budget__name">${esc(b.project)}<small>${up(esc(b.type) + " · progres fisik " + b.progress + "%")}</small></div>
         <div class="budget__bars" title="Anggaran Rp ${b.budget} jt · Realisasi Rp ${b.actual} jt">
           <span class="b-plan" data-w="${(b.budget / maxB) * 100}"></span><span class="b-act ${over ? "over" : ""}" data-w="${(b.actual / maxB) * 100}"></span></div>
         <div class="budget__pct"><span class="${over ? "t-danger" : pct > 90 ? "t-warn" : "t-ok"}">${pct}% terserap</span><small>Rp ${b.actual.toLocaleString("id-ID")} / ${b.budget.toLocaleString("id-ID")} jt</small></div>
@@ -669,7 +677,7 @@
     const C = D.closing;
     const list = $("#closeList"), box = $("#closeStatus");
     let locked = store.get("du-close-locked", false);
-    $("#closeTitle").textContent = "A. DAFTAR PERIKSA TUTUP BUKU · " + C.period.toUpperCase();
+    $("#closePeriod").textContent = up(C.period);
     const drawList = () => {
       list.innerHTML = C.tasks.map((t, i) => `
         <li class="${state.closing[i] ? "done" : ""}" data-i="${i}" role="checkbox" aria-checked="${state.closing[i]}" aria-disabled="${locked}" tabindex="0">
@@ -683,7 +691,7 @@
       box.innerHTML = `
         <div class="sla">
           ${ring(pct, locked ? "ok" : pct === 1 ? "ok" : "warn", Math.round(pct * 100) + "%", 96)}
-          <div><span class="mono note">PERIODE</span><b class="big-num big-num--sm">${esc(C.period)}</b>
+          <div><span class="mono note">${up("Periode")}</span><b class="big-num big-num--sm">${esc(C.period)}</b>
           <span class="note">${done}/${total} langkah selesai · batas ${fmtDate(dl)} (${days > 0 ? days + " hari lagi" : "hari ini"})</span></div>
         </div>
         <button class="btn ${locked ? "btn--ghost" : "btn--solid"} btn--block" type="button" id="lockBtn" ${pct < 1 && !locked ? "disabled" : ""}>
@@ -707,7 +715,7 @@
     };
     list.addEventListener("click", (e) => { const li = e.target.closest("li"); if (li) toggle(li); });
     list.addEventListener("keydown", (e) => { const li = e.target.closest("li"); if (li && (e.key === " " || e.key === "Enter")) { e.preventDefault(); toggle(li); } });
-    $("#closeHistory").innerHTML = C.history.map((h) => `<li class="done"><span class="t-date">DITUTUP ${esc(h.closed).toUpperCase()}</span><span class="t-title">${esc(h.period)}<span class="tag">${esc(h.by)}</span></span></li>`).join("");
+    $("#closeHistory").innerHTML = C.history.map((h) => `<li class="done"><span class="t-date">${up("Ditutup " + esc(h.closed))}</span><span class="t-title">${esc(h.period)}<span class="tag">${esc(h.by)}</span></span></li>`).join("");
     drawList(); drawBox();
   }
 
@@ -719,7 +727,7 @@
     const total = D.headcount.reduce((s, v) => s + v.value, 0);
     $("#headcount").innerHTML = `
       <div class="stack__bar">${D.headcount.map((h, i) => `<i style="background:${colors[i]}" data-w="${(h.value / total) * 100}" title="${esc(h.label)}: ${h.value}"></i>`).join("")}</div>
-      <ul class="stack__list">${D.headcount.map((h, i) => `<li><span class="sw" style="background:${colors[i]}"></span>${esc(h.label)}<b>${h.value}</b></li>`).join("")}<li class="stack__total"><b>TOTAL ${total} ORANG</b></li></ul>`;
+      <ul class="stack__list">${D.headcount.map((h, i) => `<li><span class="sw" style="background:${colors[i]}"></span>${esc(h.label)}<b>${h.value}</b></li>`).join("")}<li class="stack__total"><b>${up("Total " + total + " orang")}</b></li></ul>`;
 
     const sel = $("#empDiv"), search = $("#empSearch"), body = $("#empBody");
     [...new Set(D.employees.map((e) => e.div))].forEach((d) => sel.insertAdjacentHTML("beforeend", `<option>${esc(d)}</option>`));
@@ -762,7 +770,7 @@
   function renderAttendance() {
     const tone = { Hadir: "ok", Terlambat: "warn", "Dinas Lapangan": "info", Izin: "muted", Sakit: "danger" };
     const sum = D.attendanceSummary;
-    $("#attTitle").textContent = "A. ABSENSI · " + fmtDate(today, { weekday: "long", day: "numeric", month: "long" }).toUpperCase();
+    $("#attDate").textContent = up(fmtDate(today, { weekday: "long", day: "numeric", month: "long" }));
     $("#attStats").innerHTML = Object.entries(sum).map(([k, v]) => stat(k, `<span data-count="${v}">${v}</span>`, "orang", tone[k] === "muted" ? "" : tone[k])).join("");
     $("#attBody").innerHTML = D.attendanceToday.map((a) => `<tr><td>${esc(a.name)}</td><td class="mono">${esc(a.in)}</td><td class="mono">${esc(a.out)}</td><td>${esc(a.loc)}</td><td>${pill(a.status, tone[a.status])}</td></tr>`).join("");
 
@@ -779,7 +787,7 @@
       }
     }
     $("#attendance").innerHTML = html;
-    $("#attNote").textContent = `RATA-RATA KEHADIRAN ${(total / n).toFixed(1)}%`;
+    $("#attNote").textContent = up(`Rata-rata kehadiran ${(total / n).toFixed(1)}%`);
   }
 
   /* =========================================================
@@ -803,7 +811,7 @@
       <div class="lic ${d.tone === "danger" ? "is-urgent" : ""}">
         ${ring(Math.min(1, d.daysLeft / 365), d.tone, d.daysLeft + "h")}
         <div class="lic__name">${esc(d.title)}<small>${esc(d.party)} · ${esc(d.cat)}</small></div>
-        <div class="lic__left t-${d.tone}">${d.daysLeft} HARI<small>s.d. ${d.until}</small></div>
+        <div class="lic__left t-${d.tone}">${d.daysLeft} ${up("hari")}<small>s.d. ${d.until}</small></div>
       </div>`).join("") || `<p class="note">Tidak ada dokumen yang jatuh tempo dalam 90 hari.</p>`;
     onIn(lic.closest(".panel"), (p) => animateIn(p));
 
@@ -824,7 +832,7 @@
   }
 
   /* ---------------- INIT ---------------- */
-  $$("[data-date]").forEach((el) => (el.textContent = fmtDate(today, { day: "2-digit", month: "long", year: "numeric" }).toUpperCase()));
+  $$("[data-date]").forEach((el) => (el.textContent = up(fmtDate(today, { day: "2-digit", month: "long", year: "numeric" }))));
   initTheme();
   renderKpi();
   renderProcurement(); renderAssets(); renderVendors(); renderServices(); renderClient(); renderCalendar();
