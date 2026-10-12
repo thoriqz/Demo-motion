@@ -6,7 +6,7 @@
 <title>Opsi Desain Divisi Umum</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Barlow+Condensed:wght@600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,500;1,6..96,500&family=IBM+Plex+Mono:wght@400;500&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Barlow+Condensed:wght@600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,500;1,6..96,500&family=IBM+Plex+Mono:wght@400;500&family=Sora:wght@400;600;700&family=Schibsted+Grotesk:wght@500;800&family=Plus+Jakarta+Sans:wght@600;700;800&family=Instrument+Serif:ital@0;1&family=Bricolage+Grotesque:opsz,wght@12..96,600;800&display=swap" rel="stylesheet">
 <style>
 /* Layout: lembar studio — tiap opsi = satu baris (pratinjau hidup kiri, spesifikasi kanan), lalu tabel perbandingan */
 :root {
@@ -47,6 +47,12 @@ h1, h2, h3 { font-family: var(--f-display); font-stretch: 112%; text-wrap: balan
 .jump { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
 .jump a { text-decoration: none; color: var(--fg); border: 1px solid var(--line); background: var(--surface); padding: 6px 12px; font: 500 12px var(--f-mono); }
 .jump a:hover, .jump a:focus-visible { border-color: var(--accent); outline: none; }
+
+/* group heading */
+.group-head { padding-top: 56px; display: grid; gap: 6px; }
+.group-head .eyebrow { font-size: 11px; color: var(--accent); text-transform: uppercase; margin: 0; }
+.group-head h2 { font-size: clamp(28px, 3.8vw, 44px); font-weight: 800; font-stretch: 118%; }
+.group-head p { margin: 0; color: var(--muted); max-width: 70ch; }
 
 /* option row */
 .opt { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 28px; padding-block: 44px; border-bottom: 1px solid var(--line); scroll-margin-top: 12px; }
@@ -91,6 +97,7 @@ th, td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--li
 thead th { font: 500 11px var(--f-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
 tbody th { font-weight: 600; width: 170px; }
 tr:last-child td, tr:last-child th { border-bottom: 0; }
+.tbl-cap { font: 500 11px var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 22px 0 10px; font-stretch: 100%; }
 .rec { margin-top: 28px; display: grid; grid-template-columns: auto 1fr; gap: 18px; padding: 20px; background: var(--accent-soft); border-left: 4px solid var(--accent); }
 .rec b.k { font: 500 11px var(--f-mono); letter-spacing: .08em; color: var(--accent); text-transform: uppercase; }
 .rec p { margin: 0 0 8px; max-width: 75ch; }
@@ -289,6 +296,162 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
   .d-side h4 { display: none; }
 }
 
+/* ---------- E. SWISS GRID ---------- */
+.pv-e {
+  --e-red: #e30613; --e-ink: #111; --e-paper: #fafaf8;
+  background: var(--e-paper); color: var(--e-ink); font-family: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+  display: grid; grid-template-columns: 1fr 1.25fr; grid-template-rows: auto 1fr; column-gap: 3cqw; padding: 3cqw 3.4cqw;
+}
+.e-top { grid-column: 1 / -1; display: flex; justify-content: space-between; font-size: clamp(8px, 1.2cqw, 12px); font-weight: 500; border-top: 3px solid var(--e-ink); padding-top: .8cqw; position: relative; z-index: 2; }
+.e-circle { position: absolute; width: 34cqw; height: 34cqw; border-radius: 50%; background: var(--e-red); left: -8cqw; bottom: -12cqw; animation: eCircle 1.3s cubic-bezier(.7,0,.2,1) both .1s; }
+@keyframes eCircle { from { transform: scale(0); } }
+.e-title { position: relative; z-index: 1; align-self: end; margin: 0 0 1cqw; font: 800 clamp(30px, 7.6cqw, 76px)/.88 "Schibsted Grotesk", sans-serif; letter-spacing: -.04em; color: var(--e-ink); }
+.e-title span { display: block; overflow: hidden; }
+.e-title span i { display: block; font-style: normal; animation: eSlide .9s cubic-bezier(.7,0,.2,1) both; animation-delay: calc(.35s + var(--i) * .1s); }
+.e-title span:nth-child(2) i { color: var(--e-paper); }
+@keyframes eSlide { from { transform: translateX(-105%); } }
+.e-rows { align-self: center; display: grid; position: relative; z-index: 1; }
+.e-row { display: grid; grid-template-columns: 3.4cqw 1fr auto; align-items: baseline; gap: 1.2cqw; padding: 1.1cqw .8cqw; position: relative;
+  animation: hop 7.5s steps(1) infinite; animation-delay: calc(2s + var(--i) * 1.5s); }
+.e-row::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: currentColor; transform-origin: left; animation: eRule .8s cubic-bezier(.7,0,.2,1) both; animation-delay: calc(.5s + var(--i) * .08s); }
+.e-n { font-size: clamp(8px, 1.2cqw, 12px); font-weight: 500; }
+.e-name { font-size: clamp(10px, 1.9cqw, 19px); font-weight: 500; letter-spacing: -.01em; }
+.e-val { font-size: clamp(16px, 3.6cqw, 36px); font-weight: 800; letter-spacing: -.03em; line-height: 1; font-variant-numeric: tabular-nums; }
+.e-val small { font-size: .35em; font-weight: 500; letter-spacing: 0; margin-left: .3em; }
+@keyframes eRule { from { transform: scaleX(0); } }
+@keyframes hop { 0% { background: var(--e-red); color: #fff; } 20%, 100% { background: transparent; color: var(--e-ink); } }
+.odo { display: inline-flex; }
+.odo .dg { display: inline-block; height: 1em; overflow: hidden; line-height: 1; }
+.odo .dg > span { display: block; transform: translateY(calc(var(--d) * -1em)); animation: odo 1.6s cubic-bezier(.7,0,.2,1) both; animation-delay: calc(.6s + var(--k) * .12s); }
+.odo .dg > span > span { display: block; height: 1em; }
+@keyframes odo { from { transform: translateY(0); } }
+@container (max-width: 560px) {
+  .pv-e { grid-template-columns: 1fr; grid-template-rows: auto auto 1fr; }
+  .e-title { align-self: start; margin-top: 3cqw; }
+  .e-row { grid-template-columns: 6cqw 1fr auto; padding: 2cqw 1cqw; }
+  .e-circle { width: 60cqw; height: 60cqw; left: auto; right: -20cqw; bottom: auto; top: -18cqw; }
+  .e-title span:nth-child(2) i { color: var(--e-red); }
+}
+
+/* ---------- F. AURORA GLASS ---------- */
+.pv-f {
+  --f-bg: #e4eeeb; --f-ink: #12302a; --f-teal: #0f8b78; --f-peach: #ff9a68; --f-sky: #7cc4e4;
+  background: var(--f-bg); color: var(--f-ink); font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+  display: grid; grid-template-rows: auto 1fr; gap: 2cqw; padding: 3cqw 3.4cqw; isolation: isolate;
+}
+.f-blob { position: absolute; border-radius: 50%; filter: blur(4cqw); opacity: .75; z-index: -1; }
+.f-blob.b1 { width: 40cqw; height: 40cqw; background: #8fdcc6; left: -8cqw; top: -10cqw; animation: drift1 14s ease-in-out infinite alternate; }
+.f-blob.b2 { width: 34cqw; height: 34cqw; background: #ffc3a0; right: -6cqw; top: 6cqw; animation: drift2 17s ease-in-out infinite alternate; }
+.f-blob.b3 { width: 30cqw; height: 30cqw; background: #a9d8ef; left: 30cqw; bottom: -14cqw; animation: drift1 19s ease-in-out infinite alternate-reverse; }
+@keyframes drift1 { to { transform: translate(14cqw, 6cqw) scale(1.15); } }
+@keyframes drift2 { to { transform: translate(-16cqw, 8cqw) scale(.9); } }
+.f-head { display: flex; justify-content: space-between; align-items: flex-start; animation: fUp .9s cubic-bezier(.16,1,.3,1) both; }
+.f-head small { font-size: clamp(8px, 1.2cqw, 12px); color: #3d5d55; font-weight: 600; }
+.f-head h4 { margin: .3cqw 0 0; font: 800 clamp(18px, 4cqw, 40px)/1.05 "Plus Jakarta Sans", sans-serif; letter-spacing: -.03em; }
+.f-avatar { width: 5cqw; height: 5cqw; min-width: 26px; min-height: 26px; border-radius: 50%; display: grid; place-items: center; background: var(--f-ink); color: #fff; font-size: clamp(8px, 1.3cqw, 13px); font-weight: 700; }
+.f-grid { display: grid; grid-template-columns: 1.1fr 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 1.4cqw; min-height: 0; }
+.gl { background: rgba(255,255,255,.42); -webkit-backdrop-filter: blur(14px) saturate(1.3); backdrop-filter: blur(14px) saturate(1.3);
+  border: 1px solid rgba(255,255,255,.7); border-radius: 2cqw; padding: 1.6cqw; display: flex; flex-direction: column; justify-content: space-between; min-width: 0;
+  box-shadow: 0 1cqw 3cqw rgba(18,48,42,.08); animation: fUp .9s cubic-bezier(.16,1,.3,1) both; animation-delay: calc(.25s + var(--i) * .1s);
+  transform: perspective(600px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform .3s ease-out; }
+.gl:first-child { grid-row: span 2; align-items: center; justify-content: center; text-align: center; gap: 1cqw; }
+.gl span { font-size: clamp(8px, 1.2cqw, 12px); font-weight: 600; color: #3d5d55; }
+.gl b { font-size: clamp(16px, 3.4cqw, 34px); font-weight: 800; letter-spacing: -.03em; line-height: 1; font-variant-numeric: tabular-nums; }
+.gl b small { font-size: .38em; font-weight: 600; letter-spacing: 0; margin-left: .25em; color: #3d5d55; }
+.f-ring { width: 70%; max-width: 160px; }
+.f-ring circle { fill: none; stroke-width: 9; stroke-linecap: round; }
+.f-ring .tr { stroke: rgba(18,48,42,.1); }
+.f-ring .vl { stroke: var(--f-teal); stroke-dasharray: 0 999; transform: rotate(-90deg); transform-origin: 50% 50%; animation: ring72 1.8s cubic-bezier(.16,1,.3,1) both .6s; }
+@keyframes ring72 { to { stroke-dasharray: 181 251; } }
+.f-ring text { font: 800 22px "Plus Jakarta Sans", sans-serif; fill: var(--f-ink); text-anchor: middle; }
+.f-spark { width: 100%; height: 3.4cqw; min-height: 14px; overflow: visible; }
+.f-spark path { fill: none; stroke: var(--f-teal); stroke-width: 2; stroke-dasharray: 1; animation: draw 1.6s ease both 1s; }
+.f-pill { align-self: flex-start; font-size: clamp(7px, 1.05cqw, 10px); font-weight: 700; color: #8a3a12; background: rgba(255,154,104,.35); padding: .3cqw .9cqw; border-radius: 99px; animation: pulse 2s ease-in-out infinite 2s; }
+@keyframes pulse { 50% { background: rgba(255,154,104,.7); } }
+.f-faces { display: flex; }
+.f-faces i { width: 2.4cqw; height: 2.4cqw; min-width: 12px; min-height: 12px; border-radius: 50%; border: 2px solid #fff; margin-left: -.8cqw; }
+.f-faces i:first-child { margin-left: 0; }
+@keyframes fUp { from { opacity: 0; transform: translateY(14px); filter: blur(6px); } }
+@container (max-width: 560px) {
+  .f-grid { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
+  .gl:first-child { grid-row: auto; grid-column: 1 / -1; flex-direction: row; justify-content: space-between; text-align: left; }
+  .f-ring { width: 26cqw; }
+  .gl { padding: 3cqw; border-radius: 4cqw; }
+}
+
+/* ---------- G. NUSANTARA KAWUNG ---------- */
+.pv-g {
+  --g-ind: #1a1f3d; --g-sogan: #8a5a2b; --g-gold: #d4a64a; --g-cream: #f1e6d0;
+  background: radial-gradient(90% 120% at 85% 30%, #262c55 0%, var(--g-ind) 60%); color: var(--g-cream);
+  display: grid; grid-template-rows: 1fr auto; padding: 3.4cqw;
+}
+.g-motif { position: absolute; inset: 0; width: 100%; height: 100%;
+  -webkit-mask-image: linear-gradient(100deg, transparent 28%, #000 70%); mask-image: linear-gradient(100deg, transparent 28%, #000 70%); }
+.g-motif .ku { transform-box: fill-box; transform-origin: center; animation: kIn 1s cubic-bezier(.34,1.4,.64,1) both, kGlow 6s ease-in-out infinite; animation-delay: calc(var(--d) * 1s), calc(2s + var(--d) * 1s); }
+.g-motif ellipse { fill: none; stroke: var(--g-gold); stroke-width: 1; }
+.g-motif ellipse.in { fill: var(--g-sogan); stroke: none; opacity: .55; }
+.g-motif circle { fill: var(--g-gold); }
+@keyframes kIn { from { opacity: 0; transform: scale(0) rotate(-90deg); } }
+@keyframes kGlow { 50% { opacity: .45; } }
+.g-copy { position: relative; align-self: center; max-width: 55%; }
+.g-mono { font: 500 clamp(8px, 1.15cqw, 11px) var(--f-mono); letter-spacing: .2em; color: var(--g-gold); animation: fade 1s both .2s; }
+.g-copy h4 { margin: 1cqw 0; font: 400 clamp(32px, 8.6cqw, 84px)/.95 "Instrument Serif", Georgia, serif; letter-spacing: -.01em; }
+.g-copy h4 span { display: block; animation: cIn 1.4s cubic-bezier(.16,1,.3,1) both .3s; }
+.g-copy h4 em { color: var(--g-gold); }
+.g-copy p { margin: 0; font: italic 400 clamp(11px, 1.9cqw, 18px) "Instrument Serif", serif; color: #cdbf9f; animation: fade 1s both .9s; }
+.g-row { position: relative; display: grid; grid-template-columns: repeat(5, 1fr); }
+.g-row::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 1px; background: var(--g-gold); transform-origin: left; animation: eRule 1.6s cubic-bezier(.16,1,.3,1) both .8s; }
+.g-row div { padding: 1.4cqw 1cqw 0; position: relative; animation: aUp .8s both; animation-delay: calc(1.2s + var(--i) * .1s); min-width: 0; }
+.g-row div::before { content: ""; position: absolute; left: 0; top: -.45cqw; width: .9cqw; height: .9cqw; min-width: 6px; min-height: 6px; margin-top: -2px; background: var(--g-gold); transform: rotate(45deg); }
+.g-row span { font: 500 clamp(7px, 1cqw, 10px) var(--f-mono); color: var(--g-gold); letter-spacing: .12em; }
+.g-row b { display: block; font: 400 clamp(18px, 3.8cqw, 38px)/1 "Instrument Serif", serif; margin: .4cqw 0; }
+.g-row small { font-size: clamp(8px, 1.15cqw, 11px); color: #cdbf9f; }
+@container (max-width: 560px) {
+  .g-copy { max-width: 100%; }
+  .g-motif { -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 30%, transparent 75%); mask-image: linear-gradient(180deg, transparent 0%, #000 30%, transparent 75%); opacity: .6; }
+  .g-row { grid-template-columns: repeat(3, 1fr); row-gap: 3cqw; }
+}
+
+/* ---------- H. BENTO POP ---------- */
+.pv-h {
+  --h-ink: #161616; --h-bg: #f2f1ed;
+  background: var(--h-bg); color: var(--h-ink); font-family: "Bricolage Grotesque", system-ui, sans-serif; padding: 2.6cqw;
+  display: grid; gap: 1.4cqw; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(3, 1fr);
+  grid-template-areas: "hi hi ga adm" "hi hi fin fin" "hr lgl fin fin";
+}
+.bx { border: 2.5px solid var(--h-ink); border-radius: 2cqw; box-shadow: .5cqw .5cqw 0 var(--h-ink); padding: 1.4cqw 1.6cqw; position: relative; min-width: 0;
+  display: flex; flex-direction: column; justify-content: space-between;
+  animation: pop .7s cubic-bezier(.34,1.8,.5,1) both; animation-delay: calc(.15s + var(--i) * .09s); transition: transform .2s, box-shadow .2s; }
+.bx:hover { transform: translate(-.3cqw, -.3cqw); box-shadow: .8cqw .8cqw 0 var(--h-ink); }
+@keyframes pop { from { opacity: 0; transform: scale(.6) rotate(var(--r, -4deg)); } }
+.bx span { font-size: clamp(8px, 1.3cqw, 13px); font-weight: 600; }
+.bx b { font-size: clamp(18px, 4cqw, 40px); font-weight: 800; letter-spacing: -.04em; line-height: 1; }
+.bx b small { font-size: .36em; letter-spacing: 0; font-weight: 600; margin-left: .2em; }
+.h-hi { grid-area: hi; background: #ffd23f; --r: 3deg; }
+.h-hi h4 { margin: 0; font: 800 clamp(22px, 5.2cqw, 52px)/.95 "Bricolage Grotesque", sans-serif; letter-spacing: -.04em; }
+.h-sticker { position: absolute; right: 1.6cqw; top: 1.6cqw; width: 10cqw; height: 10cqw; min-width: 46px; min-height: 46px; }
+.h-sticker svg { width: 100%; height: 100%; animation: spin 10s linear infinite; }
+.h-sticker text { font: 700 11.5px "Bricolage Grotesque", sans-serif; letter-spacing: 2px; fill: var(--h-ink); }
+.h-sticker::after { content: "★"; position: absolute; inset: 0; display: grid; place-items: center; font-size: clamp(12px, 2.6cqw, 26px); }
+@keyframes spin { to { transform: rotate(360deg); } }
+.h-ga { grid-area: ga; background: #74c0fc; }
+.h-adm { grid-area: adm; background: #ff8fab; --r: 5deg; }
+.h-fin { grid-area: fin; background: #b197fc; }
+.h-hr { grid-area: hr; background: #8ce99a; --r: 6deg; }
+.h-lgl { grid-area: lgl; background: #fff; }
+.h-cols { display: flex; align-items: flex-end; gap: .8cqw; height: 55%; }
+.h-cols i { flex: 1; background: var(--h-ink); border-radius: .6cqw .6cqw 0 0; height: var(--h); transform-origin: bottom; animation: grow .8s cubic-bezier(.34,1.6,.5,1) both; animation-delay: calc(.8s + var(--k) * .07s); }
+.h-cols i:last-child { background: #fff; border: 2px solid var(--h-ink); }
+@keyframes grow { from { transform: scaleY(0); } }
+.h-chip { align-self: flex-start; font-size: clamp(7px, 1.05cqw, 10px); font-weight: 700; background: #ff6b6b; color: #fff; border: 2px solid var(--h-ink); border-radius: 99px; padding: .2cqw .9cqw; animation: wiggle 2.4s ease-in-out infinite 1.8s; }
+@keyframes wiggle { 0%, 80%, 100% { transform: rotate(0); } 85% { transform: rotate(-8deg); } 90% { transform: rotate(8deg); } 95% { transform: rotate(-4deg); } }
+@container (max-width: 560px) {
+  .pv-h { grid-template-columns: 1fr 1fr; grid-template-rows: 1.3fr 1fr 1fr 1fr; grid-template-areas: "hi hi" "ga adm" "fin fin" "hr lgl"; padding: 3cqw; gap: 2.4cqw; }
+  .bx { padding: 2.4cqw 3cqw; border-radius: 3.4cqw; }
+  .h-sticker { width: 16cqw; height: 16cqw; }
+  .h-cols { height: 45%; }
+}
+
 /* responsive shell */
 @media (max-width: 900px) {
   .intro, .opt { grid-template-columns: 1fr; }
@@ -305,15 +468,20 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
   <header class="intro">
     <div>
       <p class="eyebrow mono">Roemantara Indonesia · Divisi Umum · Studi Desain</p>
-      <h1>Empat arah desain untuk webapp Divisi Umum</h1>
+      <h1>Delapan arah desain untuk webapp Divisi Umum</h1>
     </div>
     <div>
-      <p>Setiap opsi memakai isi yang sama: lima bidang (GA, Administrasi, Finance, HR, Legal) dengan satu angka utama masing-masing. Yang berbeda hanya rupa dan gerakannya. Tekan <b>Putar ulang</b> untuk melihat animasi pembukanya lagi.</p>
+      <p>Empat opsi bertema konstruksi (A–D) dan empat opsi di luar tema konstruksi (E–H). Setiap opsi memakai isi yang sama: lima bidang (GA, Administrasi, Finance, HR, Legal) dengan satu angka utama masing-masing. Yang berbeda hanya rupa dan gerakannya. Tekan <b>Putar ulang</b> untuk melihat animasi pembukanya lagi.</p>
       <nav class="jump" aria-label="Lompat ke opsi">
-        <a href="#opsi-a">A · Blueprint CAD</a><a href="#opsi-b">B · Beton Brutalis</a><a href="#opsi-c">C · Material Board</a><a href="#opsi-d">D · Maket Isometrik</a><a href="#banding">Perbandingan</a>
+        <a href="#opsi-a">A · Blueprint CAD</a><a href="#opsi-b">B · Beton Brutalis</a><a href="#opsi-c">C · Material Board</a><a href="#opsi-d">D · Maket Isometrik</a><a href="#opsi-e">E · Swiss Grid</a><a href="#opsi-f">F · Aurora Glass</a><a href="#opsi-g">G · Nusantara Kawung</a><a href="#opsi-h">H · Bento Pop</a><a href="#banding">Perbandingan</a>
       </nav>
     </div>
   </header>
+
+  <div class="group-head" id="konstruksi">
+    <p class="eyebrow mono">Kelompok 1 · A–D</p>
+    <h2>Bertema konstruksi &amp; arsitektur</h2>
+  </div>
 
   <!-- ================= A ================= -->
   <section class="opt" id="opsi-a">
@@ -378,7 +546,7 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
       <div><h3>Ciri gerakan</h3><ul class="motion-list"><li>Garis gedung &amp; crane tergambar seperti plotter CAD</li><li>Garis pindai (scan) menyapu lembar gambar</li><li>Beban crane berayun pelan, angka naik bertahap</li></ul></div>
       <div><h3>Penilaian</h3><div class="scores">
         <div class="score">Kesan profesional<span class="dots" data-score="4"></span></div>
-        <div class="score">Nuansa arsitektur<span class="dots" data-score="5"></span></div>
+        <div class="score">Keunikan identitas<span class="dots" data-score="5"></span></div>
         <div class="score">Keterbacaan data<span class="dots" data-score="4"></span></div>
         <div class="score">Ringan di HP/laptop lama<span class="dots" data-score="4"></span></div></div></div>
       <div class="fit"><b>Paling cocok untuk</b>Dashboard harian internal. Identitas "kantor konsultan" langsung terasa.</div>
@@ -414,7 +582,7 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
       <div><h3>Ciri gerakan</h3><ul class="motion-list"><li>Pelat lantai jatuh dan "mendarat" berat, dari Lt.01 ke Lt.05</li><li>Judul muncul seperti dicap</li><li>Pita K3 bergaris kuning-hitam berjalan terus</li></ul></div>
       <div><h3>Penilaian</h3><div class="scores">
         <div class="score">Kesan profesional<span class="dots" data-score="3"></span></div>
-        <div class="score">Nuansa arsitektur<span class="dots" data-score="4"></span></div>
+        <div class="score">Keunikan identitas<span class="dots" data-score="4"></span></div>
         <div class="score">Keterbacaan data<span class="dots" data-score="3"></span></div>
         <div class="score">Ringan di HP/laptop lama<span class="dots" data-score="5"></span></div></div></div>
       <div class="fit"><b>Paling cocok untuk</b>Sisi kontraktor &amp; lapangan: K3, logistik site, papan info proyek. Kesannya tegas dan berani.</div>
@@ -452,7 +620,7 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
       <div><h3>Ciri gerakan</h3><ul class="motion-list"><li>Sampel material terbuka dengan masker dari bawah</li><li>Judul muncul lembut dari blur, ritme pelan</li><li>Kilau cahaya sesekali melintas di permukaan material</li></ul></div>
       <div><h3>Penilaian</h3><div class="scores">
         <div class="score">Kesan profesional<span class="dots" data-score="5"></span></div>
-        <div class="score">Nuansa arsitektur<span class="dots" data-score="4"></span></div>
+        <div class="score">Keunikan identitas<span class="dots" data-score="4"></span></div>
         <div class="score">Keterbacaan data<span class="dots" data-score="3"></span></div>
         <div class="score">Ringan di HP/laptop lama<span class="dots" data-score="4"></span></div></div></div>
       <div class="fit"><b>Paling cocok untuk</b>Menonjolkan sisi desain interior. Bagus dipresentasikan ke direksi atau dipakai sebagai wajah perusahaan.</div>
@@ -487,16 +655,160 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
       <div><h3>Ciri gerakan</h3><ul class="motion-list"><li>Blok lantai turun dan memantul ke posisinya</li><li>Maket melayang pelan dengan bayangan bernapas</li><li>Arahkan kursor ke daftar: lantai terkait menyala koral</li></ul></div>
       <div><h3>Penilaian</h3><div class="scores">
         <div class="score">Kesan profesional<span class="dots" data-score="4"></span></div>
-        <div class="score">Nuansa arsitektur<span class="dots" data-score="4"></span></div>
+        <div class="score">Keunikan identitas<span class="dots" data-score="3"></span></div>
         <div class="score">Keterbacaan data<span class="dots" data-score="5"></span></div>
         <div class="score">Ringan di HP/laptop lama<span class="dots" data-score="3"></span></div></div></div>
       <div class="fit"><b>Paling cocok untuk</b>Laporan ke manajemen dan layar TV kantor. Paling mudah dibaca orang non-teknis.</div>
     </div>
   </section>
 
+  <div class="group-head" id="luar-konstruksi">
+    <p class="eyebrow mono">Kelompok 2 · E–H</p>
+    <h2>Di luar tema konstruksi</h2>
+    <p>Empat arah yang tidak memakai unsur bangunan sama sekali. Isi dan angkanya tetap sama supaya adil dibandingkan dengan A–D.</p>
+  </div>
+
+  <!-- ================= E ================= -->
+  <section class="opt" id="opsi-e">
+    <div class="opt__head"><span class="opt__letter">E</span><h2>Swiss Grid</h2><span class="opt__tag">Gaya poster Swiss: grid ketat, merah-hitam-putih, tipografi besar.</span></div>
+    <div class="frame">
+      <div class="pv pv-e" data-pv>
+        <div class="e-circle"></div>
+        <div class="e-top"><span>Roemantara Indonesia</span><span>Laporan Divisi Umum · Okt 2026</span></div>
+        <h4 class="e-title"><span><i style="--i:0">Divisi</i></span><span><i style="--i:1">Umum</i></span></h4>
+        <div class="e-rows">
+          <div class="e-row" style="--i:0"><span class="e-n">01</span><span class="e-name">General Affairs</span><span class="e-val"><span class="odo" data-odo="248"></span><small>aset</small></span></div>
+          <div class="e-row" style="--i:1"><span class="e-n">02</span><span class="e-name">Administrasi</span><span class="e-val"><span class="odo" data-odo="64"></span><small>surat</small></span></div>
+          <div class="e-row" style="--i:2"><span class="e-n">03</span><span class="e-name">Finance &amp; Accounting</span><span class="e-val"><span class="odo" data-odo="72"></span><small>% serap</small></span></div>
+          <div class="e-row" style="--i:3"><span class="e-n">04</span><span class="e-name">Human Resources</span><span class="e-val"><span class="odo" data-odo="58"></span><small>orang</small></span></div>
+          <div class="e-row" style="--i:4"><span class="e-n">05</span><span class="e-name">Legal</span><span class="e-val"><span class="odo" data-odo="9"></span><small>izin</small></span></div>
+        </div>
+      </div>
+      <button class="replay" type="button">↻ Putar ulang</button>
+    </div>
+    <div class="spec">
+      <div><h3>Palet</h3><div class="swatches">
+        <span class="sw"><i style="background:#fafaf8"></i>Kertas</span><span class="sw"><i style="background:#111"></i>Hitam</span>
+        <span class="sw"><i style="background:#e30613"></i>Merah</span></div></div>
+      <div><h3>Tipografi</h3><div class="type-pair"><span style="font-family:'Schibsted Grotesk',sans-serif;font-weight:800;letter-spacing:-.03em">Schibsted Grotesk</span><small>Satu keluarga huruf, kontras dari ukuran &amp; ketebalan</small></div></div>
+      <div><h3>Ciri gerakan</h3><ul class="motion-list"><li>Angka berputar seperti odometer</li><li>Judul meluncur masuk dari balik garis grid</li><li>Sorotan merah berpindah dari baris ke baris</li></ul></div>
+      <div><h3>Penilaian</h3><div class="scores">
+        <div class="score">Kesan profesional<span class="dots" data-score="5"></span></div>
+        <div class="score">Keunikan identitas<span class="dots" data-score="3"></span></div>
+        <div class="score">Keterbacaan data<span class="dots" data-score="5"></span></div>
+        <div class="score">Ringan di HP/laptop lama<span class="dots" data-score="5"></span></div></div></div>
+      <div class="fit"><b>Paling cocok untuk</b>Laporan resmi dan dashboard yang harus awet bertahun-tahun. Rapi, tegas, dan tidak cepat terlihat ketinggalan zaman.</div>
+    </div>
+  </section>
+
+  <!-- ================= F ================= -->
+  <section class="opt" id="opsi-f">
+    <div class="opt__head"><span class="opt__letter">F</span><h2>Aurora Glass</h2><span class="opt__tag">Kartu kaca buram di atas cahaya warna lembut yang bergerak pelan.</span></div>
+    <div class="frame">
+      <div class="pv pv-f" data-pv>
+        <div class="f-blob b1"></div><div class="f-blob b2"></div><div class="f-blob b3"></div>
+        <div class="f-head"><div><small>Senin, 12 Oktober 2026</small><h4>Selamat pagi,<br>Divisi Umum</h4></div><span class="f-avatar">DU</span></div>
+        <div class="f-grid">
+          <div class="gl" style="--i:0"><span>Finance · Realisasi anggaran</span>
+            <svg class="f-ring" viewBox="0 0 100 100"><circle class="tr" cx="50" cy="50" r="40"/><circle class="vl" cx="50" cy="50" r="40"/><text x="50" y="58">72%</text></svg>
+            <span>Rp 7,7 M dari Rp 10,7 M</span></div>
+          <div class="gl" style="--i:1"><span>General Affairs</span><b>248<small>aset</small></b>
+            <svg class="f-spark" viewBox="0 0 100 20" preserveAspectRatio="none"><path pathLength="1" d="M0 16 L14 13 L28 14 L42 9 L56 11 L70 6 L84 7 L100 3"/></svg></div>
+          <div class="gl" style="--i:2"><span>Administrasi</span><b>64<small>surat</small></b><span>+12 dari bulan lalu</span></div>
+          <div class="gl" style="--i:3"><span>Human Resources</span><b>58<small>orang</small></b>
+            <span class="f-faces"><i style="background:#0f8b78"></i><i style="background:#ff9a68"></i><i style="background:#7cc4e4"></i><i style="background:#12302a"></i></span></div>
+          <div class="gl" style="--i:4"><span>Legal</span><b>9<small>izin aktif</small></b><span class="f-pill">1 habis dalam 12 hari</span></div>
+        </div>
+      </div>
+      <button class="replay" type="button">↻ Putar ulang</button>
+    </div>
+    <div class="spec">
+      <div><h3>Palet</h3><div class="swatches">
+        <span class="sw"><i style="background:#e4eeeb"></i>Embun</span><span class="sw"><i style="background:#0f8b78"></i>Teal</span>
+        <span class="sw"><i style="background:#ff9a68"></i>Persik</span><span class="sw"><i style="background:#7cc4e4"></i>Langit</span></div></div>
+      <div><h3>Tipografi</h3><div class="type-pair"><span style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;letter-spacing:-.02em">Plus Jakarta Sans</span><small>Huruf karya desainer Indonesia, ramah dan modern</small></div></div>
+      <div><h3>Ciri gerakan</h3><ul class="motion-list"><li>Gumpalan cahaya warna bergeser sangat pelan di latar</li><li>Kartu muncul dari blur, cincin progres terisi</li><li>Kartu sedikit miring mengikuti kursor (efek 3D halus)</li></ul></div>
+      <div><h3>Penilaian</h3><div class="scores">
+        <div class="score">Kesan profesional<span class="dots" data-score="4"></span></div>
+        <div class="score">Keunikan identitas<span class="dots" data-score="3"></span></div>
+        <div class="score">Keterbacaan data<span class="dots" data-score="4"></span></div>
+        <div class="score">Ringan di HP/laptop lama<span class="dots" data-score="2"></span></div></div></div>
+      <div class="fit"><b>Paling cocok untuk</b>Dashboard harian yang nyaman dipandang lama, terasa seperti aplikasi modern di HP.</div>
+    </div>
+  </section>
+
+  <!-- ================= G ================= -->
+  <section class="opt" id="opsi-g">
+    <div class="opt__head"><span class="opt__letter">G</span><h2>Nusantara Kawung</h2><span class="opt__tag">Motif batik kawung yang tumbuh perlahan, nila, sogan, dan emas.</span></div>
+    <div class="frame">
+      <div class="pv pv-g" data-pv>
+        <svg class="g-motif" id="kawung" viewBox="0 0 400 250" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg>
+        <div class="g-copy">
+          <span class="g-mono">ROEMANTARA · DIVISI UMUM</span>
+          <h4><span>Divisi <em>Umum</em></span></h4>
+          <p>Tertata, tangguh, terpercaya.</p>
+        </div>
+        <div class="g-row">
+          <div style="--i:0"><span>I</span><b>248</b><small>General Affairs</small></div>
+          <div style="--i:1"><span>II</span><b>64</b><small>Administrasi</small></div>
+          <div style="--i:2"><span>III</span><b>72%</b><small>Finance</small></div>
+          <div style="--i:3"><span>IV</span><b>58</b><small>Human Resources</small></div>
+          <div style="--i:4"><span>V</span><b>9</b><small>Legal</small></div>
+        </div>
+      </div>
+      <button class="replay" type="button">↻ Putar ulang</button>
+    </div>
+    <div class="spec">
+      <div><h3>Palet</h3><div class="swatches">
+        <span class="sw"><i style="background:#1a1f3d"></i>Nila</span><span class="sw"><i style="background:#8a5a2b"></i>Sogan</span>
+        <span class="sw"><i style="background:#d4a64a"></i>Emas</span><span class="sw"><i style="background:#f1e6d0"></i>Gading</span></div></div>
+      <div><h3>Tipografi</h3><div class="type-pair"><span style="font-family:'Instrument Serif',serif;font-size:26px">Instrument <i>Serif</i></span><small>+ IBM Plex Mono untuk penomoran</small></div></div>
+      <div><h3>Ciri gerakan</h3><ul class="motion-list"><li>Motif kawung mekar berputar, menyebar seperti gelombang</li><li>Motif "bernapas" pelan setelah terbentuk</li><li>Garis emas tergambar, angka naik satu per satu</li></ul></div>
+      <div><h3>Penilaian</h3><div class="scores">
+        <div class="score">Kesan profesional<span class="dots" data-score="4"></span></div>
+        <div class="score">Keunikan identitas<span class="dots" data-score="5"></span></div>
+        <div class="score">Keterbacaan data<span class="dots" data-score="3"></span></div>
+        <div class="score">Ringan di HP/laptop lama<span class="dots" data-score="4"></span></div></div></div>
+      <div class="fit"><b>Paling cocok untuk</b>Identitas Indonesia yang kuat dan berkelas. Bagus untuk halaman sambutan, acara internal, atau tamu dan klien.</div>
+    </div>
+  </section>
+
+  <!-- ================= H ================= -->
+  <section class="opt" id="opsi-h">
+    <div class="opt__head"><span class="opt__letter">H</span><h2>Bento Pop</h2><span class="opt__tag">Kotak-kotak warna cerah bergaris tebal, gerakan memantul dan jenaka.</span></div>
+    <div class="frame">
+      <div class="pv pv-h" data-pv>
+        <div class="bx h-hi" style="--i:0"><span>Okt 2026 · 5 bidang</span><h4>Halo, tim Divisi Umum!</h4>
+          <div class="h-sticker" aria-hidden="true"><svg viewBox="0 0 100 100"><defs><path id="hc" d="M50 50 m-36 0 a36 36 0 1 1 72 0 a36 36 0 1 1 -72 0"/></defs><text><textPath href="#hc">ROEMANTARA · DIVISI UMUM · </textPath></text></svg></div></div>
+        <div class="bx h-ga" style="--i:1"><span>General Affairs</span><b>248<small>aset</small></b></div>
+        <div class="bx h-adm" style="--i:2"><span>Administrasi</span><b>64<small>surat</small></b></div>
+        <div class="bx h-fin" style="--i:3"><span>Finance · realisasi per bulan</span>
+          <div class="h-cols"><i style="--h:40%;--k:0"></i><i style="--h:55%;--k:1"></i><i style="--h:48%;--k:2"></i><i style="--h:66%;--k:3"></i><i style="--h:60%;--k:4"></i><i style="--h:80%;--k:5"></i><i style="--h:72%;--k:6"></i></div>
+          <b>72%<small>terserap</small></b></div>
+        <div class="bx h-hr" style="--i:4"><span>HR</span><b>58<small>orang</small></b></div>
+        <div class="bx h-lgl" style="--i:5"><span>Legal</span><b>9<small>izin</small></b><span class="h-chip">1 segera!</span></div>
+      </div>
+      <button class="replay" type="button">↻ Putar ulang</button>
+    </div>
+    <div class="spec">
+      <div><h3>Palet</h3><div class="swatches">
+        <span class="sw"><i style="background:#ffd23f"></i>Kuning</span><span class="sw"><i style="background:#74c0fc"></i>Biru</span>
+        <span class="sw"><i style="background:#ff8fab"></i>Merah muda</span><span class="sw"><i style="background:#b197fc"></i>Ungu</span><span class="sw"><i style="background:#8ce99a"></i>Mint</span></div></div>
+      <div><h3>Tipografi</h3><div class="type-pair"><span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;letter-spacing:-.03em">Bricolage Grotesque</span><small>Berkarakter, sedikit jenaka</small></div></div>
+      <div><h3>Ciri gerakan</h3><ul class="motion-list"><li>Kotak-kotak "meletup" masuk dengan pantulan pegas</li><li>Stiker berputar, label peringatan bergoyang</li><li>Kotak terangkat saat disentuh kursor</li></ul></div>
+      <div><h3>Penilaian</h3><div class="scores">
+        <div class="score">Kesan profesional<span class="dots" data-score="2"></span></div>
+        <div class="score">Keunikan identitas<span class="dots" data-score="4"></span></div>
+        <div class="score">Keterbacaan data<span class="dots" data-score="4"></span></div>
+        <div class="score">Ringan di HP/laptop lama<span class="dots" data-score="4"></span></div></div></div>
+      <div class="fit"><b>Paling cocok untuk</b>Portal internal karyawan: pengumuman HR, ulang tahun, info kantor. Suasana santai dan akrab.</div>
+    </div>
+  </section>
+
   <!-- ================= PERBANDINGAN ================= -->
   <section class="compare" id="banding">
     <h2>Perbandingan singkat</h2>
+    <h3 class="tbl-cap mono">Kelompok 1 · bertema konstruksi</h3>
     <div class="table-scroll">
       <table>
         <thead><tr><th>Kriteria</th><th>A · Blueprint CAD</th><th>B · Beton Brutalis</th><th>C · Material Board</th><th>D · Maket Isometrik</th></tr></thead>
@@ -510,11 +822,27 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
         </tbody>
       </table>
     </div>
+    <h3 class="tbl-cap mono">Kelompok 2 · di luar tema konstruksi</h3>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Kriteria</th><th>E · Swiss Grid</th><th>F · Aurora Glass</th><th>G · Nusantara Kawung</th><th>H · Bento Pop</th></tr></thead>
+        <tbody>
+          <tr><th>Karakter</th><td>Korporat, rapi, tak lekang waktu</td><td>Lembut, modern, menenangkan</td><td>Berkelas, khas Indonesia</td><td>Ceria, santai, akrab</td></tr>
+          <tr><th>Motion utama</th><td>Odometer angka, judul meluncur, sorotan merah</td><td>Cahaya bergeser, kartu dari blur, miring 3D</td><td>Motif mekar bergelombang, garis emas</td><td>Kotak meletup, stiker berputar, goyang</td></tr>
+          <tr><th>Tema terang/gelap</th><td>Terang, mudah dibuat versi gelap</td><td>Terang, bisa versi malam</td><td>Gelap (nila)</td><td>Terang saja</td></tr>
+          <tr><th>Kepadatan data</th><td>Tinggi: tabel &amp; angka sangat jelas</td><td>Sedang–tinggi: kartu ringkas</td><td>Sedang: lebih banyak ruang hias</td><td>Sedang: kartu besar-besar</td></tr>
+          <tr><th>Usaha pengembangan</th><td>Rendah</td><td>Sedang</td><td>Sedang</td><td>Rendah</td></tr>
+          <tr><th>Yang perlu dijaga</th><td>Bisa terasa kaku tanpa sentuhan merek</td><td>Efek blur berat di HP/laptop lama</td><td>Motif jangan sampai mengganggu angka</td><td>Kurang cocok untuk laporan Finance &amp; Legal</td></tr>
+        </tbody>
+      </table>
+    </div>
+
     <div class="rec">
       <b class="k">Rekomendasi</b>
       <div>
         <p><b>Untuk dashboard harian Divisi Umum, tetap di Opsi A (Blueprint CAD).</b> Isinya paling padat, sudah berfungsi, dan temanya paling dekat dengan bidang konstruksi-arsitektur.</p>
         <p>Kalau webapp ini juga mau ditunjukkan ke direksi atau klien, ambil <b>maket gedung dari Opsi D</b> sebagai halaman pembuka, atau <b>palet material dari Opsi C</b> untuk menonjolkan sisi interior. Opsi B lebih cocok untuk papan informasi K3 di site daripada dashboard kantor.</p>
+        <p><b>Kalau ingin keluar dari tema konstruksi, pilih Opsi E (Swiss Grid).</b> Paling mudah dibaca, paling ringan, dan cocok untuk data Finance dan Legal yang padat. Pilih <b>Opsi G (Nusantara Kawung)</b> bila ingin identitas Indonesia yang kuat. Opsi F nyaman dilihat tetapi berat di perangkat lama, dan Opsi H lebih pas untuk portal pengumuman karyawan daripada dashboard kerja.</p>
       </div>
     </div>
   </section>
@@ -569,6 +897,49 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
     setHot(4, true);
     document.querySelectorAll("#isoList li").forEach(function (li) {
       li.addEventListener("mouseenter", function () { svg.querySelectorAll(".fl.hot").forEach(function (f) { f.classList.remove("hot"); }); setHot(li.dataset.fl, true); });
+    });
+  }
+
+  // Odometer angka (opsi E)
+  document.querySelectorAll("[data-odo]").forEach(function (el) {
+    var str = el.dataset.odo, html = "";
+    for (var k = 0; k < str.length; k++) {
+      var d = +str[k], col = "";
+      for (var n = 0; n <= 9; n++) col += "<span>" + n + "</span>";
+      html += '<span class="dg"><span style="--d:' + d + ';--k:' + k + '">' + col + "</span></span>";
+    }
+    el.innerHTML = html;
+    el.setAttribute("aria-label", str);
+  });
+
+  // Motif kawung (opsi G)
+  var kw = document.getElementById("kawung");
+  if (kw) {
+    var g = "", step = 36;
+    for (var y = 0; y <= 250 + step; y += step) {
+      for (var x = 0; x <= 400 + step; x += step) {
+        var dist = Math.hypot(x - 400, y - 0) / 480;
+        g += '<g class="ku" style="--d:' + dist.toFixed(2) + '">';
+        [45, 135, 225, 315].forEach(function (a) {
+          var r = a * Math.PI / 180, ex = x + Math.cos(r) * 9.5, ey = y + Math.sin(r) * 9.5;
+          g += '<ellipse cx="' + ex.toFixed(1) + '" cy="' + ey.toFixed(1) + '" rx="5.5" ry="10" transform="rotate(' + (a + 90) + ' ' + ex.toFixed(1) + ' ' + ey.toFixed(1) + ')"/>';
+          g += '<ellipse class="in" cx="' + ex.toFixed(1) + '" cy="' + ey.toFixed(1) + '" rx="2.6" ry="6" transform="rotate(' + (a + 90) + ' ' + ex.toFixed(1) + ' ' + ey.toFixed(1) + ')"/>';
+        });
+        g += '<circle cx="' + x + '" cy="' + y + '" r="1.6"/></g>';
+      }
+    }
+    kw.innerHTML = g;
+  }
+
+  // Kartu kaca miring mengikuti kursor (opsi F)
+  if (!reduce && window.matchMedia("(pointer: fine)").matches) {
+    document.querySelectorAll(".gl").forEach(function (c) {
+      c.addEventListener("pointermove", function (e) {
+        var r = c.getBoundingClientRect();
+        c.style.setProperty("--ry", (((e.clientX - r.left) / r.width - .5) * 10).toFixed(1) + "deg");
+        c.style.setProperty("--rx", (((e.clientY - r.top) / r.height - .5) * -10).toFixed(1) + "deg");
+      });
+      c.addEventListener("pointerleave", function () { c.style.setProperty("--rx", "0deg"); c.style.setProperty("--ry", "0deg"); });
     });
   }
 

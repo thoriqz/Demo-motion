@@ -31,4 +31,6 @@ Semua data contoh (dummy) ada di `assets/js/data.js`. Surat baru, centang pelati
 dan posisi kandidat tersimpan di `localStorage` browser masing-masing.
 
 ## Opsi desain
-`design-options.html` berisi 4 arah desain bermotion untuk dibandingkan: Blueprint CAD (versi saat ini), Beton Brutalis, Material Board, dan Maket Isometrik.
+`design-options.html` berisi 8 arah desain bermotion untuk dibandingkan:
+- Bertema konstruksi: A Blueprint CAD (versi saat ini), B Beton Brutalis, C Material Board, D Maket Isometrik
+- Di luar tema konstruksi: E Swiss Grid, F Aurora Glass, G Nusantara Kawung, H Bento Pop
