@@ -29,3 +29,10 @@ harian, C laporan mingguan per Sabtu, D laporan bulanan per tanggal 25). Tombol 
 mengenali format ini otomatis. Rekap dihitung seperti rumus di Excel: Jumlah = total,
 Akhir = nilai terakhir yang terisi, Rata-rata = rata-rata nilai terisi. Data awal yang
 tertanam diambil dari file Laporan_Dashboard_Direksi.xlsx (Minggu 1, 10 Okt 2026).
+
+## Terbitkan ke semua (versi link claude.ai)
+Versi artifact dibangun dengan `python3 dashboard/build_artifact.py OUT.html`. Data tertanam di
+halaman; pemilik (atau Editor) mengubah data lalu klik **Terbitkan ke semua**, dan halaman di link
+yang sama diperbarui untuk semua orang (yang sedang membuka ikut dimuat ulang otomatis).
+Pengunjung lain melihat dalam **Mode lihat** dan tidak bisa mengubah data.
+Bila file `index.html` dibuka langsung (tanpa claude.ai), dashboard tetap memakai localStorage.

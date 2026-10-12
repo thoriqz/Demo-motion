@@ -324,6 +324,23 @@ table.ht tbody tr:hover td{background:var(--grid)}
 .dc.fut{opacity:.45}
 .src{font:500 11px var(--mono);color:var(--muted);letter-spacing:.04em}
 
+/* ---------- terbitkan & mode lihat ---------- */
+.pubbar{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:35;display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center;
+  background:var(--ink);color:var(--paper);padding:10px 12px 10px 16px;border:1.5px solid var(--accent);max-width:calc(100% - 32px);box-shadow:0 10px 30px -12px rgba(0,0,0,.5)}
+.pubbar span{font:500 12px var(--mono);letter-spacing:.03em}
+.pubbar span b{color:var(--accent);font-weight:600}
+.pubbar .xbtn{border-color:var(--paper);color:var(--paper)}
+.pubbar .xbtn.solid{border-color:var(--accent)}
+.pubbar .xbtn[disabled]{opacity:.6;cursor:wait}
+.mode{display:inline-block;font:600 10px var(--mono);letter-spacing:.08em;text-transform:uppercase;padding:3px 7px;margin-left:8px;vertical-align:2px;border:1px solid var(--line);color:var(--line)}
+.mode.w{background:var(--accent);border-color:var(--accent);color:#fff}
+.ro .seg button{pointer-events:none}
+.ro .seg button:not([aria-pressed="true"]){opacity:.35}
+.ro .note{pointer-events:none;border-bottom-color:transparent}
+.ro .note:placeholder-shown{visibility:hidden}
+.ro .xbtn.solid[for],.ro .addf,.ro .file .rm,.ro #xlPrev,.ro #xlPrev2{display:none!important}
+.ro .xl .eyebrow .wonly{display:none}
+
 /* ---------- excel ---------- */
 .xl{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px;border:1.5px dashed var(--line);padding:10px 12px;background:var(--sheet)}
 .xl .eyebrow{flex:1 1 220px}
@@ -395,7 +412,7 @@ table.ht tbody tr:hover td{background:var(--grid)}
         <div><span class="eyebrow">PIC</span><b>Divisi Umum</b></div>
         <div><span class="eyebrow">Lingkup</span><b>GA · Finance · HR · Admin · Legal</b></div>
         <div><span class="eyebrow">No. lembar</span><b>A-01 / 15 item</b></div>
-        <div class="upd"><span class="eyebrow">Pembaruan terakhir</span><b id="tbUpd">–</b></div>
+        <div class="upd"><span class="eyebrow">Pembaruan terakhir<span class="mode" id="modeTag" hidden></span></span><b id="tbUpd">–</b></div>
       </div>
 
       <div>
@@ -499,9 +516,10 @@ table.ht tbody tr:hover td{background:var(--grid)}
     </section>
   </div>
 
-  <div class="foot"><span>Status, tautan, dan lampiran disimpan di peramban ini saja dan tidak tersinkron ke perangkat lain. Berkas maks. 1 MB; foto otomatis diperkecil.</span><span>Sumber: Laporan_Divisi_Umum_Okt2026.csv</span></div>
+  <div class="foot"><span id="footNote">Status, tautan, dan lampiran disimpan di peramban ini saja dan tidak tersinkron ke perangkat lain. Berkas maks. 1 MB; foto otomatis diperkecil.</span><span>Sumber: Laporan_Divisi_Umum_Okt2026.csv</span></div>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="pubbar" id="pubbar" hidden><span id="pubTxt"></span><button type="button" class="xbtn solid" id="pubBtn">Terbitkan ke semua</button></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
@@ -532,7 +550,12 @@ table.ht tbody tr:hover td{background:var(--grid)}
   var MAX_FILE = 1024 * 1024;
 
   var st = {};
-  try { st = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { st = {}; }
+  /* Mode artifact: data tertanam di halaman (#dash-state) dan diterbitkan pemilik untuk semua.
+     Mode lokal (file dibuka langsung): data di localStorage peramban ini. */
+  var EMB = window.__DASH_EMBED || null, ART = !!EMB, readOnly = ART, dirty = 0, artApi = null;
+  var LOCAL = null;
+  try { LOCAL = JSON.parse(localStorage.getItem(KEY)); } catch (e) {}
+  if (ART) st = JSON.parse(JSON.stringify(EMB.st || {})); else st = LOCAL || {};
   var cur = "Semua";
 
   function $(id) { return document.getElementById(id); }
@@ -554,6 +577,10 @@ table.ht tbody tr:hover td{background:var(--grid)}
   function counts(list) { var c = { Belum: 0, Proses: 0, Selesai: 0 }; list.forEach(function (it) { c[status(it.no)]++; }); return c; }
   function save() {
     st._upd = Date.now();
+    if (ART) {
+      if (readOnly) { toast("Mode lihat: hanya pemilik yang bisa mengubah data."); return false; }
+      markDirty(); return true;
+    }
     try { localStorage.setItem(KEY, JSON.stringify(st)); return true; }
     catch (e) { toast("Penyimpanan peramban penuh. Hapus lampiran lama atau gunakan tautan."); return false; }
   }
@@ -797,6 +824,11 @@ table.ht tbody tr:hover td{background:var(--grid)}
   function stamp(t) { return new Date(t).toLocaleString("id-ID", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); }
   function renderStamp() {
     var b = $("tbUpd"); b.innerHTML = "";
+    if (ART) {
+      b.appendChild(document.createTextNode("Diterbitkan untuk semua: "));
+      if (EMB.rev) b.appendChild(el("em", "", stamp(EMB.rev) + " (" + ago(EMB.rev) + ")")); else b.appendChild(document.createTextNode("belum pernah diterbitkan"));
+      b.appendChild(document.createTextNode(" · "));
+    }
     b.appendChild(document.createTextNode("Angka hasil: "));
     if (HS.importedAt) { b.appendChild(el("em", "", stamp(HS.importedAt) + " (" + ago(HS.importedAt) + ")")); b.appendChild(document.createTextNode(" dari " + HS.source)); }
     else b.appendChild(document.createTextNode("data awal dari " + HS.source + ", belum pernah diimpor"));
@@ -978,7 +1010,9 @@ table.ht tbody tr:hover td{background:var(--grid)}
   var HKEY = "dashboard-divisi-umum-hasil-v1";
   var DEFAULT_HASIL = {"source": "Laporan_Dashboard_Direksi.xlsx", "periode": {"mulai": "2026-09-26", "selesai": "2026-10-25", "bulan": "2026-10-01", "sabtu1": "2026-10-10"}, "weeks": ["2026-10-10", "2026-10-17", "2026-10-24", "2026-10-31", "2026-11-07"], "months": ["2026-10-01", "2026-11-01", "2026-12-01", "2027-01-01", "2027-02-01", "2027-03-01", "2027-04-01", "2027-05-01", "2027-06-01", "2027-07-01", "2027-08-01", "2027-09-01"], "weekly": {"1": [4, null, null, null, null], "4": [0, null, null, null, null], "5": [1, null, null, null, null], "12": [6, null, null, null, null], "13": [2, null, null, null, null]}, "monthly": {}, "daily": [], "meta": {"1": {"u": "Transaksi", "m": "Jumlah", "k": "Jumlah transaksi pengadaan & pembelian (PO/nota) yang diproses"}, "2": {"u": "Item", "m": "Akhir", "k": "Jumlah item aset, inventaris & stok tercatat di database (posisi akhir periode)"}, "3": {"u": "Vendor", "m": "Akhir", "k": "Jumlah vendor & subkon aktif yang terdaftar di database (posisi akhir periode)"}, "4": {"u": "Kasus", "m": "Jumlah", "k": "Jumlah komplain / klaim garansi yang diterima"}, "5": {"u": "Orang", "m": "Jumlah", "k": "Jumlah tamu yang datang untuk konsultasi / meeting"}, "6": {"u": "Agenda", "m": "Jumlah", "k": "Jumlah kegiatan visit, survei, dan undangan eksternal"}, "7": {"u": "Kali Update", "m": "Jumlah", "k": "Jumlah pembaruan kalender besar kegiatan"}, "8": {"u": "Rp", "m": "Jumlah", "k": "Selisih saldo buku vs kas/bank setiap selesai closing harian (detail di Tabel B)"}, "9": {"u": "Rp", "m": "Jumlah", "k": "Selisih rekonsiliasi keuangan per minggu"}, "10": {"u": "Rp", "m": "Jumlah", "k": "Selisih rekonsiliasi keuangan per bulan (closing tgl 25)"}, "11": {"u": "Dokumen", "m": "Jumlah", "k": "Laporan tutup buku yang diselesaikan (1 = selesai)"}, "12": {"u": "Dokumen", "m": "Jumlah", "k": "Jumlah surat FPP / SPH / SPK / BA / Garansi yang diterbitkan"}, "13": {"u": "Orang", "m": "Akhir", "k": "Jumlah tenaga freelance aktif (posisi akhir periode)"}, "14": {"u": "%", "m": "Rata-rata", "k": "Persentase kehadiran karyawan"}, "15": {"u": "Rp", "m": "Jumlah", "k": "Total nilai payroll yang dibayarkan"}}};
   var HS = DEFAULT_HASIL;
-  try { var hsv = JSON.parse(localStorage.getItem(HKEY)); if (hsv && hsv.weeks) HS = hsv; } catch (e) {}
+  var HLOCAL = null;
+  try { var hsv = JSON.parse(localStorage.getItem(HKEY)); if (hsv && hsv.weeks) HLOCAL = hsv; } catch (e) {}
+  if (ART) { if (EMB.hs && EMB.hs.weeks) HS = EMB.hs; } else if (HLOCAL) HS = HLOCAL;
   function isoD(d) {
     if (d instanceof Date) { var t = new Date(d.getTime() + 43200000); return t.getUTCFullYear() + "-" + String(t.getUTCMonth() + 1).padStart(2, "0") + "-" + String(t.getUTCDate()).padStart(2, "0"); }
     if (typeof d === "number" && d > 20000) return isoD(new Date(Date.UTC(1899, 11, 30) + d * 864e5));
@@ -1185,7 +1219,8 @@ table.ht tbody tr:hover td{background:var(--grid)}
       HS = pendingH; pendingH = null;
       CHANGED = {}; var nch = 0;
       ITEMS.forEach(function (it) { if (hasilOf(it).v !== before[it.no]) { CHANGED[it.no] = true; nch++; } });
-      try { localStorage.setItem(HKEY, JSON.stringify(HS)); } catch (e) { toast("Data hasil diterapkan, tapi tidak bisa disimpan di peramban ini."); }
+      if (ART) { if (readOnly) return; markDirty(); }
+      else { try { localStorage.setItem(HKEY, JSON.stringify(HS)); } catch (e) { toast("Data hasil diterapkan, tapi tidak bisa disimpan di peramban ini."); } }
       box.hidden = true; renderAll(); flashRows();
       toast(nch ? nch + " angka hasil berubah · ditandai BARU di Daftar Laporan" : "Data hasil diimpor · tidak ada angka yang berubah");
     });
@@ -1476,7 +1511,77 @@ table.ht tbody tr:hover td{background:var(--grid)}
   function tick() { $("clock").textContent = new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false }); }
   tick(); setInterval(tick, 1000);
 
-  buildTower(); buildRows(); buildCal(); renderAll(); startCrane(); setView("ringkasan");
+  /* ── terbitkan ke semua (capability artifact) ── */
+  var SKEL = '<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>';
+  var SKEY = "dashboard-divisi-umum-pending";
+  function buildDoc(state) {
+    var E = "</scr" + "ipt>";
+    return SKEL + "<title>Dashboard Divisi Umum</title>\n" +
+      '<script type="application/json" id="dash-state">' + JSON.stringify(state).replace(/</g, "\\u003c") + E + "\n" +
+      '<template id="dash-src">' + window.__DASH_TPL + "</temp" + "late>\n" +
+      '<script id="dash-boot">' + document.getElementById("dash-boot").textContent + E + "</body></html>";
+  }
+  function stash() { try { sessionStorage.setItem(SKEY, JSON.stringify({ rev: EMB.rev || 0, n: dirty, st: st, hs: HS })); } catch (e) {} }
+  function markDirty() { dirty++; stash(); paintPub(); }
+  function paintPub() {
+    var bar = $("pubbar");
+    bar.hidden = !(ART && !readOnly && dirty > 0);
+    $("pubTxt").innerHTML = "";
+    $("pubTxt").appendChild(document.createTextNode(""));
+    var b = el("b", "", dirty + " perubahan"); $("pubTxt").appendChild(b);
+    $("pubTxt").appendChild(document.createTextNode(" belum diterbitkan · baru terlihat oleh Anda"));
+  }
+  function setMode() {
+    document.body.classList.toggle("ro", readOnly);
+    var t = $("modeTag"); t.hidden = !ART; t.className = "mode" + (readOnly ? "" : " w"); t.textContent = readOnly ? "Mode lihat" : "Mode pemilik";
+    document.querySelectorAll(".note").forEach(function (i) { i.readOnly = readOnly; });
+    if (ART) $("footNote").textContent = readOnly
+      ? "Data yang tampil adalah versi terakhir yang diterbitkan pemilik. Halaman ini ikut diperbarui otomatis setiap kali pemilik menerbitkan."
+      : "Mode pemilik: perubahan Anda tersimpan sementara dan baru terlihat oleh semua orang setelah Anda klik Terbitkan ke semua.";
+    paintPub();
+  }
+  function publishNow() {
+    if (!artApi || readOnly || !dirty) return;
+    var btn = $("pubBtn"); btn.disabled = true; btn.textContent = "Menerbitkan…";
+    var html = buildDoc({ rev: Date.now(), st: st, hs: HS });
+    stash();
+    artApi.publish(html).then(function () {
+      try { sessionStorage.removeItem(SKEY); } catch (e) {}
+      dirty = 0; paintPub(); toast("Diterbitkan · semua yang membuka link melihat data terbaru");
+    }, function (e) {
+      btn.disabled = false; btn.textContent = "Terbitkan ke semua";
+      var c = e && e.code;
+      if (c === "conflict") { try { sessionStorage.removeItem(SKEY); } catch (x) {} toast("Ada versi yang lebih baru. Halaman dimuat ulang, silakan ulangi perubahan."); }
+      else if (c === "not_writer" || c === "not_granted" || c === "not_declared" || c === "consent_required" || c === "capability_disabled" || c === "capability_removed") { readOnly = true; setMode(); toast("Akun ini hanya bisa melihat, tidak bisa menerbitkan."); }
+      else if (c === "too_large") toast("Halaman terlalu besar untuk diterbitkan. Hapus beberapa lampiran foto/berkas atau ganti dengan tautan.");
+      else if (c === "rate_limited") toast("Terlalu sering menerbitkan. Tunggu sebentar, lalu coba lagi.");
+      else toast("Gagal menerbitkan. Coba lagi sebentar lagi.");
+    });
+  }
+  $("pubBtn").addEventListener("click", publishNow);
+  function initArt() {
+    if (!ART || !window.claude || !window.claude.use) return;
+    Promise.all([window.claude.use("artifact"), window.claude.use("user")]).then(function (r) {
+      artApi = r[0]; var user = r[1];
+      if (!artApi || !user) return;
+      return user.canEdit().then(function (ok) {
+        if (!ok) return;
+        readOnly = false;
+        /* perubahan yang belum terbit (mis. halaman sempat dimuat ulang) */
+        var p = null; try { p = JSON.parse(sessionStorage.getItem(SKEY)); } catch (e) {}
+        if (p && p.rev === (EMB.rev || 0) && p.n > 0) { st = p.st; HS = p.hs; dirty = p.n; }
+        else if (!EMB.rev && (LOCAL || HLOCAL)) {
+          /* pertama kali: bawa data yang sudah diisi di peramban ini */
+          if (LOCAL) st = LOCAL; if (HLOCAL) HS = HLOCAL; dirty = 1; stash();
+          toast("Data dari peramban ini dimuat. Klik Terbitkan agar terlihat oleh semua.");
+        }
+        ITEMS.forEach(function (it) { var inp = $("lk-" + it.no); if (inp) { inp.value = rec(it.no).link || ""; inp.dispatchEvent(new Event("input")); } });
+        setMode(); renderAll();
+      });
+    }).catch(function () {});
+  }
+
+  buildTower(); buildRows(); buildCal(); renderAll(); startCrane(); setView("ringkasan"); setMode(); initArt();
 })();
 </script>
 <!--PAGE-END-->
