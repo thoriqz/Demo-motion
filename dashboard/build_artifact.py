@@ -2,7 +2,7 @@
 
 Isi halaman disimpan di <template id="dash-src">, data di <script id="dash-state">,
 dan skrip kecil dash-boot menyalin template ke halaman lalu menjalankan skripnya berurutan.
-Pemakaian: python3 dashboard/build_artifact.py OUT.html
+Pemakaian: python3 dashboard/build_artifact.py OUT.html [STATE.json]
 """
 import re, sys, pathlib
 src = pathlib.Path(__file__).with_name("index.html").read_text()
@@ -29,5 +29,9 @@ out = ('<title>Dashboard Divisi Umum</title>\n'
        '<script type="application/json" id="dash-state">{"rev":0}</script>\n'
        '<template id="dash-src">' + page + '</template>\n'
        '<script id="dash-boot">' + boot + '</script>')
+if len(sys.argv) > 2:  # data terbitan terakhir (isi #dash-state) agar tidak hilang saat halaman diperbarui
+    state = pathlib.Path(sys.argv[2]).read_text().strip()
+    assert "</" not in state
+    out = out.replace('{"rev":0}', state, 1)
 pathlib.Path(sys.argv[1]).write_text(out)
 print("ok", len(out))

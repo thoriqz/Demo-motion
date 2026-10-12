@@ -1616,21 +1616,26 @@ table.ht tbody tr:hover td{background:var(--grid)}
       if (i === 0 || due.getTime() - 40 * 864e5 <= today.getTime()) PERIODS.push({ key: "M:" + m.slice(0, 7), type: "M", date: due, label: "Bulanan · " + fD.format(due), short: "Bulanan " + fM.format(due) });
     });
   }
-  /* data lama (sebelum ada periode) dipindah ke periode pertama: Sabtu pertama / bulan pertama */
+  /* data lama (sebelum ada periode) dipindah ke periode yang tenggatnya tampil saat data diisi:
+     Sabtu terdekat (hari itu atau sesudahnya) dari waktu pembaruan terakhir; tugas bulanan ke bulan itu */
   function migrate(o) {
     if (!o || o.p) return o;
     var n = { p: {} }, any = false;
+    var base = o._upd ? new Date(o._upd) : new Date(today); base.setHours(0, 0, 0, 0);
+    var wk = HS.weeks.filter(function (w) { return w && pd(w).getTime() >= base.getTime(); })[0] || HS.weeks[HS.weeks.length - 1];
+    var mo = HS.months.filter(function (m) { if (!m) return false; var d = pd(m); return new Date(d.getFullYear(), d.getMonth(), 25).getTime() >= base.getTime(); })[0] || HS.months[0];
     Object.keys(o).forEach(function (k) {
       if (!/^\d+$/.test(k)) { n[k] = o[k]; return; }
       var it = ALL[+k - 1]; if (!it) return; any = true;
-      var key = (it.w || it.h) ? "W:" + HS.weeks[0] : "M:" + HS.months[0].slice(0, 7);
+      var key = (it.w || it.h) ? "W:" + wk : "M:" + mo.slice(0, 7);
       (n.p[key] = n.p[key] || {})[k] = o[k];
     });
     return any ? n : (o.p = {}, o);
   }
   function defaultPer() {
-    var t = today.getTime(), w = PERIODS.filter(function (x) { return x.type === "W"; }), pick = w[0];
-    w.forEach(function (x) { if (x.date.getTime() <= t) pick = x; });
+    /* minggu berjalan: Sabtu terdekat hari ini atau sesudahnya */
+    var t = today.getTime(), w = PERIODS.filter(function (x) { return x.type === "W"; });
+    var pick = w.filter(function (x) { return x.date.getTime() >= t; })[0] || w[w.length - 1];
     return pick ? pick.key : PERIODS[0].key;
   }
   function setPer(key, quiet) {
