@@ -35,7 +35,6 @@
     division: VIEWS[t.closest("section.view").id].title
   }));
   MODULES.push({ id: null, view: "legal", name: "Arsip Dokumen Eksternal", division: "Legal" });
-  MODULES.push({ id: null, view: "tugas", name: "Tugas Pelaporan", division: "Tugas" });
 
   /* ---------- Router ---------- */
   let current = null;
@@ -93,7 +92,7 @@
 
   function renderHome() {
     const docs = window.DUDocs;
-    const letters = get("du-letters", []).length + D.letters.length;
+    const letters = docs ? docs.count("admin") : 0;
     const closing = get("du-close", null) || D.closing.tasks.map((t) => t.done);
     const closePct = Math.round((closing.filter(Boolean).length / closing.length) * 100);
     const procN = docs ? docs.count("procurement") : 0;
@@ -136,24 +135,18 @@
       nd.style.transform = `rotate(${(pct / 100) * 180}deg)`;
     }));
 
-    // Tugas terbuka: tindak lanjut notulen + tiket baru
-    const mom = get("du-mom", {});
-    let tasks = 0;
-    D.minutes.forEach((m) => m.actions.forEach((a, i) => { if (!(mom[m.id + i] ?? a.done)) tasks++; }));
-    tasks += (get("du-serv", null) || D.services).filter((s) => s.stage === 0).length;
+    // Tugas terbuka: tugas umum periode berjalan yang belum selesai + tiket baru
+    let tasks = (get("du-serv", null) || D.services).filter((s) => s.stage === 0).length;
+    if (window.DUTasks) { const t = window.DUTasks.summary(); tasks += t.Belum + t.Proses; }
     countTo($("#hTasks"), tasks);
+    $("#hModN").textContent = MODULES.length;
 
     // Tumpukan PDF legal terbaru
     const latest = docs ? docs.latest("legal", 3).reverse() : [];
     const cards = latest.length ? latest.map((f) => ({ t: f.name, s: f.jenis })) : [{ t: "Belum ada PDF", s: "unggah di menu Legal" }, { t: "Arsip legal", s: "perizinan · kontrak · akta" }, { t: "Divisi Umum", s: "Roemantara" }];
     $("#hIso").innerHTML = cards.map((c, k) => `<div class="cd" style="--k:${k}">${esc(c.t)}<small>${esc(c.s)}</small></div>`).join("");
 
-    // Aktivitas terbaru
-    const acts = [
-      ...D.letters.slice(0, 2).map((l) => ({ t: `${l.type} · ${l.subject}`, s: `${l.party} · ${l.date}`, p: l.value ? rpShort(l.value) : l.status, tone: l.type === "INV" ? "ok" : "info" })),
-      ...D.clientRequests.filter((c) => c.status !== "Selesai").slice(0, 2).map((c) => ({ t: c.req, s: `${c.client} · ${c.channel}, ${c.at}`, p: c.status, tone: c.status === "Menunggu" ? "warn" : "info" }))
-    ];
-    $("#hAct").innerHTML = acts.map((a, k) => `<li style="--k:${k}"><div><b>${esc(a.t)}</b><small>${esc(a.s)}</small></div><span class="pill pill--${a.tone}">${esc(a.p)}</span></li>`).join("");
+    renderLog();
 
     // Arsip legal
     $("#hSecTitle").textContent = `${legalN} PDF legal`;
@@ -172,6 +165,45 @@
   document.addEventListener("du:tasks", () => buildNotes());
   document.addEventListener("du:cal", () => { if (current === "home") renderCal(); buildNotes(); });
 
+  /* Riwayat aktivitas harian (koleksi "activity") */
+  const LOG = { rows: [], mode: "loading", day: new Date(today.toDateString()), area: "Semua" };
+  const AREAS = ["Semua", "GA", "Admin", "Finance", "HR", "Legal", "Umum", "Proyek"];
+  const ymdL = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  async function renderLog() {
+    const ol = $("#hLog");
+    if (!ol) return;
+    const key = ymdL(LOG.day), isToday = key === ymdL(new Date());
+    const dayRows = LOG.rows.filter((r) => r.day === key);
+    const present = AREAS.filter((a) => a === "Semua" || dayRows.some((r) => r.area === a));
+    if (!present.includes(LOG.area)) LOG.area = "Semua";
+    $("#hLogDay").textContent = isToday ? "Hari ini" : LOG.day.toLocaleDateString("id-ID", { weekday: "short", day: "numeric", month: "short" });
+    $("#hLogState").textContent = LOG.mode === "live" ? `${dayRows.length} aktivitas` : LOG.mode === "local" ? "tersimpan di browser ini" : "memuat…";
+    $("#hLogChips").innerHTML = present.map((a) => `<button type="button" aria-pressed="${a === LOG.area}" data-logarea="${esc(a)}">${esc(a)} <b>${a === "Semua" ? dayRows.length : dayRows.filter((r) => r.area === a).length}</b></button>`).join("");
+    const rows = dayRows.filter((r) => LOG.area === "Semua" || r.area === LOG.area);
+    const names = window.DUStore ? await window.DUStore.names(rows.map((r) => r.by)) : {};
+    ol.innerHTML = rows.map((r, k) => `<li style="--k:${Math.min(k, 8)}">
+        <span class="h-log__time">${esc(new Date(r.at).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }))}</span>
+        <span class="h-log__txt"><b>${esc(r.text)}</b><small>${r.by ? esc((names[r.by] && names[r.by].name) || "Anggota tim") : "—"}</small></span>
+        <span class="tag">${esc(r.area)}</span></li>`).join("")
+      || `<li class="h-log__empty">${LOG.mode === "loading" ? "Memuat riwayat…" : isToday ? "Belum ada aktivitas hari ini. Upload PDF, input FPP, atau tugas harian akan tercatat di sini." : "Tidak ada aktivitas di tanggal ini."}</li>`;
+  }
+  document.addEventListener("click", (e) => {
+    const n = e.target.closest("[data-lognav]");
+    if (n) {
+      const k = +n.dataset.lognav;
+      if (k === 0) LOG.day = new Date(new Date().toDateString());
+      else { const d = new Date(LOG.day); d.setDate(d.getDate() + k); if (d <= new Date()) LOG.day = d; }
+      renderLog(); return;
+    }
+    const a = e.target.closest("[data-logarea]");
+    if (a) { LOG.area = a.dataset.logarea; renderLog(); }
+  });
+  if (window.DUStore) window.DUStore.watch("activity", (rows, mode) => {
+    LOG.mode = mode === "error" ? "local" : mode;
+    if (rows) LOG.rows = rows;
+    if (current === "home") renderLog();
+  }, { limit: 1000 });
+
   /* Agenda Google Calendar di Beranda */
   function renderCal() {
     const C = window.DUCal, ul = $("#hCal"), st = $("#hCalState");
@@ -180,11 +212,16 @@
     st.textContent = mode === "live" ? "14 hari ke depan" : mode === "local" ? "hanya di versi claude.ai" : mode === "error" ? "belum tersambung" : "memuat…";
     ul.innerHTML = evs.length ? evs.map((e, k) => {
       const d = e.firstDay;
-      return `<li style="--k:${k}"><a href="${esc(e.link)}" target="_blank" rel="noopener">
+      return `<li style="--k:${k}"><a href="${esc(e.link)}" target="_blank" rel="noopener" data-preview="${esc(e.id)}">
         <span class="h-cal__date"><b>${d.getDate()}</b><small>${esc(d.toLocaleDateString("id-ID", { month: "short" }))}</small></span>
         <span class="h-cal__txt"><b>${esc(e.short)}</b><small>${esc(e.allDay ? (+e.firstDay === +e.lastDay ? "Seharian" : "s.d. " + e.lastDay.toLocaleDateString("id-ID", { day: "numeric", month: "short" })) : e.time)}${e.tag ? " · " + esc(e.tag) : ""}</small></span></a></li>`;
     }).join("") : `<li class="h-cal__empty">${esc(mode === "live" ? "Tidak ada agenda dalam 14 hari ke depan." : mode === "error" ? C.error() : "Agenda dari Google Calendar akan tampil di sini.")}</li>`;
   }
+
+  $("#hCal").addEventListener("click", (e) => {
+    const a = e.target.closest("[data-preview]");
+    if (a && window.DUCal && window.DUCal.preview) { e.preventDefault(); window.DUCal.preview(a.dataset.preview); }
+  });
 
   /* ---------- Pencarian modul ---------- */
   const input = $("#sSearch"), results = $("#sResults");

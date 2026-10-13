@@ -5,10 +5,10 @@ Divisi digambarkan sebagai gedung 5 lantai — tiap lantai satu bidang:
 
 | Lantai | Bidang | Modul |
 |---|---|---|
-| LT.01 | General Affairs | Procurement & Purchasing (PR → Approval → PO → Dikirim → Diterima, form PR baru) · Aset & Inventaris · Vendor & Subkon (rating, status, filter kategori) · Pelayanan Umum (papan tiket) · Layanan Klien (waktu respons & target SLA 30 menit) · Kalender Internal & Eksternal |
-| LT.02 | Administrasi | Surat-menyurat SPK/SPH/Invoice/BA/Umum dengan penomoran otomatis (`022/SPH/RMT/X/2026`) · Pengarsipan internal & eksternal (surat, company profile, portofolio) · Notulen rapat + tindak lanjut |
+| LT.01 | General Affairs | Procurement & Purchasing (input manual FPP kategori Material / Divisi / Kebutuhan Kantor + lampiran PDF) · Aset & Inventaris · Vendor & Subkon (rating, status, filter kategori) · Pelayanan Umum (papan tiket) · Layanan Klien (waktu respons & target SLA 30 menit) · Kalender Internal & Eksternal |
+| LT.02 | Administrasi | Arsip PDF per kategori (SPK, SPH, Invoice, Berita Acara, surat masuk/keluar, company profile, portofolio, notulen, memo internal) |
 | LT.03 | Finance & Accounting | Rekonsiliasi bank per rekening · Laporan keuangan harian/mingguan/bulanan + anggaran vs realisasi · Daftar periksa tutup buku + kunci periode |
-| LT.04 | Human Resources | Database karyawan dari DATABASE_SDM_ROEMANTRA.xlsx (nama, jenis kelamin, usia, HP, posisi, email) · Database freelancer per posisi dari DATABASE_FREELANCE.xlsx · Absensi live dari dashboard Google Apps Script (disematkan, muat ulang otomatis tiap 5 menit) |
+| LT.04 | Human Resources | Database karyawan dari DATABASE_SDM_ROEMANTRA.xlsx (nama, jenis kelamin, usia, HP, posisi, email) · Direktori freelancer (tabel ala daftar vendor, filter posisi) dari DATABASE_FREELANCE.xlsx · Absensi live dari dashboard Google Apps Script (disematkan, muat ulang otomatis tiap 5 menit) |
 | LT.05 | Legal | Arsip semua dokumen eksternal (perizinan, kontrak, akta, asuransi, sertifikat) + pengingat jatuh tempo |
 
 ## Motion & interaksi
@@ -24,8 +24,8 @@ Divisi digambarkan sebagai gedung 5 lantai — tiap lantai satu bidang:
 - `sage.html` — tampilan **Sage Soft** (Opsi I): sidebar, Beranda ringkas, satu bidang per halaman,
   pencarian modul, dan notifikasi. Isi dan logika 16 modul sama persis (`assets/js/app.js`).
 
-## Lampiran PDF (Procurement & Legal)
-Procurement dan Legal kini berupa arsip PDF: unggah satu atau beberapa PDF (maks. 20 MB per file), pilih jenis dokumen,
+## Lampiran PDF (Procurement, Admin & Legal)
+Procurement, Admin, dan Legal punya arsip PDF: unggah satu atau beberapa PDF (maks. 20 MB per file), pilih jenis dokumen,
 lalu jumlah file dan total ukuran dihitung otomatis. File disimpan di penyimpanan artifact claude.ai dan daftarnya di
 database artifact (koleksi `files`), jadi **hanya berfungsi di versi claude.ai**. Mengunggah dan menghapus butuh akses
 edit ke artifact; anggota lain bisa melihat dan membuka file. Logika ada di `assets/js/docs.js`.
@@ -34,6 +34,7 @@ edit ke artifact; anggota lain bisa melihat dan membuka file. Logika ada di `ass
 Modul GA → Kalender Google membaca dan menulis langsung ke Google Calendar kantor
 (`googleCalendar.calendarId` di `data.js`) lewat connector claude.ai "Google Calendar" (`assets/js/gcal.js`):
 - tampilan bulan + agenda 14 hari ke depan (juga di Beranda Sage dan lonceng notifikasi),
+- klik tanggal untuk melihat semua jadwal hari itu; klik acara untuk pratinjau (waktu, lokasi, catatan, tautan ke Google Calendar),
 - form "Tambah agenda" langsung membuat acara di Google Calendar dengan pengingat pop-up,
 - "Pengingat otomatis" membuat acara untuk jadwal perawatan aset dan batas tutup buku (notifikasi H-2 & H-1 pukul 09.00).
 
@@ -47,6 +48,14 @@ Hanya berfungsi di versi claude.ai.
 status Belum/Proses/Selesai, capaian (angka + satuan), tautan bukti, dan lampiran file (PDF/PNG/JPG).
 Di claude.ai data tersimpan di database (koleksi `tasks`, satu dokumen per periode); tugas yang jatuh tempo
 dalam 2 hari muncul di lonceng notifikasi Sage.
+
+## Input manual & riwayat aktivitas
+`assets/js/store.js` menyimpan data input manual di database artifact claude.ai (di salinan lokal: `localStorage` browser):
+- **FPP** (`assets/js/fpp.js`, koleksi `fpp`): GA → Procurement, nomor otomatis `FPP/YYYYMM/NNN`, status Diajukan/Disetujui/Dibeli/Ditolak.
+- **Tugas harian** (`assets/js/harian.js`, koleksi `daily`): Tugas → Tugas Harian, tiap entri terhubung ke salah satu
+  tugas umum; kartu tugas umum menampilkan jumlah catatan harian di periodenya dan bisa saling melompat.
+- **Riwayat aktivitas** (koleksi `activity`): unggah/hapus PDF, input/status FPP, tugas harian, status tugas umum,
+  dan agenda Google Calendar baru tercatat otomatis; tampil per hari di Beranda Sage.
 
 ## Kunci PIN Keuangan
 Menu Finance & Accounting (dan kartu angka keuangan di Beranda/Ringkasan) terkunci PIN 4–6 digit,

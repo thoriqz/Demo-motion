@@ -233,18 +233,17 @@
      RINGKASAN
      ========================================================= */
   const state = {
-    letters: store.get("du-letters", []).concat(D.letters),
     closing: store.get("du-close", null) || D.closing.tasks.map((t) => t.done),
     recon: store.get("du-recon", {})
   };
 
   function renderKpi() {
     const docs = window.DUDocs;
-    const procN = docs ? docs.count("procurement") : 0, legalN = docs ? docs.count("legal") : 0;
+    const procN = docs ? docs.count("procurement") : 0, admN = docs ? docs.count("admin") : 0, legalN = docs ? docs.count("legal") : 0;
     const closePct = Math.round((state.closing.filter(Boolean).length / state.closing.length) * 100);
     const kpi = [
       { label: "PDF Procurement", value: procN, unit: "file", floor: "LT.01 · GA", href: "#ga" },
-      { label: "Surat Bulan Ini", value: state.letters.length, unit: "surat", floor: "LT.02 · ADM", href: "#adm" },
+      { label: "Arsip Admin (PDF)", value: admN, unit: "file", floor: "LT.02 · ADM", href: "#adm" },
       { label: "Progres Tutup Buku", value: closePct, unit: "%", floor: "LT.03 · FIN", href: "#fin" },
       { label: "Karyawan + Freelancer", value: D.employees.length + D.freelancers.length, unit: "orang", floor: "LT.04 · HR", href: "#hr" },
       { label: "Arsip Legal (PDF)", value: legalN, unit: "file", floor: "LT.05 · LGL", href: "#legal" }
@@ -437,124 +436,6 @@
       </div>
       <h4 class="mini-title mono">${up("Permintaan per kanal")}</h4>
       <div class="bars">${Object.entries(byCh).map(([k, v]) => `<div class="bar-row"><span>${esc(k)}</span><b>${v}</b><div class="meter"><i data-w="${(v / reqs.length) * 100}"></i></div></div>`).join("")}</div>`;
-  }
-
-  /* =========================================================
-     LT.02 ADMINISTRASI
-     ========================================================= */
-  function renderLetters() {
-    const types = D.letterTypes;
-    const tabs = $("#letterTabs"), body = $("#letterBody"), form = $("#letterForm"), preview = $("#letterPreview");
-    let filter = "all";
-    tabs.innerHTML = `<button type="button" aria-pressed="true" data-filter="all">Semua</button>` + types.map((t) => `<button type="button" aria-pressed="false" data-filter="${t.code}" title="${esc(t.name)}">${t.code}</button>`).join("");
-    form.type.innerHTML = types.map((t) => `<option value="${t.code}">${t.code} — ${esc(t.name)}</option>`).join("");
-    const tone = { Draft: "muted", Terkirim: "info", Ditandatangani: "ok", Lunas: "ok" };
-    const draw = (hl) => {
-      body.innerHTML = state.letters.filter((l) => filter === "all" || l.type === filter).map((l) => `
-        <tr class="${l.no === hl ? "is-new" : ""}"><td>${esc(l.no)}</td><td><span class="tag tag--plain">${esc(l.type)}</span></td><td>${esc(l.subject)}</td>
-        <td>${esc(l.party)}</td><td class="num">${l.value ? rpShort(l.value) : "—"}</td><td>${esc(l.date)}</td><td>${pill(l.status, tone[l.status] || "muted")}</td></tr>`).join("")
-        || `<tr><td colspan="7" class="empty">Belum ada surat jenis ini.</td></tr>`;
-    };
-    const nextNo = () => {
-      const code = form.type.value;
-      const n = Math.max(0, ...state.letters.filter((l) => l.type === code).map((l) => parseInt(l.no, 10) || 0)) + 1;
-      return `${String(n).padStart(3, "0")}/${code}/RMT/${ROMAN[today.getMonth()]}/${today.getFullYear()}`;
-    };
-    const refresh = () => (preview.textContent = nextNo());
-    pressGroup(tabs, (b) => { filter = b.dataset.filter; draw(); });
-    form.type.addEventListener("change", refresh);
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const l = { no: nextNo(), type: form.type.value, subject: form.subject.value.trim(), party: form.party.value.trim(), value: +form.value.value || null, date: fmtDate(today, { day: "2-digit", month: "short" }), status: "Draft" };
-      if (!l.subject || !l.party) return;
-      state.letters.unshift(l);
-      store.set("du-letters", state.letters.slice(0, state.letters.length - D.letters.length));
-      filter = "all";
-      $$("button", tabs).forEach((x) => x.setAttribute("aria-pressed", x.dataset.filter === "all"));
-      draw(l.no);
-      form.subject.value = form.party.value = form.value.value = "";
-      refresh(); refreshKpi();
-      toast(`Surat ${l.no} terdaftar sebagai draft`);
-    });
-    draw(); refresh();
-  }
-
-  function renderArchive() {
-    const cats = D.archiveCats, docs = D.archives;
-    const folders = $("#archFolders"), body = $("#archBody"), search = $("#archSearch");
-    let scope = "all", cat = "all";
-    folders.innerHTML = cats.map((c, i) => `<button class="folder" type="button" data-cat="${esc(c)}" style="--d:${i}" aria-pressed="false">
-      <svg viewBox="0 0 40 30" aria-hidden="true"><path d="M2 6h12l3 4h21v18H2z" pathLength="1"/></svg>
-      <b>${esc(c)}</b><small class="mono">${docs.filter((d) => d.cat === c).length} ${up("dokumen")}</small></button>`).join("");
-    const draw = () => {
-      const q = norm(search.value);
-      const rows = docs.filter((d) => (scope === "all" || d.scope === scope) && (cat === "all" || d.cat === cat) && (!q || norm(d.code + d.title).includes(q)));
-      body.innerHTML = rows.map((d) => `<tr><td>${esc(d.code)}</td><td>${esc(d.title)}</td><td>${esc(d.cat)}</td>
-        <td>${pill(d.scope, d.scope === "Internal" ? "info" : "muted")}</td><td>${esc(d.date)}</td><td class="mono small">${esc(d.loc)}</td></tr>`).join("")
-        || `<tr><td colspan="6" class="empty">Tidak ada arsip yang cocok.</td></tr>`;
-      $("#archNote").textContent = `${rows.length} dari ${docs.length} arsip ditampilkan${cat !== "all" ? " · folder: " + cat : ""}`;
-    };
-    folders.addEventListener("click", (e) => {
-      const b = e.target.closest(".folder");
-      if (!b) return;
-      cat = cat === b.dataset.cat ? "all" : b.dataset.cat;
-      $$(".folder", folders).forEach((f) => f.setAttribute("aria-pressed", f.dataset.cat === cat));
-      draw();
-    });
-    pressGroup($("#archScope"), (b) => { scope = b.dataset.scope; draw(); });
-    search.addEventListener("input", draw);
-    draw();
-  }
-
-  function renderMinutes() {
-    const saved = store.get("du-mom", {});
-    const moms = D.minutes.map((m) => ({ ...m, actions: m.actions.map((a, i) => ({ ...a, done: saved[m.id + i] ?? a.done })) }));
-    const list = $("#momList"), detail = $("#momDetail");
-    let current = moms[0].id;
-    const drawList = () => {
-      list.innerHTML = moms.map((m) => {
-        const open = m.actions.filter((a) => !a.done).length;
-        return `<button type="button" class="mom-item" aria-pressed="${m.id === current}" data-id="${m.id}">
-          <span class="mono">${esc(m.id)} · ${esc(m.date)}</span><b>${esc(m.title)}</b>
-          <small>${open ? `${open} tindak lanjut terbuka` : "Semua tindak lanjut selesai"}</small></button>`;
-      }).join("");
-    };
-    const drawDetail = () => {
-      const m = moms.find((x) => x.id === current);
-      detail.innerHTML = `
-        <div class="mom">
-          <div class="mom__head"><span class="mono eyebrow">${esc(m.id)} · ${up("Notulen rapat")}</span><h3>${esc(m.title)}</h3>
-            <dl class="mom__meta"><div><dt>Tanggal</dt><dd>${esc(m.date)}, ${esc(m.time)}</dd></div><div><dt>Tempat</dt><dd>${esc(m.place)}</dd></div><div><dt>Pimpinan</dt><dd>${esc(m.lead)}</dd></div></dl>
-            <div class="mom__people">${m.attendees.map((a) => `<span class="tag tag--plain">${esc(a)}</span>`).join("")}</div></div>
-          <div class="mom__body">
-            <section><h4 class="mini-title mono">${up("Pembahasan")}</h4><ol>${m.points.map((p) => `<li>${esc(p)}</li>`).join("")}</ol></section>
-            <section><h4 class="mini-title mono">${up("Keputusan")}</h4><ul>${m.decisions.map((p) => `<li>${esc(p)}</li>`).join("")}</ul></section>
-          </div>
-          <h4 class="mini-title mono">${up("Tindak lanjut")}</h4>
-          <ul class="checklist checklist--pic">${m.actions.map((a, i) => `
-            <li class="${a.done ? "done" : ""}" data-i="${i}" role="checkbox" aria-checked="${a.done}" tabindex="0">
-              <span class="box"><svg viewBox="0 0 16 16"><polyline points="3,8 7,12 13,4" pathLength="1"/></svg></span>
-              <span class="ck__txt">${esc(a.task)}</span><span class="ck__pic mono">${esc(a.pic)} · ${esc(a.due)}</span></li>`).join("")}</ul>
-        </div>`;
-    };
-    list.addEventListener("click", (e) => {
-      const b = e.target.closest(".mom-item");
-      if (!b) return;
-      current = b.dataset.id;
-      drawList(); drawDetail();
-    });
-    const toggle = (li) => {
-      const m = moms.find((x) => x.id === current), i = +li.dataset.i;
-      m.actions[i].done = !m.actions[i].done;
-      saved[m.id + i] = m.actions[i].done;
-      store.set("du-mom", saved);
-      li.classList.toggle("done", m.actions[i].done);
-      li.setAttribute("aria-checked", m.actions[i].done);
-      drawList();
-    };
-    detail.addEventListener("click", (e) => { const li = e.target.closest(".checklist li"); if (li) toggle(li); });
-    detail.addEventListener("keydown", (e) => { const li = e.target.closest(".checklist li"); if (li && (e.key === " " || e.key === "Enter")) { e.preventDefault(); toggle(li); } });
-    drawList(); drawDetail();
   }
 
   /* =========================================================
@@ -757,23 +638,28 @@
   }
 
   function renderFreelancers() {
-    const grid = $("#freeGrid"), tabs = $("#freeTabs");
-    tabs.innerHTML = `<button type="button" aria-pressed="true" data-filter="all">Semua</button>` +
-      D.freelancePositions.map((p) => `<button type="button" aria-pressed="false" data-filter="${esc(p)}">${esc(p)}</button>`).join("");
-    const draw = (f) => {
-      grid.innerHTML = D.freelancePositions.filter((p) => f === "all" || p === f).map((p, i) => {
-        const people = D.freelancers.filter((x) => x.role === p);
-        return `<div class="vcard" style="--d:${i}">
-          <div class="vcard__top"><span class="tag tag--plain">Freelance</span>${pill(people.length + " orang", people.length ? "ok" : "")}</div>
-          <h4>${esc(p)}</h4>
-          ${people.length ? `<dl>${people.map((x) => `<div><dt>${esc(x.name)}</dt><dd><a class="lnk mono" href="${waLink(x.phone)}" target="_blank" rel="noopener">${esc(x.phone)}</a></dd></div>`).join("")}</dl>`
-            : `<p class="note mono">Belum ada freelancer di posisi ini.</p>`}
-        </div>`;
-      }).join("");
-      $("#freeNote").textContent = `${D.freelancers.length} freelancer di ${D.freelancePositions.length} posisi · klik nomor untuk WhatsApp`;
+    const list = D.freelancers, pos = D.freelancePositions, chips = $("#freeChips"), body = $("#freeBody"), search = $("#freeSearch");
+    const empty = pos.filter((p) => !list.some((x) => x.role === p));
+    const top = pos.map((p) => [p, list.filter((x) => x.role === p).length]).sort((x, y) => y[1] - x[1])[0];
+    $("#freeStats").innerHTML =
+      stat("Freelancer", `<span data-count="${list.length}">${list.length}</span>`, "terdaftar") +
+      stat("Posisi", `<span data-count="${pos.length}">${pos.length}</span>`, pos.join(" · ")) +
+      stat("Posisi terbanyak", esc(top[0]), `${top[1]} orang`) +
+      stat("Posisi kosong", `<span data-count="${empty.length}">${empty.length}</span>`, empty.length ? esc(empty.join(", ")) : "semua terisi", empty.length ? "warn" : "");
+    let cat = "Semua";
+    chips.innerHTML = ["Semua"].concat(pos).map((c, i) => `<button type="button" aria-pressed="${i === 0}" data-cat="${esc(c)}">${esc(c)} <b>${c === "Semua" ? list.length : list.filter((x) => x.role === c).length}</b></button>`).join("");
+    const draw = () => {
+      const q = norm(search.value);
+      const rows = list.filter((x) => (cat === "Semua" || x.role === cat) && (!q || norm(x.name + x.role + x.phone).includes(q)));
+      body.innerHTML = rows.map((x, i) => `<tr><td class="mono">${i + 1}</td><td>${esc(x.name)}</td><td><span class="tag tag--plain">${esc(x.role)}</span></td>
+          <td class="mono"><a class="tel" href="tel:${x.phone.replace(/\D/g, "")}">${esc(x.phone)}</a></td>
+          <td><a class="mini-btn" href="${waLink(x.phone)}" target="_blank" rel="noopener" aria-label="WhatsApp ${esc(x.name)}">WhatsApp</a></td></tr>`).join("")
+        || `<tr><td colspan="5" class="empty">${cat !== "Semua" && !list.some((x) => x.role === cat) ? "Belum ada freelancer di posisi ini." : "Tidak ada freelancer yang cocok."}</td></tr>`;
+      $("#freeNote").textContent = `${rows.length} dari ${list.length} freelancer ditampilkan · sumber: Database Freelance (Excel)`;
     };
-    pressGroup(tabs, (b) => draw(b.dataset.filter));
-    draw("all");
+    pressGroup(chips, (b) => { cat = b.dataset.cat; draw(); });
+    search.addEventListener("input", draw);
+    draw();
   }
 
   /* Absensi: dashboard Google Apps Script disematkan langsung, jadi selalu
@@ -807,7 +693,6 @@
   initTheme();
   renderKpi();
   renderAssets(); renderVendors(); renderServices(); renderClient();
-  renderLetters(); renderArchive(); renderMinutes();
   renderRecon(); renderReports(); renderClosing();
   renderEmployees(); renderFreelancers(); renderAttendance();
   initModTabs();

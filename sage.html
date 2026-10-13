@@ -55,7 +55,7 @@
       <!-- Beranda -->
       <section class="view s-home" id="home" data-view="home">
         <div class="hc kp" style="--i:0"><div><span class="lb">PDF procurement</span><b class="big" id="hPo">0</b><span class="lb sm" id="hPoSub"></span></div><span class="mini-bars" id="hPoBars"></span></div>
-        <div class="hc kp" style="--i:1"><span class="circ"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span><div><span class="lb">Surat bulan ini</span><b class="big" id="hLetters">0</b></div></div>
+        <div class="hc kp" style="--i:1"><span class="circ"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span><div><span class="lb">PDF admin</span><b class="big" id="hLetters">0</b></div></div>
         <div class="hc kp" style="--i:2"><span class="circ sand"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0"/><circle cx="17" cy="9" r="2.4"/><path d="M16 14a5 5 0 0 1 5 5"/></svg></span><div><span class="lb">Karyawan + freelancer</span><b class="big" id="hPeople">0</b></div></div>
         <a class="hc kp dark" data-secure="finance" style="--i:3" href="#fin" data-tab="fin-close"><div><span class="lb">Progres tutup buku</span><b class="big" id="hClose">0%</b></div>
           <svg class="mini" viewBox="0 0 70 22" aria-hidden="true"><path class="sq" pathLength="1" d="M0 20 C 6 20, 8 2, 16 4 S 22 20, 30 16 S 40 2, 50 6 S 62 4, 70 2"/></svg></a>
@@ -76,14 +76,13 @@
         </div>
         <div class="hc h-pro" style="--i:6">
           <span class="av">HG</span><h3>Head of General Dept.</h3><span class="lb">GA · Admin · Finance · HR · Legal</span>
-          <div class="st"><div><span class="lb">Modul</span><b>16</b></div><div><span class="lb">Tim</span><b>2</b></div><div><span class="lb">Tugas terbuka</span><b id="hTasks">0</b></div></div>
+          <div class="st"><div><span class="lb">Modul</span><b id="hModN">16</b></div><div><span class="lb">Tim</span><b>2</b></div><div><span class="lb">Tugas terbuka</span><b id="hTasks">0</b></div></div>
         </div>
 
         <div class="hc h-stack" style="--i:7">
           <div><h3>Arsip legal terbaru</h3><p>Tiga PDF legal yang terakhir diunggah. Arahkan kursor ke tumpukan untuk membukanya.</p><a class="btn-s" href="#legal">Buka arsip legal</a></div>
           <div class="iso" id="hIso"></div>
         </div>
-        <div class="hc h-act" style="--i:8"><h3>Aktivitas terbaru</h3><ul id="hAct"></ul></div>
         <div class="hc h-sec" style="--i:9">
           <svg viewBox="0 0 48 48" aria-hidden="true"><path pathLength="1" d="M24 4 L40 10 V22 C40 33 33 41 24 44 C15 41 8 33 8 22 V10 Z"/><path pathLength="1" d="M17 24 l5 5 l9 -10" style="--k:1"/></svg>
           <h3 id="hSecTitle">Arsip legal</h3><span class="lb" id="hSecSub"></span><a class="btn-s" href="#legal">Lihat dokumen</a>
@@ -93,7 +92,18 @@
           <div class="hd"><h3>Agenda Google Calendar</h3><span class="lb" id="hCalState"></span><a class="per" href="#ga" data-tab="ga-cal">Buka kalender →</a></div>
           <ul class="h-cal__list" id="hCal"></ul>
         </div>
-        <div class="hc h-mods" style="--i:11"><h3>Akses cepat modul</h3><div class="modgrid" id="hMods"></div></div>
+        <div class="hc h-log" style="--i:11">
+          <div class="hd"><h3>Riwayat aktivitas</h3><span class="lb" id="hLogState"></span>
+            <div class="tabs h-log__nav" role="group" aria-label="Pindah hari">
+              <button type="button" data-lognav="-1" aria-label="Hari sebelumnya">‹</button>
+              <button type="button" data-lognav="0" id="hLogDay">Hari ini</button>
+              <button type="button" data-lognav="1" aria-label="Hari berikutnya">›</button>
+            </div>
+          </div>
+          <div class="h-log__chips" id="hLogChips" role="group" aria-label="Filter bidang"></div>
+          <ol class="h-log__list" id="hLog"></ol>
+        </div>
+        <div class="hc h-mods" style="--i:12"><h3>Akses cepat modul</h3><div class="modgrid" id="hMods"></div></div>
       </section>
 
 <!-- GENERAL AFFAIRS -->
@@ -109,7 +119,8 @@
       </div>
 
       <div class="modpanel" id="ga-proc" role="tabpanel">
-        <div class="doclib" data-area="procurement" data-label="Procurement" data-kinds="PR / Permintaan|Penawaran Vendor|PO / Purchase Order|Invoice / Tagihan|Surat Jalan / BAST|Lainnya"></div>
+        <div class="fpp" id="fppApp"></div>
+        <div class="doclib" data-area="procurement" data-label="Procurement" data-kinds="FPP|PR / Permintaan|Penawaran Vendor|PO / Purchase Order|Invoice / Tagihan|Surat Jalan / BAST|Lainnya"></div>
       </div>
 
       <div class="modpanel" id="ga-asset" role="tabpanel" hidden>
@@ -197,67 +208,8 @@
 
     <!-- ADMINISTRASI -->
     <section class="view" hidden id="adm" data-floor="2">
-      <header class="view-head" hidden><h2>Administrasi</h2><p>Surat-menyurat (SPK, SPH, Invoice, BA), arsip internal &amp; eksternal, dan notulen rapat.</p></header>
-      <div class="modtabs" role="tablist" aria-label="Modul Administrasi">
-        <button role="tab" data-panel="adm-letter"><span class="mono">01</span>Surat-Menyurat</button>
-        <button role="tab" data-panel="adm-arch"><span class="mono">02</span>Pengarsipan</button>
-        <button role="tab" data-panel="adm-mom"><span class="mono">03</span>Notulen Rapat</button>
-      </div>
-
-      <div class="modpanel" id="adm-letter" role="tabpanel">
-        <div class="grid grid--2-1">
-          <article class="panel">
-            <div class="panel__head">
-              <h3 class="panel__title mono">Register surat</h3>
-              <div class="tabs" role="group" id="letterTabs" aria-label="Filter jenis surat"></div>
-            </div>
-            <div class="table-wrap"><table class="table">
-              <thead><tr><th>No. Surat</th><th>Jenis</th><th>Perihal</th><th>Pihak</th><th class="num">Nilai</th><th>Tgl</th><th>Status</th></tr></thead>
-              <tbody id="letterBody"></tbody>
-            </table></div>
-          </article>
-          <article class="panel">
-            <h3 class="panel__title mono">Buat surat baru</h3>
-            <form class="form" id="letterForm" autocomplete="off">
-              <label for="letterType">Jenis Surat<select id="letterType" name="type"></select></label>
-              <label for="letterSubject">Perihal<input id="letterSubject" name="subject" required placeholder="mis. Penawaran desain dapur"></label>
-              <label for="letterParty">Kepada / Pihak<input id="letterParty" name="party" required placeholder="mis. Ibu Larasati"></label>
-              <label for="letterValue">Nilai (Rp)<input id="letterValue" name="value" type="number" min="0" step="1000" placeholder="opsional, untuk SPK/SPH/Invoice"></label>
-              <output class="form__preview mono" id="letterPreview">—</output>
-              <button class="btn btn--solid" type="submit">Daftarkan Surat</button>
-            </form>
-          </article>
-        </div>
-      </div>
-
-      <div class="modpanel" id="adm-arch" role="tabpanel" hidden>
-        <div class="folder-row" id="archFolders"></div>
-        <article class="panel panel--wide">
-          <div class="panel__head">
-            <div class="tabs" role="group" id="archScope" aria-label="Lingkup arsip">
-              <button type="button" aria-pressed="true" data-scope="all">Semua</button>
-              <button type="button" aria-pressed="false" data-scope="Internal">Internal</button>
-              <button type="button" aria-pressed="false" data-scope="Eksternal">Eksternal</button>
-            </div>
-            <input class="search" type="search" id="archSearch" placeholder="Cari judul atau kode arsip…" aria-label="Cari arsip">
-          </div>
-          <div class="table-wrap"><table class="table">
-            <thead><tr><th>Kode</th><th>Judul Dokumen</th><th>Kategori</th><th>Lingkup</th><th>Tanggal</th><th>Lokasi (Fisik · Digital)</th></tr></thead>
-            <tbody id="archBody"></tbody>
-          </table></div>
-          <p class="note mono" id="archNote"></p>
-        </article>
-      </div>
-
-      <div class="modpanel" id="adm-mom" role="tabpanel" hidden>
-        <div class="grid grid--1-2">
-          <article class="panel">
-            <h3 class="panel__title mono">Daftar notulen</h3>
-            <div class="mom-list" id="momList"></div>
-          </article>
-          <article class="panel" id="momDetail" aria-live="polite"></article>
-        </div>
-      </div>
+      <header class="view-head" hidden><h2>Administrasi</h2><p>Arsip dokumen administrasi dalam bentuk PDF per kategori: SPK, SPH, Invoice, Berita Acara, surat masuk/keluar, company profile, portofolio, dan notulen.</p></header>
+      <div class="doclib" data-area="admin" data-label="Admin" data-kinds="SPK|SPH|Invoice|Berita Acara|Surat Masuk|Surat Keluar|Company Profile|Portofolio|Notulen Rapat|Memo &amp; Arsip Internal|Lainnya"></div>
     </section>
 
     <!-- FINANCE -->
@@ -346,12 +298,17 @@
       </div>
 
       <div class="modpanel" id="hr-free" role="tabpanel" hidden>
+        <div class="stat-row" id="freeStats"></div>
         <article class="panel panel--wide">
           <div class="panel__head">
-            <h3 class="panel__title mono">Database freelancer</h3>
-            <div class="tabs" role="group" id="freeTabs" aria-label="Filter posisi"></div>
+            <h3 class="panel__title mono">Direktori freelancer</h3>
+            <input class="search" type="search" id="freeSearch" placeholder="Cari nama, posisi, nomor…" aria-label="Cari freelancer">
           </div>
-          <div class="vendor-grid" id="freeGrid"></div>
+          <div class="chips chips--wrap" id="freeChips" role="group" aria-label="Filter posisi"></div>
+          <div class="table-wrap"><table class="table">
+            <thead><tr><th>No.</th><th>Nama Freelancer</th><th>Posisi</th><th>Kontak</th><th></th></tr></thead>
+            <tbody id="freeBody"></tbody>
+          </table></div>
           <p class="note mono" id="freeNote"></p>
         </article>
       </div>
@@ -381,8 +338,13 @@
     </section>
         <!-- TUGAS -->
       <section class="view" hidden id="tugas" data-view="tugas">
-        <header class="view-head" hidden><h2>Tugas</h2><p>Daftar tugas pelaporan Divisi Umum per periode: status, bukti tautan atau file, dan capaian mingguan (Sabtu) &amp; bulanan (tanggal 25).</p></header>
-        <div id="tugasApp"></div>
+        <header class="view-head" hidden><h2>Tugas</h2><p>Tugas harian yang diinput manual dan terhubung ke tugas umum, serta 15 tugas pelaporan per periode (mingguan Sabtu &amp; bulanan tanggal 25).</p></header>
+        <div class="modtabs" role="tablist" aria-label="Modul Tugas">
+          <button role="tab" data-panel="tg-daily"><span class="mono">01</span>Tugas Harian</button>
+          <button role="tab" data-panel="tg-umum"><span class="mono">02</span>Tugas Umum</button>
+        </div>
+        <div class="modpanel" id="tg-daily" role="tabpanel"><div id="harianApp"></div></div>
+        <div class="modpanel" id="tg-umum" role="tabpanel" hidden><div id="tugasApp"></div></div>
       </section>
     </main>
   </div>
@@ -392,11 +354,14 @@
   <script src="assets/js/data.js"></script>
   <script src="assets/js/inventaris.js"></script>
   <script src="assets/js/tugas-data.js"></script>
+  <script src="assets/js/store.js"></script>
   <script src="assets/js/app.js"></script>
   <script src="assets/js/pin.js"></script>
   <script src="assets/js/docs.js"></script>
   <script src="assets/js/gcal.js"></script>
+  <script src="assets/js/fpp.js"></script>
   <script src="assets/js/tugas.js"></script>
+  <script src="assets/js/harian.js"></script>
   <script src="assets/js/sage.js"></script>
 </body>
 </html>

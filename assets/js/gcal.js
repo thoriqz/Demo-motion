@@ -44,6 +44,8 @@
   const errMsg = (e) => ERR[e && e.code] || "Gagal terhubung ke Google Calendar.";
 
   /* ---------- Normalisasi acara ---------- */
+  const plain = (h) => String(h).replace(/<br\s*\/?>/gi, "\n").replace(/<\/(p|div|li)>/gi, "\n").replace(/<[^>]+>/g, "")
+    .replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/\n{3,}/g, "\n\n").trim();
   function norm(ev) {
     if (!ev || ev.status === "cancelled") return null;
     const allDay = !!(ev.start && ev.start.date);
@@ -57,7 +59,7 @@
     return {
       id: ev.id, title: ev.summary || "(tanpa judul)", tag: m ? m[1].trim() : "", short: m ? m[2] : ev.summary || "(tanpa judul)",
       allDay, start: s, end: e, firstDay, lastDay: lastDay < firstDay ? firstDay : lastDay, time: allDay ? "" : hm(s),
-      link: ev.htmlLink, location: ev.location || "", desc: ev.description || ""
+      link: ev.htmlLink, location: ev.location || "", desc: plain(ev.description || "")
     };
   }
   const events = (payload) => ((payload && payload.events) || []).map(norm).filter(Boolean).sort((x, y) => x.start - y.start);
@@ -66,8 +68,14 @@
     : e.time);
 
   /* ---------- State bersama untuk modul lain ---------- */
-  const S = { mcp: null, mode: "loading", month: new Date(today.getFullYear(), today.getMonth(), 1), monthEvents: [], upcoming: [], err: "", unwatchMonth: null, updated: null };
-  window.DUCal = { upcoming: () => S.upcoming, mode: () => S.mode, error: () => S.err };
+  const S = { mcp: null, mode: "loading", month: new Date(today.getFullYear(), today.getMonth(), 1), monthEvents: [], upcoming: [], err: "", unwatchMonth: null, updated: null, day: today };
+  const findEv = (id) => S.monthEvents.find((e) => e.id === id) || S.upcoming.find((e) => e.id === id);
+  const onDay = (day) => {
+    const seen = new Set();
+    return S.monthEvents.concat(S.upcoming).filter((e) => day >= e.firstDay && day <= e.lastDay && !seen.has(e.id) && seen.add(e.id))
+      .sort((a, b) => (b.allDay - a.allDay) || (a.start - b.start));
+  };
+  window.DUCal = { upcoming: () => S.upcoming, mode: () => S.mode, error: () => S.err, preview: (id) => openEvent(id) };
   const announce = () => document.dispatchEvent(new CustomEvent("du:cal"));
 
   /* ---------- Markup modul kalender ---------- */
@@ -86,7 +94,7 @@
             </div>
           </div>
           <div class="cal" id="gcGrid"></div>
-          <p class="note mono">Klik acara untuk membukanya di Google Calendar (ubah atau hapus di sana).</p>
+          <p class="note mono">Klik tanggal untuk melihat semua jadwal hari itu, klik acara untuk pratinjau.</p>
         </article>
         <article class="panel">
           <h3 class="panel__title mono">${esc(up("Tambah agenda"))}</h3>
@@ -117,6 +125,18 @@
           </form>
         </article>
       </div>
+      <article class="panel gc-daypanel" id="gcDayPanel">
+        <div class="panel__head">
+          <h3 class="panel__title mono" id="gcDayTitle"></h3>
+          <div class="tabs" role="group" aria-label="Pindah hari">
+            <button type="button" data-dnav="-1" aria-label="Hari sebelumnya">‹</button>
+            <button type="button" data-dnav="0">Hari ini</button>
+            <button type="button" data-dnav="1" aria-label="Hari berikutnya">›</button>
+          </div>
+        </div>
+        <ol class="gc-day" id="gcDay"></ol>
+        <button class="mini-btn gc-dayadd" type="button" data-addday>+ Tambah agenda di tanggal ini</button>
+      </article>
       <div class="grid grid--2">
         <article class="panel">
           <h3 class="panel__title mono">${esc(up("Agenda 14 hari ke depan"))}</h3>
@@ -129,6 +149,51 @@
         </article>
       </div>`;
   }
+
+  /* ---------- Pratinjau acara (modal) ---------- */
+  const modal = document.createElement("div");
+  modal.className = "gc-modal";
+  modal.hidden = true;
+  modal.innerHTML = `<div class="gc-modal__box" role="dialog" aria-modal="true" aria-labelledby="gcmTitle" tabindex="-1"></div>`;
+  document.body.appendChild(modal);
+  const box = modal.firstElementChild;
+  let lastFocus = null;
+  function openEvent(id) {
+    const e = findEv(id);
+    if (!e) return;
+    const range = e.allDay
+      ? (+e.firstDay === +e.lastDay ? fmt(e.firstDay, { weekday: "long", day: "numeric", month: "long", year: "numeric" }) + " · seharian"
+        : `${fmt(e.firstDay, { weekday: "short", day: "numeric", month: "long" })} – ${fmt(e.lastDay, { weekday: "short", day: "numeric", month: "long", year: "numeric" })}`)
+      : `${fmt(e.firstDay, { weekday: "long", day: "numeric", month: "long", year: "numeric" })} · ${hm(e.start)} – ${hm(e.end)}`;
+    box.innerHTML = `
+      <button class="gc-modal__x" type="button" data-close aria-label="Tutup">×</button>
+      ${e.tag ? `<span class="tag">${esc(e.tag)}</span>` : ""}
+      <h3 id="gcmTitle">${esc(e.short)}</h3>
+      <dl class="gc-modal__dl">
+        <div><dt>Waktu</dt><dd>${esc(range)}</dd></div>
+        ${e.location ? `<div><dt>Lokasi</dt><dd><a class="lnk" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(e.location)}" target="_blank" rel="noopener">${esc(e.location)}</a></dd></div>` : ""}
+        <div><dt>Catatan</dt><dd class="gc-modal__desc">${e.desc ? esc(e.desc) : "—"}</dd></div>
+      </dl>
+      <div class="gc-modal__act">
+        <button class="mini-btn" type="button" data-showday="${ymd(e.firstDay)}">Semua jadwal hari ini</button>
+        ${e.link ? `<a class="btn btn--solid" href="${esc(e.link)}" target="_blank" rel="noopener">Buka di Google Calendar ↗</a>` : ""}
+      </div>`;
+    if (modal.hidden) lastFocus = document.activeElement;
+    modal.hidden = false;
+    requestAnimationFrame(() => modal.classList.add("is-on"));
+    box.focus();
+  }
+  function closeModal() {
+    modal.classList.remove("is-on");
+    modal.hidden = true;
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal || e.target.closest("[data-close]")) { closeModal(); return; }
+    const sd = e.target.closest("[data-showday]");
+    if (sd) { closeModal(); selectDay(dateOnly(sd.dataset.showday), true); }
+  });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !modal.hidden) closeModal(); });
 
   /* ---------- Render ---------- */
   function setStatus() {
@@ -153,12 +218,33 @@
     for (let d = 1; d <= days; d++) {
       const day = new Date(m.getFullYear(), m.getMonth(), d);
       const evs = S.monthEvents.filter((e) => day >= e.firstDay && day <= e.lastDay);
-      const isToday = +day === +today;
-      html += `<div class="cal__day ${isToday ? "is-today" : ""}" style="--d:${d}"><span class="cal__num mono">${d}</span>
-        ${evs.slice(0, 3).map((e) => `<a class="cal__ev ${e.allDay ? "cal__ev--in" : "cal__ev--ex"}" href="${esc(e.link)}" target="_blank" rel="noopener" title="${esc(timeLabel(e) + " · " + e.title)}">${e.allDay ? "" : `<b>${esc(e.time)}</b> `}${esc(e.title)}</a>`).join("")}
-        ${evs.length > 3 ? `<span class="cal__more mono">+${evs.length - 3} lagi</span>` : ""}</div>`;
+      const isToday = +day === +today, isSel = +day === +S.day;
+      html += `<div class="cal__day ${isToday ? "is-today" : ""} ${isSel ? "is-sel" : ""}" style="--d:${d}" data-day="${ymd(day)}"><button type="button" class="cal__num mono" data-day="${ymd(day)}" aria-label="Lihat jadwal ${esc(fmt(day, { weekday: "long", day: "numeric", month: "long" }))}${evs.length ? ", " + evs.length + " acara" : ""}">${d}</button>
+        ${evs.slice(0, 3).map((e) => `<button type="button" class="cal__ev ${e.allDay ? "cal__ev--in" : "cal__ev--ex"}" data-ev="${esc(e.id)}" title="${esc(timeLabel(e) + " · " + e.title)}">${e.allDay ? "" : `<b>${esc(e.time)}</b> `}${esc(e.title)}</button>`).join("")}
+        ${evs.length > 3 ? `<button type="button" class="cal__more mono" data-day="${ymd(day)}">+${evs.length - 3} lagi</button>` : ""}</div>`;
     }
     grid.innerHTML = html;
+    drawDay();
+  }
+
+  /* Semua jadwal pada satu hari */
+  function drawDay() {
+    const ol = $("#gcDay");
+    if (!ol) return;
+    const evs = onDay(S.day);
+    $("#gcDayTitle").textContent = up("Jadwal · " + fmt(S.day, { weekday: "long", day: "numeric", month: "long", year: "numeric" }));
+    ol.innerHTML = evs.length ? evs.map((e) => `<li><button type="button" data-ev="${esc(e.id)}">
+        <span class="gc-day__time mono">${esc(e.allDay ? timeLabel(e) : hm(e.start) + " – " + hm(e.end))}</span>
+        <span class="gc-day__txt"><b>${esc(e.short)}</b>${e.location ? `<small>${esc(e.location)}</small>` : ""}</span>
+        ${e.tag ? `<span class="tag">${esc(e.tag)}</span>` : ""}</button></li>`).join("")
+      : `<li class="gc-empty"><span class="note">${S.mode === "live" ? "Tidak ada jadwal di hari ini." : esc(S.mode === "error" ? S.err : S.mode === "local" ? "Jadwal Google Calendar tampil di versi claude.ai." : "Memuat jadwal…")}</span></li>`;
+  }
+  function selectDay(d, scroll) {
+    const sameMonth = d.getFullYear() === S.month.getFullYear() && d.getMonth() === S.month.getMonth();
+    S.day = d;
+    if (!sameMonth) { S.month = new Date(d.getFullYear(), d.getMonth(), 1); S.monthEvents = []; drawMonth(); watchMonth(); }
+    else drawMonth();
+    if (scroll) { const p = $("#gcDayPanel"); if (p) p.scrollIntoView({ behavior: "smooth", block: "start" }); }
   }
 
   function drawUpcoming() {
@@ -166,10 +252,11 @@
     if (ol) {
       ol.innerHTML = S.upcoming.length ? S.upcoming.slice(0, 10).map((e) => `
         <li><span class="t-date">${esc(up(fmt(e.firstDay, { weekday: "short", day: "2-digit", month: "short" })))} · ${esc(up(timeLabel(e)))}</span>
-        <a class="t-title gc-link" href="${esc(e.link)}" target="_blank" rel="noopener">${esc(e.short)}${e.tag ? `<span class="tag">${esc(e.tag)}</span>` : ""}</a></li>`).join("")
+        <button type="button" class="t-title gc-link" data-ev="${esc(e.id)}">${esc(e.short)}${e.tag ? `<span class="tag">${esc(e.tag)}</span>` : ""}</button></li>`).join("")
         : `<li class="gc-empty"><span class="t-title">${S.mode === "live" ? "Tidak ada agenda dalam 14 hari ke depan." : esc(S.mode === "error" ? S.err : "Agenda Google Calendar tampil di sini.")}</span></li>`;
     }
     drawAuto();
+    drawDay();
     announce();
   }
 
@@ -233,10 +320,23 @@
   /* ---------- Interaksi ---------- */
   if (panel) {
     panel.addEventListener("click", async (e) => {
+      const evb = e.target.closest("[data-ev]");
+      if (evb) { openEvent(evb.dataset.ev); return; }
+      const dn = e.target.closest("[data-dnav]");
+      if (dn) { const n = +dn.dataset.dnav; selectDay(n === 0 ? today : addDays(S.day, n)); return; }
+      if (e.target.closest("[data-addday]")) {
+        $("#gcDate").value = ymd(S.day);
+        $("#gcTitleIn").focus();
+        $("#gcForm").scrollIntoView({ behavior: "smooth", block: "center" });
+        return;
+      }
+      const dc = e.target.closest("[data-day]");
+      if (dc) { selectDay(dateOnly(dc.dataset.day), e.target.closest("button") && matchMedia("(max-width: 860px)").matches); return; }
       const nav = e.target.closest("[data-nav]");
       if (nav) {
         const n = +nav.dataset.nav;
         S.month = n === 0 ? new Date(today.getFullYear(), today.getMonth(), 1) : new Date(S.month.getFullYear(), S.month.getMonth() + n, 1);
+        S.day = n === 0 ? today : new Date(S.month);
         S.monthEvents = [];
         drawMonth();
         watchMonth();
@@ -251,6 +351,7 @@
           const d = dateOnly(r.date);
           await create({ summary: r.summary, description: r.desc, allDay: true, startTime: local(d), endTime: local(addDays(d, 1)), overrideReminders: [{ method: "popup", minutes: 2340 }, { method: "popup", minutes: 900 }] });
           rb.outerHTML = `<span class="pill pill--ok">Sudah di kalender</span>`;
+          if (window.DULog) window.DULog.add("GA", `Membuat pengingat ponsel: ${r.summary}`);
         } catch (err) {
           rb.disabled = false; rb.textContent = "Coba lagi";
           rb.title = errMsg(err);
@@ -277,6 +378,7 @@
       try {
         await create(input);
         msg.textContent = `Tersimpan di Google Calendar: ${input.summary}`;
+        if (window.DULog) window.DULog.add(f.bidang.value, `Menambah agenda Google Calendar: ${f.title.value.trim()} (${fmt(d, { day: "numeric", month: "short" })})`);
         f.title.value = ""; f.location.value = ""; f.desc.value = "";
       } catch (err) {
         msg.textContent = errMsg(err);

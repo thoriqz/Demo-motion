@@ -513,3 +513,49 @@ body.fin-locked[data-skin="sage"] .hc.dark[data-secure="finance"]::after { backg
 [data-skin="sage"] .tg-src a { color: var(--accent); }
 
 [data-skin="sage"] .att-live__frame { border-radius: 16px; border-color: var(--line); }
+
+/* ---------- Kalender, FPP, tugas harian (Sage) ---------- */
+[data-skin="sage"] .cal__day.is-sel { box-shadow: inset 0 0 0 2px var(--accent); }
+[data-skin="sage"] .cal__ev { color: var(--ink); }
+[data-skin="sage"] .gc-day button { border: 0; background: var(--soft); border-radius: 14px; }
+[data-skin="sage"] .gc-day__time { font: 500 13px var(--f-body); }
+[data-skin="sage"] .gc-modal { background: rgba(29, 31, 28, .35); }
+[data-skin="sage"] .gc-modal__box { background: var(--panel); border: 0; border-radius: 24px; box-shadow: 0 30px 80px rgba(0, 0, 0, .18); }
+[data-skin="sage"] .gc-modal__box h3 { font: 600 24px/1.2 var(--f-head); }
+[data-skin="sage"] .gc-modal__dl dt { font: 500 12px var(--f-body); text-transform: none; letter-spacing: 0; }
+[data-skin="sage"] .fpp__st { border-radius: 99px; background: var(--soft); border: 0; font-weight: 500; }
+[data-skin="sage"] .fpp__st.pill--warn { color: var(--warn); } [data-skin="sage"] .fpp__st.pill--info { color: var(--info); }
+[data-skin="sage"] .fpp__st.pill--ok { color: var(--ok); } [data-skin="sage"] .fpp__st.pill--danger { color: var(--danger); }
+[data-skin="sage"] .hr-item { border: 0; background: var(--panel); border-radius: 18px; box-shadow: inset 4px 0 0 #d9a441; }
+[data-skin="sage"] .hr-item--proses { box-shadow: inset 4px 0 0 var(--info); }
+[data-skin="sage"] .hr-item--selesai { box-shadow: inset 4px 0 0 var(--sage); }
+[data-skin="sage"] .hr-list .hr-item { background: var(--soft); }
+[data-skin="sage"] .hr-link { border-radius: 99px; background: var(--sage-l); color: var(--accent); padding: 3px 10px; }
+[data-skin="sage"] .hr-link:hover { background: var(--accent); color: #fff; }
+[data-skin="sage"] .hr-date { border-radius: 99px; }
+[data-skin="sage"] .tg-card.is-flash { animation: tgFlashS 1.6s ease; }
+@keyframes tgFlashS { 0%, 60% { outline: 3px solid var(--sage); } 100% { outline: 3px solid transparent; } }
+
+/* ---------- Beranda: riwayat aktivitas ---------- */
+.h-sec { grid-column: span 2; }
+.h-log { grid-column: 1 / -1; }
+.h-log .hd { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.h-log__nav { margin-left: auto; }
+.h-log__chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 14px 0 6px; }
+.h-log__chips button { border: 0; background: var(--soft); color: var(--muted); border-radius: 99px; padding: 5px 12px; font: 500 12px var(--f-body); cursor: pointer; }
+.h-log__chips button b { color: var(--accent); margin-left: 4px; font-weight: 600; }
+.h-log__chips button[aria-pressed="true"] { background: var(--accent); color: #fff; }
+.h-log__chips button[aria-pressed="true"] b { color: #fff; }
+.h-log__list { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 4px; max-height: 360px; overflow: auto; }
+.h-log__list li { display: grid; grid-template-columns: 52px minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 10px 6px; border-bottom: 1px solid var(--line-soft); animation: sRise .5s both; animation-delay: calc(var(--k, 0) * .05s); }
+.h-log__list li:last-child { border-bottom: 0; }
+.h-log__time { font: 600 13px var(--f-body); color: var(--accent); font-variant-numeric: tabular-nums; }
+.h-log__txt b { display: block; font-size: 14px; font-weight: 500; line-height: 1.35; overflow-wrap: anywhere; }
+.h-log__txt small { font-size: 12px; color: var(--muted); }
+.h-log__list li.h-log__empty { display: block; color: var(--muted); font-size: 14px; border: 0; }
+@media (max-width: 600px) {
+  .h-sec, .h-log { grid-column: auto; }
+  .h-log__nav { margin-left: 0; }
+  .h-log__list li { grid-template-columns: 44px minmax(0, 1fr); }
+  .h-log__list li .tag { display: none; }
+}

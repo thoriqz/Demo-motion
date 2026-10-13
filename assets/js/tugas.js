@@ -74,6 +74,31 @@
     }
   };
   const announce = () => document.dispatchEvent(new CustomEvent("du:tasks"));
+  /* Rentang tanggal periode (untuk menghitung catatan tugas harian) */
+  const range = (p) => {
+    const from = new Date(p.date);
+    if (p.type === "W") from.setDate(from.getDate() - 6);
+    else { from.setMonth(from.getMonth() - 1); from.setDate(26); }
+    return [ymd(from), ymd(p.date)];
+  };
+  const log = (it, text) => window.DULog && window.DULog.add(it ? it.bidang[0] : "Umum", text);
+  /* Buka kartu tugas umum di periode yang memuat tanggal catatan harian */
+  window.DUTasks.focus = (no, date) => {
+    S.bidang = "Semua";
+    const it = T.items.find((x) => String(x.no) === String(no));
+    const d = date || ymd(today);
+    const fits = (p) => itemsOf(p).includes(it) && range(p)[0] <= d && d <= range(p)[1];
+    S.per = PERIODS.find((p) => p.type === "W" && fits(p)) || PERIODS.find((p) => p.type === "M" && fits(p))
+      || (itemsOf(S.per).includes(it) ? S.per : PERIODS.find((p) => itemsOf(p).includes(it)) || S.per);
+    render();
+    const tab = document.getElementById("tab-tg-umum");
+    if (tab) tab.click();
+    const card = root.querySelector(`.tg-card[data-no="${no}"]`);
+    if (card) {
+      card.scrollIntoView({ behavior: "smooth", block: "center" });
+      card.classList.remove("is-flash"); void card.offsetWidth; card.classList.add("is-flash");
+    }
+  };
 
   function pickDefault() {
     let saved = null;
@@ -139,6 +164,7 @@
     // daftar
     const rows = S.bidang === "Semua" ? all : all.filter((it) => it.bidang.includes(S.bidang));
     const canWrite = S.mode === "live";
+    const [rf, rt] = range(p);
     listEl.innerHTML = rows.map((it, k) => {
       const r = recOf(p.key, String(it.no));
       const busy = S.busy.has(p.key + it.no);
@@ -148,7 +174,7 @@
           <div class="tg-card__txt">
             <h4>${esc(it.name)}</h4>
             <p>${esc(it.desc)}</p>
-            <div class="tg-meta">${it.bidang.map((b) => `<span class="tag tag--plain">${esc(b)}</span>`).join("")}<span class="note">${esc(freq(it))}</span><span class="note">Tenggat: ${esc(dueText(p, it))}</span></div>
+            <div class="tg-meta">${it.bidang.map((b) => `<span class="tag tag--plain">${esc(b)}</span>`).join("")}<span class="note">${esc(freq(it))}</span><span class="note">Tenggat: ${esc(dueText(p, it))}</span>${(() => { const n = window.DUHarian ? window.DUHarian.count(it.no, rf, rt) : 0; return `<button type="button" class="hr-link" data-harian="${it.no}">${n ? `📝 ${n} catatan harian periode ini` : "+ catatan harian"}</button>`; })()}</div>
           </div>
           <div class="tg-val">
             <span class="mono">${esc(up("Capaian"))}</span>
@@ -195,13 +221,20 @@
   root.addEventListener("click", (e) => {
     const pb = e.target.closest("[data-per]");
     if (pb) { S.per = PERIODS.find((x) => x.key === pb.dataset.per); try { localStorage.setItem("du-tugas-per", S.per.key); } catch (er) { /* abaikan */ } render(); return; }
+    const hb = e.target.closest("[data-harian]");
+    if (hb) { if (window.DUHarian) window.DUHarian.show(hb.dataset.harian); return; }
     const bb = e.target.closest("[data-b]");
     if (bb) { S.bidang = bb.dataset.b; render(); return; }
     const card = e.target.closest(".tg-card");
     if (!card) return;
     const no = card.dataset.no;
     const sb = e.target.closest("[data-st]");
-    if (sb) { write(no, { status: sb.dataset.st }); toast(`Tugas ${pad(no)} → ${sb.dataset.st}`); return; }
+    if (sb) {
+      const it = T.items.find((x) => String(x.no) === String(no));
+      write(no, { status: sb.dataset.st }); toast(`Tugas ${pad(no)} → ${sb.dataset.st}`);
+      log(it, `Tugas umum ${pad(no)} ${it ? it.name : ""} (${S.per.label}) → ${sb.dataset.st}`);
+      return;
+    }
     if (e.target.closest('[data-act="link"]')) {
       const box = document.createElement("form");
       box.className = "tg-linkform";
@@ -214,6 +247,7 @@
         if (!/^https:\/\//i.test(url)) { toast("Gunakan tautan yang diawali https://"); return; }
         const r = recOf(S.per.key, no);
         write(no, r.link ? { att: r.att.concat({ type: "link", name: url, url }) } : { link: url });
+        log(T.items.find((x) => String(x.no) === String(no)), `Menambah tautan bukti tugas umum ${pad(no)} (${S.per.label})`);
       });
       $("[data-cancel]", box).addEventListener("click", () => box.remove());
     }
@@ -240,6 +274,7 @@
         const r = recOf(S.per.key, no);
         await write(no, { att: r.att.concat({ type: "file", name: f.name, ext: (f.name.split(".").pop() || "").toLowerCase(), size: res.sizeBytes, assetId: res.id }) });
         toast(`${f.name} terlampir`);
+        log(T.items.find((x) => String(x.no) === String(no)), `Melampirkan ${f.name} ke tugas umum ${pad(no)} (${S.per.label})`);
       } catch (er) {
         toast(er && er.code === "too_large" ? "Ukuran file melebihi 20 MB." : er && er.code === "unsupported_type" ? "Jenis file tidak didukung (PDF, PNG, JPG)." : "Gagal mengunggah file.");
       }
@@ -265,5 +300,6 @@
       render();
     }, () => { S.mode = "local"; render(); });
   }
+  document.addEventListener("du:harian", () => { if (S.per) render(); });
   boot();
 })();

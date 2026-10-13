@@ -1,5 +1,5 @@
 /* =========================================================
-   Lampiran PDF (Procurement & Legal)
+   Lampiran PDF (Procurement, Admin & Legal)
    File disimpan di penyimpanan artifact (assets), daftarnya di database
    artifact (db, koleksi "files"). Hanya aktif saat halaman dibuka sebagai
    artifact di claude.ai; di salinan lokal tampil pemberitahuan.
@@ -25,6 +25,8 @@
     quota_exceeded: "Database penuh. Hapus beberapa data lalu coba lagi."
   };
   const errMsg = (e) => ERR[e && e.code] || "Gagal menyimpan. Coba lagi.";
+  const AREA = { procurement: "GA", admin: "Admin", legal: "Legal" };
+  const log = (area, text) => { if (window.DULog) window.DULog.add(AREA[area] || area, text); };
 
   const S = { db: null, assets: null, user: null, uid: null, files: [], ready: false, mode: "loading" };
   window.DUDocs = {
@@ -76,7 +78,7 @@
         </table></div>
       </article>`;
     const L = {
-      area, kinds, root, filter: "Semua",
+      area, kinds, label, root, filter: "Semua",
       stats: $(".doclib__stats", root), drop: $(".doclib__drop", root), input: $("input[type=file]", root),
       kind: $(".doclib__kind select", root), queue: $(".doclib__queue", root), notice: $(".doclib__notice", root),
       chips: $(".doclib__chips", root), body: $("tbody", root), search: $(".search", root), zone: $(".doclib__zone", root)
@@ -161,6 +163,7 @@
         await S.db.collection("files").add({ area: L.area, jenis: kind, name: file.name, size: res.sizeBytes, assetId: res.id, uploadedAt: new Date().toISOString(), by: S.uid || "" });
         li.classList.add("is-ok");
         state.textContent = "Tersimpan";
+        log(L.area, `Mengunggah PDF ${L.label} (${kind}): ${file.name}`);
       } catch (e) {
         li.classList.add("is-err");
         state.textContent = errMsg(e);
@@ -176,6 +179,7 @@
       await S.db.collection("files").doc(id).delete();
       if (f.assetId && S.assets) await S.assets.delete(f.assetId).catch(() => {});
       toast(`${f.name} dihapus`);
+      log(f.area, `Menghapus PDF (${f.jenis}): ${f.name}`);
     } catch (e) {
       toast(errMsg(e));
     }
