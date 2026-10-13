@@ -772,27 +772,30 @@
     draw("all");
   }
 
+  /* Absensi: dashboard Google Apps Script disematkan langsung, jadi selalu
+     mengikuti data aslinya. Dimuat saat tab dibuka, dimuat ulang tiap 5 menit. */
   function renderAttendance() {
-    const tone = { Hadir: "ok", Terlambat: "warn", "Dinas Lapangan": "info", Izin: "muted", Sakit: "danger" };
-    const sum = D.attendanceSummary;
-    $("#attDate").textContent = up(fmtDate(today, { weekday: "long", day: "numeric", month: "long" }));
-    $("#attStats").innerHTML = Object.entries(sum).map(([k, v]) => stat(k, `<span data-count="${v}">${v}</span>`, "orang", tone[k] === "muted" ? "" : tone[k])).join("");
-    $("#attBody").innerHTML = D.attendanceToday.map((a) => `<tr><td>${esc(a.name)}</td><td class="mono">${esc(a.in)}</td><td class="mono">${esc(a.out)}</td><td>${esc(a.loc)}</td><td>${pill(a.status, tone[a.status])}</td></tr>`).join("");
-
-    const days = ["S", "S", "R", "K", "J"];
-    let seed = 7, total = 0, n = 0;
-    const rnd = () => ((seed = (seed * 9301 + 49297) % 233280) / 233280);
-    let html = `<span></span>${days.map((d) => `<span class="hd">${d}</span>`).join("")}`;
-    for (let w = 1; w <= 4; w++) {
-      html += `<span>M${w}</span>`;
-      for (let d = 0; d < 5; d++) {
-        const v = Math.round(86 + rnd() * 14);
-        total += v; n++;
-        html += `<span class="cell" style="--o:${((v - 80) / 20).toFixed(2)};transition-delay:${(w * 5 + d) * 30}ms" title="Minggu ${w}: ${v}% hadir"></span>`;
-      }
-    }
-    $("#attendance").innerHTML = html;
-    $("#attNote").textContent = up(`Rata-rata kehadiran ${(total / n).toFixed(1)}%`);
+    const panel = $("#hr-att"), frame = $("#attFrame"), stamp = $("#attStamp");
+    const url = D.attendance && D.attendance.url;
+    if (!panel || !frame || !url) return;
+    $("#attOpen").href = url;
+    let timer = 0, loaded = false;
+    const time = () => new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
+    const load = () => {
+      loaded = true;
+      stamp.textContent = "Memuat…";
+      frame.src = url + (url.includes("?") ? "&" : "?") + "_t=" + Date.now();
+    };
+    frame.addEventListener("load", () => { if (frame.src) stamp.textContent = up("Diperbarui " + time()); });
+    $("#attReload").addEventListener("click", load);
+    const sync = () => {
+      clearInterval(timer);
+      if (panel.hidden) return;
+      if (!loaded) load();
+      timer = setInterval(() => { if (!document.hidden) load(); }, (D.attendance.refreshMinutes || 5) * 60000);
+    };
+    new MutationObserver(sync).observe(panel, { attributes: true, attributeFilter: ["hidden"] });
+    sync();
   }
 
   /* ---------------- INIT ---------------- */

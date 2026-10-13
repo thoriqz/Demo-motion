@@ -463,22 +463,20 @@
       </div>
 
       <div class="modpanel" id="hr-att" role="tabpanel" hidden>
-        <div class="stat-row stat-row--5" id="attStats"></div>
-        <div class="grid grid--2-1">
-          <article class="panel">
-            <h3 class="panel__title mono">A. ABSENSI · <span id="attDate"></span></h3>
-            <div class="table-wrap"><table class="table">
-              <thead><tr><th>Nama</th><th>Masuk</th><th>Pulang</th><th>Lokasi</th><th>Status</th></tr></thead>
-              <tbody id="attBody"></tbody>
-            </table></div>
-            <p class="note mono">Menampilkan sebagian karyawan (contoh).</p>
-          </article>
-          <article class="panel">
-            <h3 class="panel__title mono">B. TINGKAT KEHADIRAN 4 MINGGU</h3>
-            <div class="heat" id="attendance"></div>
-            <p class="note mono" id="attNote"></p>
-          </article>
-        </div>
+        <article class="panel att-live">
+          <div class="att-live__head">
+            <h3 class="panel__title mono">A. ABSENSI · LIVE</h3>
+            <div class="att-live__actions">
+              <span class="att-live__stamp mono" id="attStamp">Memuat…</span>
+              <button class="btn btn--ghost" type="button" id="attReload">Muat ulang</button>
+              <a class="btn" id="attOpen" target="_blank" rel="noopener">Buka di tab baru ↗</a>
+            </div>
+          </div>
+          <div class="att-live__frame">
+            <iframe id="attFrame" title="Dashboard Absensi"></iframe>
+          </div>
+          <p class="note mono">Data langsung dari Google Apps Script absensi. Otomatis mengikuti data aslinya, dimuat ulang tiap 5 menit. Jika tidak tampil, klik “Buka di tab baru”.</p>
+        </article>
       </div>
     </section>
 

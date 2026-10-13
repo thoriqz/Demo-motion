@@ -513,3 +513,5 @@ body.fin-locked[data-skin="sage"] .hc.dark[data-secure="finance"]::after { backg
 [data-skin="sage"] .tg-add { border-radius: 99px; border-color: #c9cbc5; }
 [data-skin="sage"] .tg-linkform input { border: 0; background: var(--soft); border-radius: 10px; }
 [data-skin="sage"] .tg-src a { color: var(--accent); }
+
+[data-skin="sage"] .att-live__frame { border-radius: 16px; border-color: var(--line); }

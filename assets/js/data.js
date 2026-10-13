@@ -271,15 +271,8 @@ window.DU_DATA = {
     { name: "Citra Dewanti", skill: "Desainer Grafis (Compro)", rate: "Rp 4 jt / proyek", project: "Compro 2027", rating: 4.6, avail: "Bertugas" },
     { name: "Hadi Prasetyo", skill: "Surveyor Topografi", rate: "Rp 2,5 jt / lokasi", project: "—", rating: 4.4, avail: "Tersedia" }
   ],
-  attendanceToday: [
-    { name: "Andika Pratama", in: "07.52", out: "—", loc: "Kantor", status: "Hadir" },
-    { name: "Sekar Ayuningtyas", in: "08.03", out: "—", loc: "Kantor", status: "Hadir" },
-    { name: "Bayu Saputra", in: "07.10", out: "—", loc: "Site Cikarang", status: "Dinas Lapangan" },
-    { name: "Dewi Kartika", in: "08.21", out: "—", loc: "Kantor", status: "Terlambat" },
-    { name: "Rizal Hakim", in: "—", out: "—", loc: "—", status: "Izin" },
-    { name: "Putri Maharani", in: "07.58", out: "—", loc: "Kantor", status: "Hadir" },
-    { name: "Yoga Firmansyah", in: "07.05", out: "—", loc: "Site Kemang", status: "Dinas Lapangan" },
-    { name: "Laras Wulandari", in: "—", out: "—", loc: "—", status: "Sakit" }
-  ],
-  attendanceSummary: { Hadir: 47, Terlambat: 3, "Dinas Lapangan": 5, Izin: 2, Sakit: 1 }
+  attendance: {
+    url: "https://script.google.com/macros/s/AKfycbxWMYLpRaKjP7VHfIoNCNH_6mAZGoMG8zRIaoeLqfMxkY7fwvL5XLdSSeNZFgaEbswXJg/exec?page=dashboard",
+    refreshMinutes: 5
+  }
 };
