@@ -802,3 +802,5 @@ body.fin-locked [data-secure="finance"]::after {
   font: 500 13px var(--f-body); color: var(--muted); background: repeating-linear-gradient(-45deg, transparent 0 8px, color-mix(in srgb, var(--line) 5%, transparent) 8px 9px);
 }
 body.fin-locked .kpi[data-secure="finance"]::after { z-index: 1; width: auto; height: auto; left: 0; right: 0; top: 0; bottom: 0; background: var(--panel); color: var(--muted); }
+.pin-dots i.is-new { animation: pop .3s cubic-bezier(.34,1.8,.5,1) both; }
+@keyframes pop { from { opacity: 0; transform: scale(.6); } }

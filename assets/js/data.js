@@ -1,14 +1,14 @@
 /* Data contoh (dummy) Divisi Umum — ganti dengan data riil atau sambungkan ke API/Spreadsheet.
    Nilai uang dalam Rupiah penuh kecuali disebut lain. */
 window.DU_DATA = {
-  /* Kunci PIN area Keuangan. Yang disimpan hanya hash SHA-256 dari "du-fin:" + PIN.
+  /* Kunci PIN area Keuangan (PIN 4–6 digit). Yang disimpan hanya hash SHA-256 dari "du-fin:" + PIN.
      Ganti PIN: buka halaman, jalankan DUPin.hash("PIN_BARU") di console browser,
      lalu tempel hasilnya ke "hash" peran yang sesuai. */
   access: {
     finance: {
-      length: 6, idleMinutes: 15, maxTries: 5, lockSeconds: 60,
+      minLength: 4, maxLength: 6, idleMinutes: 15, maxTries: 5, lockSeconds: 60,
       roles: [
-        { id: "umum", label: "Divisi Umum", hash: "5188b5f2ac04db154f10664664a11e7b4b003aab199793a7a66db5ee88abf0d3" },
+        { id: "umum", label: "Divisi Umum", hash: "a58f06e9390a31930922cc1ed7467bd2a7e9ea55c77d423ec1ca9aa09b923de6" },
         { id: "direksi", label: "Direksi", hash: "c6ec823c85c2ee7539f4137aabd360e6407ba29088a1ec54965106a5249feec9" }
       ]
     }

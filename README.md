@@ -25,7 +25,7 @@ Divisi digambarkan sebagai gedung 5 lantai — tiap lantai satu bidang:
   pencarian modul, dan notifikasi. Isi dan logika 16 modul sama persis (`assets/js/app.js`).
 
 ## Kunci PIN Keuangan
-Menu Finance & Accounting (dan kartu angka keuangan di Beranda/Ringkasan) terkunci PIN 6 digit,
+Menu Finance & Accounting (dan kartu angka keuangan di Beranda/Ringkasan) terkunci PIN 4–6 digit,
 khusus **Divisi Umum** dan **Direksi**. Peran terdeteksi dari PIN yang dimasukkan.
 - Terkunci lagi otomatis setelah 15 menit tidak ada aktivitas, saat tab ditutup, atau lewat tombol "Kunci sekarang".
 - 5 kali salah → input dikunci 60 detik.

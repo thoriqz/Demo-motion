@@ -12,6 +12,7 @@
   if (!CFG || !fin) return;
 
   const SALT = "du-fin:";
+  const MIN = CFG.minLength || 4, MAX = CFG.maxLength || 6;
   const K_SESSION = "du-fin-session", K_TRIES = "du-fin-tries";
   const ss = { get(k) { try { return JSON.parse(sessionStorage.getItem(k)); } catch (e) { return null; } }, set(k, v) { try { v == null ? sessionStorage.removeItem(k) : sessionStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* abaikan */ } } };
   const ls = { get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } }, set(k, v) { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* abaikan */ } } };
@@ -56,11 +57,11 @@
     <div class="pin-card" role="dialog" aria-labelledby="pinTitle" aria-describedby="pinDesc">
       <div class="pin-lock" aria-hidden="true"><svg viewBox="0 0 48 48"><rect x="10" y="21" width="28" height="21" rx="4"/><path class="shackle" d="M16 21v-6a8 8 0 0 1 16 0v6"/><circle cx="24" cy="31" r="2.6"/><path d="M24 33.5v3.5"/></svg></div>
       <h3 id="pinTitle">Area Keuangan terkunci</h3>
-      <p id="pinDesc">Khusus Divisi Umum dan Direksi. Masukkan PIN ${CFG.length} digit Anda.</p>
+      <p id="pinDesc">Khusus Divisi Umum dan Direksi. Masukkan PIN Anda (${MIN}–${MAX} digit).</p>
       <form class="pin-form" autocomplete="off">
         <label class="pin-field" for="pinInput">
-          <span class="pin-dots" aria-hidden="true">${"<i></i>".repeat(CFG.length)}</span>
-          <input id="pinInput" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="${CFG.length}" aria-label="PIN ${CFG.length} digit" autocomplete="off">
+          <span class="pin-dots" aria-hidden="true">${"<i></i>".repeat(MIN)}</span>
+          <input id="pinInput" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="${MAX}" aria-label="PIN ${MIN} sampai ${MAX} digit" autocomplete="off">
         </label>
         <p class="pin-msg" id="pinMsg" role="alert" aria-live="assertive"></p>
         <button class="btn btn--solid pin-btn" type="submit">Buka akses</button>
@@ -75,7 +76,7 @@
   fin.insertBefore(bar, anchor);
 
   const form = gate.querySelector("form"), input = gate.querySelector("#pinInput"), msg = gate.querySelector("#pinMsg");
-  const dots = Array.from(gate.querySelectorAll(".pin-dots i"));
+  const dotsBox = gate.querySelector(".pin-dots");
   const card = gate.querySelector(".pin-card");
 
   /* ---------- Status ---------- */
@@ -110,12 +111,21 @@
     say._t = setTimeout(() => el.classList.remove("is-on"), 2600);
   }
 
-  const paintDots = () => dots.forEach((d, i) => d.classList.toggle("on", i < input.value.length));
+  /* Kotak bertambah mengikuti digit yang diketik (minimal MIN, maksimal MAX) */
+  const paintDots = () => {
+    const n = input.value.length;
+    const boxes = Math.min(MAX, Math.max(MIN, n + (n < MAX && n >= MIN ? 1 : 0)));
+    while (dotsBox.children.length < boxes) dotsBox.appendChild(Object.assign(document.createElement("i"), { className: "is-new" }));
+    while (dotsBox.children.length > boxes) dotsBox.lastElementChild.remove();
+    Array.from(dotsBox.children).forEach((d, i) => d.classList.toggle("on", i < n));
+  };
+  const matchRole = (pin) => { const h = sha256(SALT + pin); return CFG.roles.find((r) => r.hash === h) || null; };
   input.addEventListener("input", () => {
-    input.value = input.value.replace(/\D/g, "").slice(0, CFG.length);
+    input.value = input.value.replace(/\D/g, "").slice(0, MAX);
     paintDots();
     msg.textContent = "";
-    if (input.value.length === CFG.length) form.requestSubmit ? form.requestSubmit() : form.dispatchEvent(new Event("submit", { cancelable: true }));
+    /* Cek diam-diam begitu panjang PIN cukup; salah baru dihitung saat dikirim atau sudah MAX digit */
+    if ((input.value.length >= MIN && matchRole(input.value)) || input.value.length === MAX) form.requestSubmit ? form.requestSubmit() : form.dispatchEvent(new Event("submit", { cancelable: true }));
   });
 
   let lockTimer = 0;
@@ -138,9 +148,8 @@
   form.addEventListener("submit", (e) => {
     e.preventDefault();
     if (lockedOut()) return;
-    if (input.value.length !== CFG.length) { msg.textContent = `PIN harus ${CFG.length} digit.`; return; }
-    const h = sha256(SALT + input.value);
-    const role = CFG.roles.find((r) => r.hash === h);
+    if (input.value.length < MIN) { msg.textContent = `PIN minimal ${MIN} digit.`; return; }
+    const role = matchRole(input.value);
     if (role) {
       const roleId = role.id;
       ls.set(K_TRIES, null);
