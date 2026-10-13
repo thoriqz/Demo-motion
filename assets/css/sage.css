@@ -193,7 +193,7 @@ body[data-skin="sage"] { background: var(--bg); background-image: none; color: v
 .h-sec .btn-s { margin-top: 8px; animation: sPulse 2.6s ease-in-out infinite 2.4s; }
 
 .h-mods { grid-column: 1 / -1; }
-.modgrid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 18px; margin-top: 14px; }
+.modgrid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 18px; margin-top: 14px; }
 .modgrp { display: grid; gap: 6px; align-content: start; }
 .modgrp .lb { font-size: 12px; color: var(--muted); margin-bottom: 2px; }
 .modgrp a { display: block; padding: 9px 12px; border-radius: 12px; background: var(--soft); color: var(--ink); text-decoration: none; font-size: 14px; transition: background .2s, transform .2s; }
@@ -484,3 +484,31 @@ body.fin-locked[data-skin="sage"] .hc.dark[data-secure="finance"]::after { backg
 .h-cal__empty { grid-column: 1 / -1; color: var(--muted); font-size: 14px; padding: 10px 0; }
 @media (max-width: 900px) { .h-cal__list { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 600px) { .h-cal__list { grid-template-columns: 1fr; } .h-cal { grid-column: auto; } }
+
+/* menu Tugas — versi Sage */
+[data-skin="sage"] .tg-pchip { border: 0; border-radius: 16px; padding: 10px 16px; }
+[data-skin="sage"] .tg-pchip[aria-pressed="true"] { background: var(--ink); color: #fff; }
+[data-skin="sage"] .tg-bcard { border: 0; border-radius: 18px; padding: 14px 16px; }
+[data-skin="sage"] .tg-bcard[aria-pressed="true"] { box-shadow: inset 0 0 0 2px var(--sage); background: var(--sage-l); }
+[data-skin="sage"] .tg-bar { border-radius: 99px; background: var(--soft); height: 6px; }
+[data-skin="sage"] .tg-bar > i { border-radius: 99px; background: var(--sage); }
+[data-skin="sage"] .tg-card { border: 0; border-radius: 20px; padding: 16px 20px; box-shadow: inset 4px 0 0 #d9a441; }
+[data-skin="sage"] .tg-card--proses { box-shadow: inset 4px 0 0 var(--info); }
+[data-skin="sage"] .tg-card--selesai { box-shadow: inset 4px 0 0 var(--sage); }
+[data-skin="sage"] .tg-card__txt h4 { font-weight: 600; }
+[data-skin="sage"] .tg-no { color: var(--accent); font-weight: 600; }
+[data-skin="sage"] .tg-val b { font: 600 22px/1 var(--f-head); }
+[data-skin="sage"] .tg-valin { background: var(--soft); border: 0; border-radius: 10px; padding: 8px 10px; }
+[data-skin="sage"] .tg-valin:focus { box-shadow: 0 0 0 2px var(--sage); }
+[data-skin="sage"] .tg-seg { border: 0; background: var(--soft); border-radius: 99px; padding: 3px; }
+[data-skin="sage"] .tg-seg button { border-radius: 99px; padding: 7px 13px; }
+[data-skin="sage"] .tg-seg button + button { border-left: 0; }
+[data-skin="sage"] .tg-seg button[aria-pressed="true"][data-st="Belum"] { background: #f7ecd4; color: #9a6a10; }
+[data-skin="sage"] .tg-seg button[aria-pressed="true"][data-st="Proses"] { background: #e3ebf8; color: var(--info); }
+[data-skin="sage"] .tg-seg button[aria-pressed="true"][data-st="Selesai"] { background: var(--sage); color: #fff; }
+[data-skin="sage"] .tg-chip { border: 0; background: var(--soft); border-radius: 99px; padding: 5px 12px; }
+[data-skin="sage"] .tg-chip:hover { background: var(--sage-l); }
+[data-skin="sage"] .tg-chip--off { background: transparent; box-shadow: inset 0 0 0 1px #d5d7d1; }
+[data-skin="sage"] .tg-add { border-radius: 99px; border-color: #c9cbc5; }
+[data-skin="sage"] .tg-linkform input { border: 0; background: var(--soft); border-radius: 10px; }
+[data-skin="sage"] .tg-src a { color: var(--accent); }

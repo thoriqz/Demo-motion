@@ -47,6 +47,7 @@
       <a href="#fin" data-view="fin" aria-label="Finance &amp; Accounting"><svg viewBox="0 0 24 24"><path d="M6 20V12M12 20V5M18 20v-9"/></svg><span>Finance</span></a>
       <a href="#hr" data-view="hr" aria-label="Human Resources"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0"/><circle cx="17" cy="9" r="2.4"/><path d="M16 14a5 5 0 0 1 5 5"/></svg><span>HR</span></a>
       <a href="#legal" data-view="legal" aria-label="Legal"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.5-3 8-7 9-4-1-7-4.5-7-9V6z"/><path d="m9 12 2 2 4-4"/></svg><span>Legal</span></a>
+      <a href="#tugas" data-view="tugas" aria-label="Tugas"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="17" rx="2"/><path d="M9 3h6v3H9z"/><path d="m8 12 2 2 4-4M8 17h8"/></svg><span>Tugas</span></a>
       <a class="s-me" href="index.html" aria-label="Buka tampilan Blueprint" title="Buka tampilan Blueprint">HG</a>
     </nav>
 
@@ -383,17 +384,24 @@
       <header class="view-head" hidden><h2>Legal</h2><p>Arsip seluruh dokumen eksternal dalam bentuk PDF: perizinan, kontrak, akta, asuransi, dan sertifikat.</p></header>
       <div class="doclib" data-area="legal" data-label="Legal" data-kinds="Perizinan|Kontrak Klien|Kontrak Vendor &amp; Subkon|Akta &amp; Legalitas|Asuransi &amp; Jaminan|Sertifikat|Lainnya"></div>
     </section>
-      </main>
+        <!-- TUGAS -->
+      <section class="view" hidden id="tugas" data-view="tugas">
+        <header class="view-head" hidden><h2>Tugas</h2><p>Daftar tugas pelaporan Divisi Umum per periode: status, bukti tautan atau file, dan capaian mingguan (Sabtu) &amp; bulanan (tanggal 25).</p></header>
+        <div id="tugasApp"></div>
+      </section>
+    </main>
   </div>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script src="assets/js/data.js"></script>
   <script src="assets/js/inventaris.js"></script>
+  <script src="assets/js/tugas-data.js"></script>
   <script src="assets/js/app.js"></script>
   <script src="assets/js/pin.js"></script>
   <script src="assets/js/docs.js"></script>
   <script src="assets/js/gcal.js"></script>
+  <script src="assets/js/tugas.js"></script>
   <script src="assets/js/sage.js"></script>
 </body>
 </html>

@@ -35,6 +35,7 @@
     division: VIEWS[t.closest("section.view").id].title
   }));
   MODULES.push({ id: null, view: "legal", name: "Arsip Dokumen Eksternal", division: "Legal" });
+  MODULES.push({ id: null, view: "tugas", name: "Tugas Pelaporan", division: "Tugas" });
 
   /* ---------- Router ---------- */
   let current = null;
@@ -162,12 +163,13 @@
     renderCal();
 
     // Akses cepat
-    $("#hMods").innerHTML = ["ga", "adm", "fin", "hr", "legal"].map((v) => `
+    $("#hMods").innerHTML = ["ga", "adm", "fin", "hr", "legal", "tugas"].map((v) => `
       <div class="modgrp"><span class="lb">${esc(VIEWS[v].title)}</span>
         ${MODULES.filter((m) => m.view === v).map((m) => `<a href="#${v}" ${m.id ? `data-tab="${m.id}"` : ""}>${esc(m.name)}</a>`).join("")}</div>`).join("");
   }
   document.addEventListener("du:change", () => { if (current === "home") renderHome(); });
   document.addEventListener("du:docs", () => { if (current === "home") renderHome(); });
+  document.addEventListener("du:tasks", () => buildNotes());
   document.addEventListener("du:cal", () => { if (current === "home") renderCal(); buildNotes(); });
 
   /* Agenda Google Calendar di Beranda */
@@ -216,6 +218,9 @@
     if (window.DUCal) {
       const t0 = new Date(today.toDateString()), t2 = new Date(t0); t2.setDate(t0.getDate() + 2);
       window.DUCal.upcoming().filter((e) => e.firstDay < t2 && e.lastDay >= t0).slice(0, 4).forEach((e) => items.push({ t: `${+e.firstDay <= +t0 ? "Hari ini" : "Besok"}: ${e.short}`, v: "ga", tab: "ga-cal", tone: "info" }));
+    }
+    if (window.DUTasks) {
+      window.DUTasks.due().slice(0, 4).forEach((d) => items.push({ t: `Tugas ${d.n === 0 ? "hari ini" : d.n === 1 ? "besok" : d.n + " hari lagi"}: ${d.it.name}`, v: "tugas", tone: d.n === 0 ? "danger" : "warn" }));
     }
     D.clientRequests.filter((c) => c.status === "Menunggu").forEach((c) => items.push({ t: `${c.client} menunggu respons`, v: "ga", tab: "ga-client", tone: "warn" }));
     $("#sNoteList").innerHTML = items.map((n) => `<li><a href="#${n.v}" ${n.tab ? `data-tab="${n.tab}"` : ""}><i class="tone tone--${n.tone}"></i>${esc(n.t)}</a></li>`).join("");

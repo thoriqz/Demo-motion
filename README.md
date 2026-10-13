@@ -41,6 +41,13 @@ Notifikasi ponsel datang dari aplikasi Google Calendar di ponsel (login akun yan
 Setiap penampil memakai connector Google Calendar miliknya sendiri, jadi akun Google-nya harus punya akses ke kalender kantor.
 Hanya berfungsi di versi claude.ai.
 
+## Menu Tugas
+15 tugas pelaporan Divisi Umum (GA, Admin, Finance, HR) disalin dari "Dashboard Divisi Umum"
+(`assets/js/tugas-data.js`, logika di `assets/js/tugas.js`). Per periode mingguan (Sabtu) dan bulanan (tanggal 25):
+status Belum/Proses/Selesai, capaian (angka + satuan), tautan bukti, dan lampiran file (PDF/PNG/JPG).
+Di claude.ai data tersimpan di database (koleksi `tasks`, satu dokumen per periode); tugas yang jatuh tempo
+dalam 2 hari muncul di lonceng notifikasi Sage.
+
 ## Kunci PIN Keuangan
 Menu Finance & Accounting (dan kartu angka keuangan di Beranda/Ringkasan) terkunci PIN 4–6 digit,
 khusus **Divisi Umum** dan **Direksi**, memakai satu PIN bersama.
