@@ -234,12 +234,27 @@
       </div>
 
       <div class="modpanel" id="ga-vendor" role="tabpanel" hidden>
+        <div class="stat-row" id="vendorStats"></div>
         <article class="panel panel--wide">
           <div class="panel__head">
-            <h3 class="panel__title mono">DAFTAR VENDOR &amp; SUBKONTRAKTOR</h3>
-            <div class="chips" id="vendorChips" role="group" aria-label="Filter kategori vendor"></div>
+            <h3 class="panel__title mono">DIREKTORI VENDOR &amp; SUBKONTRAKTOR</h3>
+            <div class="tabs" role="group" id="vendorGroup" aria-label="Kelompok mitra">
+              <button type="button" aria-pressed="true" data-group="vendor">Vendor Material</button>
+              <button type="button" aria-pressed="false" data-group="subkon">Subkontraktor</button>
+            </div>
           </div>
-          <div class="vendor-grid" id="vendorGrid"></div>
+          <div class="vendor-tools">
+            <div class="chips chips--wrap" id="vendorChips" role="group" aria-label="Filter jenis vendor"></div>
+            <div class="toolbar">
+              <select id="vendorLoc" class="select" aria-label="Filter lokasi"><option value="all">Semua lokasi</option></select>
+              <input class="search" type="search" id="vendorSearch" placeholder="Cari nama, nomor, lokasi…" aria-label="Cari vendor">
+            </div>
+          </div>
+          <div class="table-wrap"><table class="table">
+            <thead><tr><th>No.</th><th>Nama Vendor</th><th>Jenis</th><th>Kontak</th><th>Lokasi</th><th></th></tr></thead>
+            <tbody id="vendorBody"></tbody>
+          </table></div>
+          <p class="note mono" id="vendorNote"></p>
         </article>
       </div>
 

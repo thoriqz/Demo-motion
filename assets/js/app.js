@@ -344,21 +344,57 @@
   const stars = (r) => `<span class="stars" aria-label="Rating ${r} dari 5"><i style="width:${(r / 5) * 100}%"></i></span><b class="mono">${r.toFixed(1)}</b>`;
 
   function renderVendors() {
-    const chips = $("#vendorChips"), grid = $("#vendorGrid");
-    chips.innerHTML = ["Semua"].concat(D.vendorCats).map((c, i) => `<button type="button" aria-pressed="${i === 0}" data-cat="${esc(c)}">${esc(c)}</button>`).join("");
-    const tone = { Aktif: "ok", Evaluasi: "warn", "Kontrak habis": "danger" };
-    const draw = (cat) => {
-      grid.innerHTML = D.vendors.filter((v) => cat === "Semua" || v.cat === cat).map((v, i) => `
-        <div class="vcard" style="--d:${i}">
-          <div class="vcard__top"><span class="tag tag--plain">${esc(v.cat)}</span>${pill(v.status, tone[v.status])}</div>
-          <h4>${esc(v.name)}</h4>
-          <div class="vcard__rate">${stars(v.rating)}</div>
-          <dl><div><dt>PIC</dt><dd>${esc(v.pic)}</dd></div><div><dt>Proyek aktif</dt><dd>${v.projects}</dd></div>
-          <div><dt>Nilai 2026</dt><dd>${rpShort(v.ytd)}</dd></div><div><dt>Evaluasi</dt><dd>${esc(v.review)}</dd></div></dl>
-        </div>`).join("");
+    const chips = $("#vendorChips"), body = $("#vendorBody"), search = $("#vendorSearch"), locSel = $("#vendorLoc");
+    const tools = $(".vendor-tools", $("#ga-vendor"));
+    const list = D.vendors, subs = D.subcontractors || [];
+    const key = (v) => v.name + "|" + v.phone;
+    const catsOf = {};
+    list.forEach((v) => (catsOf[key(v)] = (catsOf[key(v)] || []).concat(v.cat)));
+    const locCount = {};
+    list.forEach((v) => (locCount[v.loc] = (locCount[v.loc] || 0) + 1));
+    const topLoc = Object.entries(locCount).sort((x, y) => y[1] - x[1])[0];
+    $("#vendorStats").innerHTML =
+      stat("Vendor material", `<span data-count="${Object.keys(catsOf).length}">${Object.keys(catsOf).length}</span>`, `${list.length} entri, sebagian melayani beberapa jenis`) +
+      stat("Jenis vendor", `<span data-count="${D.vendorCats.length}">${D.vendorCats.length}</span>`, "toko bangunan s.d. pre-cast") +
+      stat("Lokasi terbanyak", esc(topLoc[0]), `${topLoc[1]} vendor · ${Object.keys(locCount).length} lokasi`) +
+      stat("Subkontraktor", `<span data-count="${subs.length}">${subs.length}</span>`, subs.length ? "terdaftar" : "belum ada data", subs.length ? "" : "warn");
+
+    chips.innerHTML = ["Semua"].concat(D.vendorCats).map((c, i) => `<button type="button" aria-pressed="${i === 0}" data-cat="${esc(c)}">${esc(c)} <b>${c === "Semua" ? list.length : list.filter((v) => v.cat === c).length}</b></button>`).join("");
+    Object.keys(locCount).sort((x, y) => x.localeCompare(y, "id")).forEach((l) => locSel.insertAdjacentHTML("beforeend", `<option value="${esc(l)}">${esc(l)} (${locCount[l]})</option>`));
+
+    const wa = (phone) => {
+      const d = phone.replace(/\D/g, "");
+      return d.startsWith("08") ? "https://wa.me/62" + d.slice(1) : null;
     };
-    pressGroup(chips, (b) => draw(b.dataset.cat));
-    draw("Semua");
+    let group = "vendor", cat = "Semua";
+    const draw = () => {
+      tools.hidden = group !== "vendor";
+      if (group === "subkon") {
+        body.innerHTML = subs.length
+          ? subs.map((v, i) => `<tr><td class="mono">${i + 1}</td><td>${esc(v.name)}</td><td>${esc(v.cat)}</td><td class="mono">${esc(v.phone)}</td><td>${esc(v.loc)}</td><td></td></tr>`).join("")
+          : `<tr><td colspan="6" class="empty">Belum ada data subkontraktor. Kirim daftarnya dengan kolom yang sama (jenis, nama, kontak, lokasi) untuk ditambahkan.</td></tr>`;
+        $("#vendorNote").textContent = "";
+        return;
+      }
+      const q = norm(search.value), loc = locSel.value;
+      const rows = list.filter((v) => (cat === "Semua" || v.cat === cat) && (loc === "all" || v.loc === loc) && (!q || norm(v.name + v.phone + v.loc + v.cat).includes(q)));
+      body.innerHTML = rows.map((v, i) => {
+        const others = catsOf[key(v)].filter((c) => c !== v.cat);
+        const w = wa(v.phone);
+        return `<tr><td class="mono">${i + 1}</td>
+          <td>${esc(v.name)}${others.length ? `<small class="mono sub">juga: ${esc(others.join(", "))}</small>` : ""}</td>
+          <td><span class="tag tag--plain">${esc(v.cat)}</span></td>
+          <td class="mono"><a class="tel" href="tel:${v.phone.replace(/\D/g, "")}">${esc(v.phone)}</a></td>
+          <td>${esc(v.loc)}</td>
+          <td>${w ? `<a class="mini-btn" href="${w}" target="_blank" rel="noopener" aria-label="WhatsApp ${esc(v.name)}">WhatsApp</a>` : `<span class="note">telepon kantor</span>`}</td></tr>`;
+      }).join("") || `<tr><td colspan="6" class="empty">Tidak ada vendor yang cocok.</td></tr>`;
+      $("#vendorNote").textContent = `${rows.length} dari ${list.length} entri ditampilkan · sumber: Daftar Vendor Material (Excel)`;
+    };
+    pressGroup(chips, (b) => { cat = b.dataset.cat; draw(); });
+    pressGroup($("#vendorGroup"), (b) => { group = b.dataset.group; draw(); });
+    locSel.addEventListener("change", draw);
+    search.addEventListener("input", draw);
+    draw();
   }
 
   function renderServices() {

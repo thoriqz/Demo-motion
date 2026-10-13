@@ -742,3 +742,11 @@ h1, h2, h3 { font-family: var(--f-head); font-weight: 700; letter-spacing: .01em
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; transition-delay: 0s !important; }
   .cad { display: none; }
 }
+
+/* direktori vendor */
+.vendor-tools { display: grid; gap: 12px; margin-bottom: 14px; }
+.vendor-tools[hidden] { display: none; }
+.vendor-tools .chips--wrap { margin-bottom: 0; }
+.table a.tel { color: inherit; text-decoration: none; border-bottom: 1px dotted var(--line-soft); }
+.table a.tel:hover { color: var(--accent); }
+a.mini-btn { display: inline-block; text-decoration: none; }
