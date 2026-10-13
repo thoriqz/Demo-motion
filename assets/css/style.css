@@ -807,7 +807,12 @@ body.fin-locked .kpi[data-secure="finance"]::after { z-index: 1; width: auto; he
 
 /* tabel inventaris panjang: gulir di dalam, judul kolom tetap terlihat */
 #ga-asset .table-wrap { max-height: 620px; overflow: auto; }
-#ga-asset .table thead th { position: sticky; top: 0; z-index: 1; background: var(--bg); }
+/* border-collapse: separate supaya latar judul kolom yang menempel benar-benar menutup baris di bawahnya */
+#ga-asset .table { border-collapse: separate; border-spacing: 0; }
+#ga-asset .table thead th { position: sticky; top: 0; z-index: 3; background: var(--bg); box-shadow: inset 0 -1px 0 var(--line); }
+#ga-asset .table tbody tr { position: relative; z-index: 0; }
+/* baris judul tidak ikut animasi masuk (animasi membuat lapisan baru yang menenggelamkan judul) */
+.table thead tr { animation: none; position: relative; z-index: 2; }
 [data-skin="sage"] #ga-asset .table thead th { background: var(--panel); }
 
 /* =========================================================
