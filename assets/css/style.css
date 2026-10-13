@@ -612,10 +612,6 @@ h1, h2, h3 { font-family: var(--f-head); font-weight: 700; letter-spacing: .01em
 .vcard dl { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px; margin: 4px 0 0; padding-top: 10px; border-top: 1px dashed var(--line-soft); }
 .vcard dt { font: 10px var(--f-mono); color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
 .vcard dd { margin: 0; font-size: 13px; }
-.stars { position: relative; display: inline-block; font-size: 14px; letter-spacing: 2px; color: var(--line-soft); line-height: 1; }
-.stars::before { content: "★★★★★"; }
-.stars i { position: absolute; left: 0; top: 0; overflow: hidden; white-space: nowrap; color: var(--accent); font-style: normal; }
-.stars i::before { content: "★★★★★"; }
 
 /* kanban 3 kolom (pelayanan umum) */
 .kanban--3 { grid-template-columns: repeat(3, 1fr); }
@@ -946,3 +942,7 @@ a.cal__ev:hover { filter: brightness(1.15); text-decoration: underline; }
 .att-live__stamp { font-size: 11px; color: var(--muted); }
 .att-live__frame { position: relative; height: min(78vh, 900px); min-height: 520px; border: 1px solid var(--line-soft); background: #fff; overflow: hidden; }
 .att-live__frame iframe { display: block; width: 100%; height: 100%; border: 0; }
+
+/* Tautan kontak (WhatsApp / email) di tabel HR */
+.lnk { color: var(--accent); text-decoration: none; border-bottom: 1px dotted currentColor; }
+.lnk:hover { border-bottom-style: solid; }

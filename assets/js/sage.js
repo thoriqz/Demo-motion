@@ -104,7 +104,7 @@
     const kv = Object.values(kinds), kmax = Math.max(1, ...kv);
     $("#hPoBars").innerHTML = (kv.length ? kv : [0, 0, 0, 0]).slice(0, 5).map((n, k) => `<i style="--h:${16 + (n / kmax) * 84}%;--k:${k}" class="${n ? "" : "lo"}"></i>`).join("");
     countTo($("#hLetters"), letters);
-    countTo($("#hPeople"), 58 + D.freelancers.length);
+    countTo($("#hPeople"), D.employees.length + D.freelancers.length);
     countTo($("#hClose"), closePct, "%");
 
     // Arus kas bulanan

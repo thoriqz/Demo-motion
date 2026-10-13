@@ -246,7 +246,7 @@
       { label: "PDF Procurement", value: procN, unit: "file", floor: "LT.01 · GA", href: "#ga" },
       { label: "Surat Bulan Ini", value: state.letters.length, unit: "surat", floor: "LT.02 · ADM", href: "#adm" },
       { label: "Progres Tutup Buku", value: closePct, unit: "%", floor: "LT.03 · FIN", href: "#fin" },
-      { label: "Karyawan + Freelancer", value: 58 + D.freelancers.length, unit: "orang", floor: "LT.04 · HR", href: "#hr" },
+      { label: "Karyawan + Freelancer", value: D.employees.length + D.freelancers.length, unit: "orang", floor: "LT.04 · HR", href: "#hr" },
       { label: "Arsip Legal (PDF)", value: legalN, unit: "file", floor: "LT.05 · LGL", href: "#legal" }
     ];
     const grid = $("#kpiGrid");
@@ -337,7 +337,6 @@
     $("#invSource").innerHTML = `Disalin dari <a href="${esc(I.source.url)}" target="_blank" rel="noopener">${esc(I.source.name)}</a> · tanggal laporan ${fd(I.source.asOf)}. Perubahan di aplikasi sumber belum otomatis masuk ke sini.`;
   }
 
-  const stars = (r) => `<span class="stars" aria-label="Rating ${r} dari 5"><i style="width:${(r / 5) * 100}%"></i></span><b class="mono">${r.toFixed(1)}</b>`;
 
   function renderVendors() {
     const chips = $("#vendorChips"), body = $("#vendorBody"), search = $("#vendorSearch"), locSel = $("#vendorLoc");
@@ -727,30 +726,30 @@
   /* =========================================================
      LT.04 HUMAN RESOURCES
      ========================================================= */
+  /* Nomor HP lokal (08…) → tautan WhatsApp 628… */
+  const waLink = (p) => "https://wa.me/62" + String(p).replace(/\D/g, "").replace(/^0/, "");
+
   function renderEmployees() {
-    const colors = ["var(--accent)", "var(--accent-2)", "var(--ok)", "var(--line)", "var(--muted)", "#7aa7ff"];
-    const total = D.headcount.reduce((s, v) => s + v.value, 0);
-    $("#headcount").innerHTML = `
-      <div class="stack__bar">${D.headcount.map((h, i) => `<i style="background:${colors[i]}" data-w="${(h.value / total) * 100}" title="${esc(h.label)}: ${h.value}"></i>`).join("")}</div>
-      <ul class="stack__list">${D.headcount.map((h, i) => `<li><span class="sw" style="background:${colors[i]}"></span>${esc(h.label)}<b>${h.value}</b></li>`).join("")}<li class="stack__total"><b>${up("Total " + total + " orang")}</b></li></ul>`;
+    const E = D.employees;
+    const male = E.filter((e) => e.gender === "Laki-laki").length;
+    const avg = E.length ? E.reduce((s, e) => s + e.age, 0) / E.length : 0;
+    $("#empStats").innerHTML = [
+      stat("Total karyawan", `<span data-count="${E.length}">${E.length}</span>`, "orang"),
+      stat("Laki-laki", `<span data-count="${male}">${male}</span>`, "orang"),
+      stat("Perempuan", `<span data-count="${E.length - male}">${E.length - male}</span>`, "orang"),
+      stat("Rata-rata usia", `<span data-count="${Math.round(avg)}">${Math.round(avg)}</span>`, "tahun")
+    ].join("");
 
     const sel = $("#empDiv"), search = $("#empSearch"), body = $("#empBody");
-    [...new Set(D.employees.map((e) => e.div))].forEach((d) => sel.insertAdjacentHTML("beforeend", `<option>${esc(d)}</option>`));
-    const tone = { Tetap: "ok", PKWT: "info", Probation: "warn" };
-    const tenure = (join) => {
-      const j = new Date(join + "T00:00:00");
-      let m = (today.getFullYear() - j.getFullYear()) * 12 + today.getMonth() - j.getMonth();
-      if (today.getDate() < j.getDate()) m--;
-      const y = Math.floor(m / 12); m %= 12;
-      return (y ? y + " th " : "") + m + " bln";
-    };
+    [...new Set(E.map((e) => e.gender))].forEach((d) => sel.insertAdjacentHTML("beforeend", `<option>${esc(d)}</option>`));
     const draw = () => {
       const q = norm(search.value), dv = sel.value;
-      const rows = D.employees.filter((e) => (dv === "all" || e.div === dv) && (!q || norm(e.nik + e.name + e.role).includes(q)));
-      body.innerHTML = rows.map((e) => `<tr><td>${esc(e.nik)}</td><td>${esc(e.name)}</td><td>${esc(e.role)}</td><td>${esc(e.div)}</td>
-        <td>${pill(e.status, tone[e.status])}</td><td>${fmtDate(new Date(e.join + "T00:00:00"))}</td><td class="mono">${tenure(e.join)}</td></tr>`).join("")
-        || `<tr><td colspan="7" class="empty">Tidak ada karyawan yang cocok.</td></tr>`;
-      $("#empNote").textContent = `${rows.length} baris ditampilkan · contoh ${D.employees.length} dari ${total} karyawan`;
+      const rows = E.filter((e) => (dv === "all" || e.gender === dv) && (!q || norm(e.name + e.role + e.email + e.phone).includes(q)));
+      body.innerHTML = rows.map((e) => `<tr><td>${esc(e.name)}</td><td>${esc(e.gender)}</td><td class="mono">${e.age} th</td>
+        <td class="mono"><a class="lnk" href="${waLink(e.phone)}" target="_blank" rel="noopener">${esc(e.phone)}</a></td>
+        <td>${esc(e.role)}</td><td><a class="lnk" href="mailto:${esc(e.email)}">${esc(e.email)}</a></td></tr>`).join("")
+        || `<tr><td colspan="6" class="empty">Tidak ada karyawan yang cocok.</td></tr>`;
+      $("#empNote").textContent = `${rows.length} dari ${E.length} karyawan ditampilkan · sumber: Database SDM Roemantara`;
     };
     sel.addEventListener("change", draw);
     search.addEventListener("input", draw);
@@ -758,17 +757,22 @@
   }
 
   function renderFreelancers() {
-    const grid = $("#freeGrid");
+    const grid = $("#freeGrid"), tabs = $("#freeTabs");
+    tabs.innerHTML = `<button type="button" aria-pressed="true" data-filter="all">Semua</button>` +
+      D.freelancePositions.map((p) => `<button type="button" aria-pressed="false" data-filter="${esc(p)}">${esc(p)}</button>`).join("");
     const draw = (f) => {
-      grid.innerHTML = D.freelancers.filter((x) => f === "all" || x.avail === f).map((x, i) => `
-        <div class="vcard" style="--d:${i}">
-          <div class="vcard__top"><span class="tag tag--plain">${esc(x.skill)}</span>${pill(x.avail, x.avail === "Tersedia" ? "ok" : "info")}</div>
-          <h4>${esc(x.name)}</h4>
-          <div class="vcard__rate">${stars(x.rating)}</div>
-          <dl><div><dt>Tarif</dt><dd>${esc(x.rate)}</dd></div><div><dt>Proyek saat ini</dt><dd>${esc(x.project)}</dd></div></dl>
-        </div>`).join("");
+      grid.innerHTML = D.freelancePositions.filter((p) => f === "all" || p === f).map((p, i) => {
+        const people = D.freelancers.filter((x) => x.role === p);
+        return `<div class="vcard" style="--d:${i}">
+          <div class="vcard__top"><span class="tag tag--plain">Freelance</span>${pill(people.length + " orang", people.length ? "ok" : "")}</div>
+          <h4>${esc(p)}</h4>
+          ${people.length ? `<dl>${people.map((x) => `<div><dt>${esc(x.name)}</dt><dd><a class="lnk mono" href="${waLink(x.phone)}" target="_blank" rel="noopener">${esc(x.phone)}</a></dd></div>`).join("")}</dl>`
+            : `<p class="note mono">Belum ada freelancer di posisi ini.</p>`}
+        </div>`;
+      }).join("");
+      $("#freeNote").textContent = `${D.freelancers.length} freelancer di ${D.freelancePositions.length} posisi · klik nomor untuk WhatsApp`;
     };
-    pressGroup($("#freeTabs"), (b) => draw(b.dataset.filter));
+    pressGroup(tabs, (b) => draw(b.dataset.filter));
     draw("all");
   }
 

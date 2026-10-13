@@ -295,8 +295,6 @@ body[data-skin="sage"] { background: var(--bg); background-image: none; color: v
 [data-skin="sage"] .vcard h4 { font: 600 18px var(--f-head); }
 [data-skin="sage"] .vcard dl { border-top: 1px solid var(--line-soft); }
 [data-skin="sage"] .vcard dt { font: 500 11px var(--f-body); text-transform: none; letter-spacing: 0; }
-[data-skin="sage"] .stars { color: #d8d8d2; }
-[data-skin="sage"] .stars i { color: #e0a73a; }
 
 [data-skin="sage"] .kanban__col { border: 0; background: var(--soft); border-radius: 18px; padding: 12px; }
 [data-skin="sage"] .kanban__col h4 { font: 600 13px var(--f-body); color: var(--ink); letter-spacing: 0; }

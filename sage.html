@@ -328,17 +328,17 @@
       </div>
 
       <div class="modpanel" id="hr-emp" role="tabpanel">
-        <article class="panel panel--wide"><h3 class="panel__title mono">Komposisi karyawan</h3><div class="stack stack--row" id="headcount"></div></article>
+        <div class="stat-row" id="empStats"></div>
         <article class="panel panel--wide">
           <div class="panel__head">
             <h3 class="panel__title mono">Data karyawan</h3>
             <div class="toolbar">
-              <select id="empDiv" class="select" aria-label="Filter divisi"><option value="all">Semua divisi</option></select>
-              <input class="search" type="search" id="empSearch" placeholder="Cari nama, NIK, jabatan…" aria-label="Cari karyawan">
+              <select id="empDiv" class="select" aria-label="Filter jenis kelamin"><option value="all">Semua jenis kelamin</option></select>
+              <input class="search" type="search" id="empSearch" placeholder="Cari nama, posisi, email…" aria-label="Cari karyawan">
             </div>
           </div>
           <div class="table-wrap"><table class="table">
-            <thead><tr><th>NIK</th><th>Nama</th><th>Jabatan</th><th>Divisi</th><th>Status</th><th>Bergabung</th><th>Masa Kerja</th></tr></thead>
+            <thead><tr><th>Nama</th><th>Jenis Kelamin</th><th>Usia</th><th>Nomor HP</th><th>Posisi Kerja</th><th>Email</th></tr></thead>
             <tbody id="empBody"></tbody>
           </table></div>
           <p class="note mono" id="empNote"></p>
@@ -349,13 +349,10 @@
         <article class="panel panel--wide">
           <div class="panel__head">
             <h3 class="panel__title mono">Database freelancer</h3>
-            <div class="tabs" role="group" id="freeTabs" aria-label="Filter ketersediaan">
-              <button type="button" aria-pressed="true" data-filter="all">Semua</button>
-              <button type="button" aria-pressed="false" data-filter="Tersedia">Tersedia</button>
-              <button type="button" aria-pressed="false" data-filter="Bertugas">Bertugas</button>
-            </div>
+            <div class="tabs" role="group" id="freeTabs" aria-label="Filter posisi"></div>
           </div>
           <div class="vendor-grid" id="freeGrid"></div>
+          <p class="note mono" id="freeNote"></p>
         </article>
       </div>
 

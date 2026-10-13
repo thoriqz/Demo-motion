@@ -241,35 +241,22 @@ window.DU_DATA = {
   /* =====================================================
      LT.04 HUMAN RESOURCES
      ===================================================== */
-  headcount: [
-    { label: "Arsitek & Desainer", value: 14 },
-    { label: "Drafter / BIM", value: 9 },
-    { label: "Site Engineer & Pengawas", value: 16 },
-    { label: "Quantity Surveyor", value: 5 },
-    { label: "Divisi Umum & Support", value: 8 },
-    { label: "Manajemen", value: 6 }
-  ],
+  /* Sumber: DATABASE_SDM_ROEMANTRA.xlsx (sheet DATA KARYAWAN) */
   employees: [
-    { nik: "RMT-0003", name: "Andika Pratama", role: "Direktur Operasional", div: "Manajemen", status: "Tetap", join: "2015-03-02" },
-    { nik: "RMT-0008", name: "Sekar Ayuningtyas", role: "Arsitek Utama", div: "Desain", status: "Tetap", join: "2017-07-17" },
-    { nik: "RMT-0014", name: "Bayu Saputra", role: "Site Manager", div: "Konstruksi", status: "Tetap", join: "2018-01-08" },
-    { nik: "RMT-0021", name: "Dewi Kartika", role: "Interior Designer", div: "Desain", status: "Tetap", join: "2019-09-02" },
-    { nik: "RMT-0027", name: "Rizal Hakim", role: "Quantity Surveyor", div: "QS", status: "Tetap", join: "2020-02-03" },
-    { nik: "RMT-0033", name: "Putri Maharani", role: "Staff Finance", div: "Divisi Umum", status: "Tetap", join: "2021-04-12" },
-    { nik: "RMT-0039", name: "Galih Permana", role: "Drafter BIM", div: "Desain", status: "PKWT", join: "2022-08-01" },
-    { nik: "RMT-0044", name: "Yoga Firmansyah", role: "Pengawas Lapangan", div: "Konstruksi", status: "PKWT", join: "2023-03-06" },
-    { nik: "RMT-0049", name: "Nadia Salsabila", role: "Admin Kantor", div: "Divisi Umum", status: "Tetap", join: "2023-10-02" },
-    { nik: "RMT-0052", name: "Teguh Wibisono", role: "Site Engineer", div: "Konstruksi", status: "PKWT", join: "2024-05-13" },
-    { nik: "RMT-0056", name: "Laras Wulandari", role: "3D Visualizer", div: "Desain", status: "PKWT", join: "2025-06-02" },
-    { nik: "RMT-0058", name: "Fikri Ramadhan", role: "Drafter AutoCAD", div: "Desain", status: "Probation", join: "2026-09-01" }
+    { name: "Thoriq Ilham Zuhaldi", gender: "Laki-laki", age: 28, phone: "082281479117", role: "Head of General", email: "thoriqzuhaldi@gmail.com" },
+    { name: "Ananda Tri Pamungkas", gender: "Laki-laki", age: 28, phone: "08989301726", role: "Head of Branding Marketing", email: "nandatri1020@gmail.com" },
+    { name: "M Reyhanryan Daffa M", gender: "Laki-laki", age: 26, phone: "082374824392", role: "Head of Operational", email: "ryandaffar@gmail.com" },
+    { name: "Muhammad Fahmi Alman", gender: "Laki-laki", age: 25, phone: "085809824153", role: "Pengawas Lapangan", email: "m.fahmialman15@gmail.com" }
   ],
+  /* Sumber: DATABASE_FREELANCE.xlsx. Posisi tanpa nama tetap ditampilkan. */
+  freelancePositions: ["3D Designer", "Drafter Estimator", "Content Creator"],
   freelancers: [
-    { name: "Arif Nugroho", skill: "Drafter AutoCAD", rate: "Rp 450 rb / lembar", project: "Gudang Cikarang", rating: 4.7, avail: "Bertugas" },
-    { name: "Melati Kusuma", skill: "3D Visualizer", rate: "Rp 1,2 jt / view", project: "—", rating: 4.9, avail: "Tersedia" },
-    { name: "Pak Slamet", skill: "Mandor Sipil", rate: "Rp 350 rb / hari", project: "Rumah Kemang", rating: 4.5, avail: "Bertugas" },
-    { name: "Indra Lesmana", skill: "Tukang Kayu Interior", rate: "Rp 300 rb / hari", project: "—", rating: 4.3, avail: "Tersedia" },
-    { name: "Citra Dewanti", skill: "Desainer Grafis (Compro)", rate: "Rp 4 jt / proyek", project: "Compro 2027", rating: 4.6, avail: "Bertugas" },
-    { name: "Hadi Prasetyo", skill: "Surveyor Topografi", rate: "Rp 2,5 jt / lokasi", project: "—", rating: 4.4, avail: "Tersedia" }
+    { name: "Zaki", role: "3D Designer", phone: "0812-1840-7448" },
+    { name: "Renaldi", role: "3D Designer", phone: "0822-8086-8952" },
+    { name: "Nurul", role: "3D Designer", phone: "0812-1489-3641" },
+    { name: "Febry", role: "3D Designer", phone: "0878-6946-4120" },
+    { name: "Akbar", role: "Drafter Estimator", phone: "0857-6491-6822" },
+    { name: "Arya", role: "Drafter Estimator", phone: "0831-2444-2158" }
   ],
   attendance: {
     url: "https://script.google.com/macros/s/AKfycbxWMYLpRaKjP7VHfIoNCNH_6mAZGoMG8zRIaoeLqfMxkY7fwvL5XLdSSeNZFgaEbswXJg/exec?page=dashboard",

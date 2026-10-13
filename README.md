@@ -8,7 +8,7 @@ Divisi digambarkan sebagai gedung 5 lantai — tiap lantai satu bidang:
 | LT.01 | General Affairs | Procurement & Purchasing (PR → Approval → PO → Dikirim → Diterima, form PR baru) · Aset & Inventaris · Vendor & Subkon (rating, status, filter kategori) · Pelayanan Umum (papan tiket) · Layanan Klien (waktu respons & target SLA 30 menit) · Kalender Internal & Eksternal |
 | LT.02 | Administrasi | Surat-menyurat SPK/SPH/Invoice/BA/Umum dengan penomoran otomatis (`022/SPH/RMT/X/2026`) · Pengarsipan internal & eksternal (surat, company profile, portofolio) · Notulen rapat + tindak lanjut |
 | LT.03 | Finance & Accounting | Rekonsiliasi bank per rekening · Laporan keuangan harian/mingguan/bulanan + anggaran vs realisasi · Daftar periksa tutup buku + kunci periode |
-| LT.04 | Human Resources | Database karyawan (cari & filter divisi, masa kerja otomatis) · Database freelancer · Absensi live dari dashboard Google Apps Script (disematkan, muat ulang otomatis tiap 5 menit) |
+| LT.04 | Human Resources | Database karyawan dari DATABASE_SDM_ROEMANTRA.xlsx (nama, jenis kelamin, usia, HP, posisi, email) · Database freelancer per posisi dari DATABASE_FREELANCE.xlsx · Absensi live dari dashboard Google Apps Script (disematkan, muat ulang otomatis tiap 5 menit) |
 | LT.05 | Legal | Arsip semua dokumen eksternal (perizinan, kontrak, akta, asuransi, sertifikat) + pengingat jatuh tempo |
 
 ## Motion & interaksi
