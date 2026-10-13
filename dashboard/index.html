@@ -1,0 +1,1678 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+</head>
+<body>
+<!--PAGE-START-->
+<title>Dashboard Divisi Umum</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: lembar gambar kerja arsitek (desain Menara Laporan). Kop atas berisi logo, menu lembar
+   A-01 Ringkasan / A-02 Lampiran / A-03 Jadwal, dan jam. */
+:root{
+  --paper:#e9eeec; --sheet:#f5f7f5; --ink:#18293a; --muted:#5b6b78; --line:#2c5c8a; --grid:rgba(44,92,138,.10);
+  --accent:#e2701f; --done:#2f8259; --wip:#c8920f; --todo:#8a97a3; --lit:#ffd27a;
+  --display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0d2136; --sheet:#11294222; --ink:#dbe7f1; --muted:#8fa7bb; --line:#7fb6e6; --grid:rgba(127,182,230,.09);
+  --accent:#f28a3c; --done:#56b585; --wip:#e3b23c; --todo:#5d7489; --lit:#ffd27a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0d2136; --sheet:#11294222; --ink:#dbe7f1; --muted:#8fa7bb; --line:#7fb6e6; --grid:rgba(127,182,230,.09);
+  --accent:#f28a3c; --done:#56b585; --wip:#e3b23c; --todo:#5d7489; --lit:#ffd27a; color-scheme:dark}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.55 var(--body);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:16px;padding-block:24px 64px}
+h1,h2,h3{font-family:var(--display);font-weight:700;letter-spacing:.01em;text-wrap:balance;margin:0;line-height:1.05}
+.eyebrow{font:500 11px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* ---------- hero ---------- */
+.hero{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:28px;align-items:stretch}
+@media (max-width:860px){.hero{grid-template-columns:1fr}}
+.drawing{border:1.5px solid var(--line);position:relative;padding:14px;min-width:0}
+.drawing::before,.drawing::after{content:"";position:absolute;width:14px;height:14px;border:1.5px solid var(--accent)}
+.drawing::before{top:-5px;left:-5px;border-right:0;border-bottom:0}
+.drawing::after{bottom:-5px;right:-5px;border-left:0;border-top:0}
+.drawing .eyebrow{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+svg.tower{display:block;width:100%;height:auto;max-height:640px}
+.tower text{font-family:var(--mono);fill:var(--muted);font-size:9px}
+.tower .stroke{stroke:var(--line);fill:none}
+.floor .slab{fill:transparent;stroke:transparent;stroke-width:1.6;transition:fill .6s,stroke .3s}
+.floor .win{fill:transparent;stroke:var(--todo);stroke-width:.8;stroke-dasharray:2 2;transition:fill .45s ease,stroke .3s}
+.floor{cursor:pointer}
+.floor.s-proses .win{fill:url(#hatch);stroke:var(--wip);stroke-dasharray:none}
+.floor.s-selesai .slab{fill:var(--line);fill-opacity:.10}
+.floor.s-selesai .win{fill:var(--lit);stroke:var(--line);stroke-dasharray:none}
+.floor.s-selesai .win.dim{fill-opacity:.55}
+.floor:hover .slab,.floor.hl .slab{stroke:var(--accent)}
+.floor text.lvl{font-size:9px}
+.floor.hl text.lvl,.floor:hover text.lvl{fill:var(--accent)}
+.rise{animation:rise .7s cubic-bezier(.2,.8,.2,1) both}
+@keyframes rise{from{transform:translateY(10px);opacity:.25}to{transform:none;opacity:1}}
+.draw{stroke-dasharray:1400;animation:draw 1.6s ease-out both}
+@keyframes draw{from{stroke-dashoffset:1400}to{stroke-dashoffset:0}}
+#gondola{transition:transform 1.4s cubic-bezier(.5,0,.2,1),opacity .6s}
+.cable{transition:transform 1.4s cubic-bezier(.5,0,.2,1),opacity .6s;transform-box:fill-box;transform-origin:top}
+#gondolaSway{animation:sway 4s ease-in-out infinite;transform-box:fill-box;transform-origin:top center}
+@keyframes sway{0%,100%{transform:rotate(-1.2deg)}50%{transform:rotate(1.2deg)}}
+#beacon{animation:blink 1.2s steps(2) infinite}
+@keyframes blink{50%{opacity:.15}}
+#sign polygon{fill:var(--paper);stroke:var(--line);stroke-width:.8;transition:fill .6s}
+#sign text{fill:var(--muted);font-size:5.6px;letter-spacing:.14em;transition:fill .6s}
+.topped #sign polygon{fill:var(--lit);fill-opacity:.35}
+.topped #sign text{fill:var(--accent);font-weight:600}
+.topped #gondola,.topped .cable{opacity:0}
+.iso .ln{stroke:var(--line);fill:none;stroke-width:1}
+.iso .thin{stroke:var(--line);fill:none;stroke-width:.6;opacity:.75}
+.iso .hid{stroke:var(--line);fill:none;stroke-width:.7;stroke-dasharray:3 3;opacity:.5}
+.iso .faceL{fill:var(--line);fill-opacity:.05;stroke:var(--line);stroke-width:1.2}
+.iso .faceR{fill:var(--line);fill-opacity:.12;stroke:var(--line);stroke-width:1.2}
+.iso .faceT{fill:var(--line);fill-opacity:.03;stroke:var(--line);stroke-width:1.2}
+.iso .dim{stroke:var(--line);stroke-width:.6;fill:none}
+.iso .dimt{fill:var(--line);font-size:7.5px}
+.iso .tick{stroke:var(--line);stroke-width:1.1}
+.site{cursor:pointer}
+.site:focus{outline:none}
+.site.hlb .faceL,.site.hlb .faceR,.site.hlb .faceT,.site:focus-visible .faceL,.site:focus-visible .faceR{stroke:var(--accent)}
+.iso .col{stroke:var(--line);stroke-width:1.1}
+.iso .scaf{fill:url(#hatch);opacity:.6;stroke:var(--wip);stroke-width:.5}
+.iso .lit{fill:var(--lit);stroke:var(--line);stroke-width:.4}
+.iso .lit.dim{fill-opacity:.5}
+.iso .road{fill:var(--line);fill-opacity:.07;stroke:var(--line);stroke-width:.8}
+.iso .bname{font-family:var(--display);font-weight:700;font-size:12px;fill:var(--ink);letter-spacing:.04em}
+.iso .bstage{font-size:7px;fill:var(--muted);letter-spacing:.06em}
+.iso .bstage.done{fill:var(--done)}
+.iso #labels text{paint-order:stroke;stroke:var(--paper);stroke-width:3px;stroke-linejoin:round;pointer-events:none}
+.grow{animation:grow .7s cubic-bezier(.2,.8,.2,1) both}
+@keyframes grow{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:none}}
+.flag{animation:wave 1.8s ease-in-out infinite;transform-box:fill-box;transform-origin:left center}
+@keyframes wave{50%{transform:scaleX(.82) skewY(5deg)}}
+.truck{animation:drive 20s linear infinite}
+@keyframes drive{from{transform:translate(0,0)}to{transform:translate(var(--dx),var(--dy))}}
+#hookLoad{transition:none}
+
+.side{display:flex;flex-direction:column;gap:20px;min-width:0}
+.titleblock{border:1.5px solid var(--line);display:grid;grid-template-columns:1fr 1fr;background:var(--sheet)}
+.titleblock>div{padding:10px 12px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);min-width:0}
+.titleblock>div:nth-child(2n){border-right:0}
+.titleblock .main{grid-column:1/-1;border-right:0;padding:16px 14px}
+.titleblock .main h1{font-size:clamp(34px,5vw,54px);text-transform:uppercase}
+.titleblock .main p{margin:8px 0 0;color:var(--muted);max-width:52ch}
+.titleblock b{display:block;font:600 14px/1.3 var(--body);margin-top:4px}
+.titleblock>div:nth-last-child(-n+2){border-bottom:0}
+.titleblock>div:nth-last-child(3){border-bottom:0}
+.titleblock>div.upd{grid-column:1/-1;border-right:0;border-top:1px solid var(--line);background:var(--grid)}
+.titleblock>div.upd b{font-weight:500;font-size:13px}
+.titleblock>div.upd b em{font-style:normal;color:var(--accent);font-weight:600}
+.row.flash{animation:flash 2.4s ease-out 1}
+@keyframes flash{0%,30%{background:rgba(226,112,31,.18)}100%{background:transparent}}
+.newtag{display:inline-block;font:600 9px var(--mono);letter-spacing:.08em;background:var(--accent);color:#fff;padding:2px 5px;margin-left:6px;vertical-align:3px}
+
+.meter{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.meter .m{border-top:3px solid var(--c);padding-top:8px}
+.meter .n{font:700 44px/1 var(--display);font-variant-numeric:tabular-nums}
+.meter .l{font:500 12px/1.2 var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.bar{height:10px;border:1px solid var(--line);display:flex;overflow:hidden;margin-top:4px}
+.bar span{display:block;height:100%;transition:width .8s cubic-bezier(.2,.8,.2,1)}
+.bar .d{background:var(--done)} .bar .p{background:repeating-linear-gradient(135deg,var(--wip) 0 4px,transparent 4px 7px)}
+
+.due{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:520px){.due{grid-template-columns:1fr}}
+.due .card{border:1.5px solid var(--line);padding:12px;background:var(--sheet);position:relative}
+.due .card.soon{border-color:var(--accent)}
+.due .k{font:700 30px/1 var(--display);font-variant-numeric:tabular-nums}
+.due .k small{font:500 13px var(--mono);color:var(--muted);margin-left:4px}
+.due .t{font-size:13px;color:var(--muted);margin-top:4px}
+.due .pending{font:500 11px var(--mono);margin-top:8px;color:var(--ink)}
+.tape{height:8px;margin-top:2px;background:repeating-linear-gradient(-45deg,var(--accent) 0 10px,transparent 10px 20px);opacity:.85}
+
+/* ---------- calendar ---------- */
+section{margin-top:40px}
+.sechead{display:flex;justify-content:space-between;align-items:end;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.sechead h2{font-size:30px;text-transform:uppercase}
+.cal-scroll{overflow-x:auto;border:1.5px solid var(--line);background:var(--sheet)}
+.cal{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(34px,1fr);min-width:720px}
+.day{border-right:1px solid var(--grid);padding:8px 2px 10px;text-align:center;position:relative}
+.day:last-child{border-right:0}
+.day .dw{font:500 10px var(--mono);color:var(--muted);text-transform:uppercase}
+.day .dn{font:600 18px/1.4 var(--display);font-variant-numeric:tabular-nums}
+.day.sun .dn{color:var(--accent)}
+.day .pins{display:flex;flex-direction:column;align-items:center;gap:3px;min-height:20px}
+.pin{width:8px;height:8px;display:block}
+.pin.w{background:var(--line)} .pin.b{background:var(--accent);transform:rotate(45deg)}
+.day.today{background:var(--grid)}
+.day.today::after{content:"HARI INI";position:absolute;left:50%;top:-1px;transform:translateX(-50%);font:600 8px var(--mono);letter-spacing:.06em;background:var(--accent);color:var(--paper);padding:1px 3px;white-space:nowrap}
+.day.past .dn{opacity:.4}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font:500 12px var(--mono);color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+
+/* ---------- register ---------- */
+.filters{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:transparent;padding:5px 11px;font:500 12px var(--mono);cursor:pointer;letter-spacing:.04em}
+.chip[aria-pressed="true"]{background:var(--line);color:var(--paper)}
+.chip:hover{border-color:var(--accent)}
+.reg{border:1.5px solid var(--line);background:var(--sheet)}
+.row{display:grid;grid-template-columns:52px minmax(0,1.5fr) minmax(0,.85fr) minmax(0,.8fr) auto minmax(0,.9fr);gap:14px;align-items:center;padding:12px 14px;border-bottom:1px solid var(--grid);position:relative;transition:background .3s}
+.row:last-child{border-bottom:0}
+.row.hl{background:var(--grid)}
+.row::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--c,var(--todo));transition:background .4s}
+.row .no{font:700 22px/1 var(--display);color:var(--muted);font-variant-numeric:tabular-nums}
+.row .no small{display:block;font:500 9px var(--mono);letter-spacing:.1em}
+.row .name{font-weight:600;line-height:1.3}
+.row .tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:5px}
+.tag{font:500 10.5px var(--mono);padding:2px 6px;border:1px solid var(--grid);color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.tag.bd{border-color:var(--line);color:var(--line)}
+.row .when{font-size:13px}
+.row .when .rel{display:block;font:500 11px var(--mono);color:var(--muted)}
+.row .when .rel.soon{color:var(--accent)}
+.seg{display:inline-flex;border:1px solid var(--line)}
+.seg button{border:0;background:transparent;padding:6px 10px;font:500 11px var(--mono);cursor:pointer;text-transform:uppercase;letter-spacing:.05em;border-right:1px solid var(--line)}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"][data-s="belum"]{background:var(--todo);color:var(--paper)}
+.seg button[aria-pressed="true"][data-s="proses"]{background:var(--wip);color:#1d1606}
+.seg button[aria-pressed="true"][data-s="selesai"]{background:var(--done);color:#fff}
+.seg button:disabled{cursor:default;opacity:.8}
+.note{width:100%;border:0;border-bottom:1px dashed var(--muted);background:transparent;font:13px var(--body);color:var(--ink);padding:5px 2px}
+.note:focus{outline:none;border-bottom:1.5px solid var(--accent)}
+.note::placeholder{color:var(--muted);opacity:.7}
+@media (max-width:900px){
+  .row{grid-template-columns:44px minmax(0,1fr);row-gap:8px}
+  .row .when,.row .seg-wrap,.row .note-wrap,.row .res{grid-column:2}
+}
+.foot{margin-top:28px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font:500 11px var(--mono);color:var(--muted)}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,30px);opacity:0;background:var(--ink);color:var(--paper);padding:8px 14px;font:500 12px var(--mono);transition:.3s;pointer-events:none}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+
+/* ---------- kop & menu ---------- */
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:22px;border:1.5px solid var(--line);background:var(--sheet);padding:10px 14px}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.logo{width:46px;height:auto;flex:none;display:block}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .logo{filter:brightness(0) invert(.88)}}
+:root[data-theme="dark"] .logo{filter:brightness(0) invert(.88)}
+.brand b{display:block;font:700 22px/1 var(--display);text-transform:uppercase;letter-spacing:.02em}
+.brand .eyebrow{display:block;margin-top:4px}
+.tabs{display:flex;border:1.5px solid var(--line)}
+.tabs button{border:0;border-right:1px solid var(--line);background:transparent;padding:8px 16px;cursor:pointer;text-align:left;min-height:44px}
+.tabs button:last-child{border-right:0}
+.tabs button span{display:block;font:500 9.5px var(--mono);letter-spacing:.12em;color:var(--muted)}
+.tabs button b{display:block;font:700 17px/1.1 var(--display);text-transform:uppercase;letter-spacing:.03em}
+.tabs button:hover{background:var(--grid)}
+.tabs button[aria-selected="true"]{background:var(--line);color:var(--paper)}
+.tabs button[aria-selected="true"] span{color:var(--paper);opacity:.8}
+.clock{font:500 14px var(--mono);font-variant-numeric:tabular-nums;color:var(--muted);min-width:76px;text-align:right}
+.view>section:first-child{margin-top:0}
+
+/* ---------- per bidang ---------- */
+.bidang{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));border:1.5px solid var(--line);background:var(--sheet)}
+.bcell{border:0;border-right:1px solid var(--line);background:transparent;text-align:left;padding:14px;cursor:pointer;display:flex;flex-direction:column;gap:8px;min-width:0}
+.bcell:last-child{border-right:0}
+.bcell:hover{background:var(--grid)}
+.bcell[aria-pressed="true"]{box-shadow:inset 0 0 0 2px var(--accent)}
+.bcell .bn{font:700 20px/1 var(--display);text-transform:uppercase;letter-spacing:.02em;display:flex;justify-content:space-between;gap:6px}
+.bcell .bn em{font:500 11px var(--mono);font-style:normal;color:var(--muted);letter-spacing:.06em}
+.bcell .pct{font:700 38px/1 var(--display);font-variant-numeric:tabular-nums}
+.bcell .pct small{font:500 13px var(--mono);color:var(--muted);margin-left:2px}
+.bcell .bar{margin-top:0}
+.bcell .bar .t{background:transparent}
+.bcell .bs{font:500 11px var(--mono);color:var(--muted)}
+@media (max-width:860px){.bidang{grid-template-columns:repeat(2,minmax(0,1fr))}.bcell{border-bottom:1px solid var(--line)}.bcell:nth-child(2n){border-right:0}}
+
+/* ---------- daftar: tautan sumber ---------- */
+.lk{display:flex;gap:8px;align-items:center}
+.lk .note{flex:1;min-width:0}
+.open{flex:none;font:500 11px var(--mono);text-transform:uppercase;letter-spacing:.05em;border:1px solid var(--line);padding:6px 10px;color:var(--line);text-decoration:none;white-space:nowrap}
+.open:hover{background:var(--line);color:var(--paper)}
+.err{font:500 11px var(--mono);color:var(--accent);margin:4px 0 0}
+
+/* ---------- lampiran ---------- */
+.att{display:flex;flex-direction:column;gap:18px}
+.ac{border:1.5px solid var(--line);background:var(--sheet);padding:16px;position:relative;display:flex;flex-direction:column;gap:12px}
+.ac::before{content:"";position:absolute;top:-5px;left:-5px;width:12px;height:12px;border:1.5px solid var(--accent);border-right:0;border-bottom:0}
+.ac header{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap}
+.att .ac{margin-top:0}
+.ac h3{font-size:22px;text-transform:uppercase}
+.ac .m{font:500 11px var(--mono);color:var(--muted);margin:4px 0 0;letter-spacing:.04em;text-transform:uppercase}
+.cnt{font:500 11px var(--mono);text-transform:uppercase;letter-spacing:.06em;background:var(--done);color:#fff;padding:3px 8px;white-space:nowrap}
+.files{display:flex;flex-direction:column;border-top:1px solid var(--grid)}
+.files:empty{display:none}
+.file{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--grid)}
+.tb{width:44px;height:44px;border:1px solid var(--line);display:grid;place-items:center;font:600 10px var(--mono);letter-spacing:.06em;color:var(--line)}
+.thumb{width:44px;height:44px;object-fit:cover;border:1px solid var(--line);cursor:zoom-in;display:block}
+.file .fi{display:flex;flex-direction:column;min-width:0}
+.file .fn{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.file .fm{font:500 11px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.file .act,.file .rm{border:0;background:none;cursor:pointer;font:500 11px var(--mono);text-transform:uppercase;letter-spacing:.05em;padding:8px 6px;text-decoration:none}
+.file .act{color:var(--line)}
+.file .rm{color:var(--muted)}
+.file .act:hover,.file .rm:hover{color:var(--accent)}
+.addf{display:grid;grid-template-columns:minmax(0,.55fr) minmax(0,1fr) minmax(0,1.4fr) auto;gap:8px;align-items:center}
+.fld{border:1px solid var(--line);background:transparent;padding:0 10px;height:40px;font:13px var(--body);color:var(--ink);min-width:0;width:100%}
+.fld:focus{outline:none;border-color:var(--accent)}
+.fld::placeholder{color:var(--muted);opacity:.8}
+select.fld{cursor:pointer}
+select.fld option{background:var(--paper);color:var(--ink)}
+.pick{display:flex;align-items:center;gap:10px;min-width:0;cursor:pointer}
+.pick .pb{flex:none;font:500 11px var(--mono);text-transform:uppercase;letter-spacing:.05em;border:1px dashed var(--line);padding:0 12px;height:40px;display:inline-flex;align-items:center;color:var(--line)}
+.pick:hover .pb{border-style:solid}
+.pick .pn{font-size:13px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.vh{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;clip:rect(0 0 0 0)}
+.add{height:40px;border:0;background:var(--accent);color:#fff;padding:0 18px;font:600 15px var(--display);text-transform:uppercase;letter-spacing:.06em;cursor:pointer}
+.add:hover{filter:brightness(1.08)}
+.empty{border:1.5px dashed var(--line);padding:32px 18px;text-align:center;color:var(--muted)}
+.empty b{display:block;font:700 22px var(--display);text-transform:uppercase;color:var(--ink);margin-bottom:4px}
+.lightbox{position:fixed;inset:0;background:rgba(12,24,36,.82);display:grid;place-items:center;padding:20px;z-index:40;cursor:zoom-out}
+.lightbox img{max-width:100%;max-height:88vh;border:2px solid var(--paper)}
+@media (max-width:760px){
+  .addf{grid-template-columns:1fr 1fr}
+  .addf .pick,.addf input[type=url],.addf .add{grid-column:1/-1}
+  .file{grid-template-columns:auto minmax(0,1fr) auto}
+  .file .rm{grid-column:3}
+}
+
+/* ---------- hasil per tugas ---------- */
+.res{display:flex;align-items:flex-end;gap:10px;min-width:0}
+.res .rv{font:700 26px/1 var(--display);font-variant-numeric:tabular-nums;white-space:nowrap}
+.res .rv small{font:500 10.5px var(--mono);color:var(--muted);margin-left:4px;text-transform:uppercase;letter-spacing:.04em}
+.res .rv.none{color:var(--muted);font-size:20px}
+.res .rm{font:500 9.5px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:3px}
+.spark{display:flex;align-items:flex-end;gap:2px;height:24px;flex:none}
+.spark i{display:block;width:6px;background:var(--line);min-height:2px}
+.spark i.nil{background:transparent;border-bottom:1.5px dotted var(--todo);height:0!important}
+.spark i.now{background:var(--accent)}
+.row .ket{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.35}
+.hsum{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:1.5px solid var(--line);background:var(--sheet)}
+.hsum>div{padding:12px 14px;border-right:1px solid var(--line);min-width:0}
+.hsum>div:last-child{border-right:0}
+.hsum b{display:block;font:700 30px/1.05 var(--display);font-variant-numeric:tabular-nums;margin-top:4px;overflow-wrap:anywhere}
+.hsum span.s{display:block;font-size:12px;color:var(--muted);margin-top:2px}
+@media (max-width:760px){.hsum{grid-template-columns:1fr 1fr}.hsum>div:nth-child(2n){border-right:0}.hsum>div:nth-child(-n+2){border-bottom:1px solid var(--line)}}
+.tbl-scroll{overflow-x:auto;border:1.5px solid var(--line);background:var(--sheet)}
+table.ht{border-collapse:collapse;width:100%;min-width:760px;font-size:13px}
+table.ht th,table.ht td{border-bottom:1px solid var(--grid);padding:8px 10px;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+table.ht th{font:500 10px var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);background:var(--grid);vertical-align:bottom}
+table.ht th small{display:block;font-size:10px;color:var(--ink);letter-spacing:0;margin-top:2px}
+table.ht td.l,table.ht th.l{text-align:left;white-space:normal}
+table.ht td.l{font-weight:600;min-width:220px}
+table.ht td.l span{display:block;font:500 10px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.04em;font-weight:500}
+table.ht td.nil{color:var(--todo)}
+table.ht td.rk,table.ht th.rk{background:var(--grid);font-weight:700}
+table.ht th.cur,table.ht td.cur{box-shadow:inset 2px 0 0 var(--accent),inset -2px 0 0 var(--accent)}
+table.ht th.cur{color:var(--accent)}
+table.ht tbody tr:hover td{background:var(--grid)}
+.days{display:grid;grid-template-columns:repeat(auto-fill,minmax(42px,1fr));gap:4px;margin-bottom:12px}
+.dc{border:1px solid var(--grid);padding:4px 2px;text-align:center;font:600 13px var(--display);background:var(--sheet)}
+.dc small{display:block;font:500 8.5px var(--mono);color:var(--muted);text-transform:uppercase}
+.dc.ok{border-color:var(--done);box-shadow:inset 0 -3px 0 var(--done)}
+.dc.bad{border-color:var(--accent);box-shadow:inset 0 -3px 0 var(--accent)}
+.dc.fut{opacity:.45}
+.src{font:500 11px var(--mono);color:var(--muted);letter-spacing:.04em}
+
+/* ---------- terbitkan & mode lihat ---------- */
+.pubbar{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:35;display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center;
+  background:var(--ink);color:var(--paper);padding:10px 12px 10px 16px;border:1.5px solid var(--accent);max-width:calc(100% - 32px);box-shadow:0 10px 30px -12px rgba(0,0,0,.5)}
+.pubbar span{font:500 12px var(--mono);letter-spacing:.03em}
+.pubbar span b{color:var(--accent);font-weight:600}
+.pubbar .xbtn{border-color:var(--paper);color:var(--paper)}
+.pubbar .xbtn.solid{border-color:var(--accent)}
+.pubbar .xbtn[disabled]{opacity:.6;cursor:wait}
+.mode{display:inline-block;font:600 10px var(--mono);letter-spacing:.08em;text-transform:uppercase;padding:3px 7px;margin-left:8px;vertical-align:2px;border:1px solid var(--line);color:var(--line)}
+.mode.w{background:var(--accent);border-color:var(--accent);color:#fff}
+.ro .seg button{pointer-events:none}
+.ro .seg button:not([aria-pressed="true"]){opacity:.35}
+.ro .note{pointer-events:none;border-bottom-color:transparent}
+.ro .note:placeholder-shown{visibility:hidden}
+.ro .xbtn.solid[for],.ro .addf,.ro .file .rm,.ro #xlPrev,.ro #xlPrev2{display:none!important}
+.ro .xl .eyebrow .wonly{display:none}
+
+/* ---------- periode ---------- */
+.perbar{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:0 0 18px;padding:10px 12px;border:1.5px solid var(--line);background:var(--sheet)}
+.perbar .eyebrow{margin-right:6px}
+.pchip{display:inline-flex;flex-direction:column;align-items:flex-start;gap:1px;padding:5px 10px;line-height:1.2}
+.pchip small{font:500 9.5px var(--mono);opacity:.75;letter-spacing:.04em}
+
+/* ---------- excel ---------- */
+.xl{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px;border:1.5px dashed var(--line);padding:10px 12px;background:var(--sheet)}
+.xl .eyebrow{flex:1 1 220px}
+.xbtn{border:1.5px solid var(--line);background:transparent;color:var(--line);font:600 14px var(--display);text-transform:uppercase;letter-spacing:.06em;padding:0 14px;height:38px;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+.xbtn:hover{background:var(--line);color:var(--paper)}
+.xbtn.solid{background:var(--accent);border-color:var(--accent);color:#fff}
+.xbtn.solid:hover{filter:brightness(1.08)}
+.xprev{border:1.5px solid var(--accent);background:var(--sheet);padding:14px;margin-bottom:12px;display:flex;flex-direction:column;gap:10px}
+.xprev h3{font-size:20px;text-transform:uppercase}
+.xprev ul{margin:0;padding:0;list-style:none;max-height:240px;overflow:auto;border-top:1px solid var(--grid)}
+.xprev li{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:10px;padding:7px 0;border-bottom:1px solid var(--grid);font-size:13px;align-items:center}
+.xprev li b{font:700 16px var(--display);color:var(--muted)}
+.xprev li span.ch{font:500 11px var(--mono);text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
+.xprev .warn{font:500 11px var(--mono);color:var(--accent)}
+.xprev .act{display:flex;gap:8px;flex-wrap:wrap}
+
+/* ---------- jadwal ---------- */
+.tl .row{grid-template-columns:minmax(0,180px) minmax(0,1fr) auto}
+.tl .d{font:700 20px/1.1 var(--display);text-transform:uppercase;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.tl .k{color:var(--muted)}
+.tl .n{font:700 34px/1 var(--display);font-variant-numeric:tabular-nums}
+.tl .n small{font:500 11px var(--mono);color:var(--muted);margin-left:4px;text-transform:uppercase}
+.today{font:600 10px var(--mono);letter-spacing:.06em;background:var(--accent);color:var(--paper);padding:2px 6px}
+@media (max-width:900px){ .tl .row{grid-template-columns:minmax(0,1fr) auto} .tl .k{grid-column:1/-1;order:3} }
+@media (max-width:640px){ .tabs{width:100%} .tabs button{flex:1 1 0;min-width:0;padding:8px 6px} .tabs button b{font-size:15px} .clock{display:none} }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><img class="logo" src="assets/logo_roemantara.png" alt="Logo Roemantara" width="46" height="37"><div><b>Divisi Umum</b><span class="eyebrow">Roemantara Indonesia</span></div></div>
+    <nav class="tabs" role="tablist" aria-label="Menu dashboard">
+      <button type="button" role="tab" data-view="ringkasan" aria-selected="true"><span>A-01</span><b>Ringkasan</b></button>
+      <button type="button" role="tab" data-view="hasil" aria-selected="false"><span>A-02</span><b>Hasil</b></button>
+      <button type="button" role="tab" data-view="lampiran" aria-selected="false"><span>A-03</span><b>Lampiran</b></button>
+      <button type="button" role="tab" data-view="jadwal" aria-selected="false"><span>A-04</span><b>Jadwal</b></button>
+    </nav>
+    <div class="clock" id="clock" aria-live="off"></div>
+  </header>
+
+  <div class="perbar" id="perbar1" role="group" aria-label="Pilih periode laporan"></div>
+
+  <!-- ═════════ RINGKASAN ═════════ -->
+  <div class="view" id="v-ringkasan">
+  <div class="hero">
+    <figure class="drawing" style="margin:0">
+      <div class="eyebrow"><span>Rencana tapak · Kawasan proyek</span><span>1 gedung = 1 bidang</span></div>
+      <svg class="tower iso" id="tower" viewBox="0 0 420 368" role="img" aria-label="Kawasan proyek: lima gedung bidang yang dibangun sesuai progres laporan">
+        <defs>
+          <pattern id="hatch" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+            <rect width="4" height="4" fill="transparent"/>
+            <line x1="0" y1="0" x2="0" y2="4" stroke="var(--wip)" stroke-width="1.4"/>
+          </pattern>
+        </defs>
+        <g id="ground"></g>
+        <g id="scene"></g>
+        <g id="craneTop"></g>
+        <g id="traffic"></g>
+        <g id="labels"></g>
+      </svg>
+      <div class="eyebrow" style="margin-top:8px;display:flex;gap:14px;flex-wrap:wrap"><span>▦ Rangka + perancah = proses</span><span>■ Fasad menyala = selesai</span><span>⚑ Bendera = serah terima</span></div>
+    </figure>
+
+    <div class="side">
+      <div class="titleblock">
+        <div class="main">
+          <div class="eyebrow">Roemantara Indonesia · General Department</div>
+          <h1>Laporan Divisi Umum</h1>
+          <p>Pantau status 15 laporan kegiatan Divisi Umum untuk Oktober 2026, per bidang dan per laporan.</p>
+        </div>
+        <div><span class="eyebrow">Periode</span><b>Oktober 2026</b></div>
+        <div><span class="eyebrow">PIC</span><b>Divisi Umum</b></div>
+        <div><span class="eyebrow">Lingkup</span><b>GA · Finance · HR · Admin · Legal</b></div>
+        <div><span class="eyebrow">No. lembar</span><b>A-01 / 15 item</b></div>
+        <div class="upd"><span class="eyebrow">Pembaruan terakhir<span class="mode" id="modeTag" hidden></span></span><b id="tbUpd">–</b></div>
+      </div>
+
+      <div>
+        <div class="eyebrow" style="margin-bottom:8px">Progres · <span id="perLbl"></span></div>
+        <div class="meter">
+          <div class="m" style="--c:var(--done)"><div class="n" id="nDone">0</div><div class="l">Selesai</div></div>
+          <div class="m" style="--c:var(--wip)"><div class="n" id="nWip">0</div><div class="l">Proses</div></div>
+          <div class="m" style="--c:var(--todo)"><div class="n" id="nTodo">15</div><div class="l">Belum</div></div>
+        </div>
+        <div class="bar" aria-hidden="true"><span class="d" id="barD" style="width:0"></span><span class="p" id="barP" style="width:0"></span></div>
+        <div class="eyebrow" style="margin-top:6px" id="progressText">0 dari 15 laporan selesai</div>
+      </div>
+
+      <div>
+        <div class="eyebrow" style="margin-bottom:8px">Tenggat terdekat</div>
+        <div class="due" id="due"></div>
+      </div>
+    </div>
+  </div>
+
+  <section>
+    <div class="sechead">
+      <h2>Status per bidang</h2>
+      <div class="legend"><span><i class="pin" style="background:var(--done)"></i>Selesai</span><span><i class="pin" style="background:var(--wip)"></i>Proses</span><span><i class="pin" style="background:var(--todo)"></i>Belum</span><span>Ketuk bidang untuk memfilter</span></div>
+    </div>
+    <div class="bidang" id="bidang"></div>
+  </section>
+
+  <section>
+    <div class="sechead">
+      <h2>Daftar Laporan</h2>
+      <div class="filters" id="bfilters" role="group" aria-label="Filter bidang"></div>
+    </div>
+    <div class="xl">
+      <span class="eyebrow">Perbarui lewat Excel: unduh file, isi kolom STATUS (Belum / Proses / Selesai) dan TAUTAN SUMBER, lalu impor kembali.</span>
+      <button type="button" class="xbtn" id="xlDown">↓ Unduh Excel</button>
+      <label class="xbtn solid" for="xlFile">↑ Impor Excel</label>
+      <input type="file" id="xlFile" class="vh" accept=".xlsx,.xls,.csv">
+    </div>
+    <div class="xprev" id="xlPrev" hidden></div>
+    <div class="reg" id="reg"></div>
+  </section>
+  </div>
+
+  <!-- ═════════ HASIL ═════════ -->
+  <div class="view" id="v-hasil" hidden>
+    <section>
+      <div class="sechead">
+        <h2>Hasil kegiatan</h2>
+        <div class="legend"><span id="hSrc" class="src"></span></div>
+      </div>
+      <div class="hsum" id="hSum"></div>
+      <div class="xl" style="margin-top:12px">
+        <span class="eyebrow">Sumber angka: file Excel Laporan Divisi Umum (Tabel B, C, D). Isi angkanya di Excel, simpan, lalu impor di sini. Rekap dihitung sama seperti rumus di Excel: Jumlah, Akhir, atau Rata-rata.</span>
+        <label class="xbtn solid" for="xlFile2">↑ Impor Excel</label>
+        <input type="file" id="xlFile2" class="vh" accept=".xlsx,.xls,.csv">
+      </div>
+      <div class="xprev" id="xlPrev2" hidden></div>
+    </section>
+    <section>
+      <div class="sechead"><h2>C. Laporan mingguan</h2><div class="legend"><span>Setiap Sabtu · garis oranye = minggu berjalan</span></div></div>
+      <div class="tbl-scroll"><table class="ht" id="tWeek"></table></div>
+    </section>
+    <section>
+      <div class="sechead"><h2>D. Laporan bulanan</h2><div class="legend"><span>Setiap tanggal 25</span></div></div>
+      <div class="tbl-scroll"><table class="ht" id="tMonth"></table></div>
+    </section>
+    <section>
+      <div class="sechead"><h2>B. Rekonsiliasi harian</h2><div class="legend"><span><i class="pin" style="background:var(--done)"></i>Sesuai</span><span><i class="pin" style="background:var(--accent)"></i>Ada selisih</span><span>Sehabis closing</span></div></div>
+      <div class="days" id="dGrid"></div>
+      <div class="tbl-scroll"><table class="ht" id="tDay"></table></div>
+    </section>
+  </div>
+
+  <!-- ═════════ LAMPIRAN ═════════ -->
+  <div class="view" id="v-lampiran" hidden>
+    <section>
+      <div class="sechead">
+        <h2>Lampiran tugas selesai · <span id="perLbl2"></span></h2>
+        <div class="legend"><span>Berkas, tautan, dan foto dari laporan yang berstatus Selesai</span></div>
+      </div>
+      <div class="att" id="att"></div>
+    </section>
+  </div>
+
+  <!-- ═════════ JADWAL ═════════ -->
+  <div class="view" id="v-jadwal" hidden>
+    <section>
+      <div class="sechead">
+        <h2 id="calTitle">Jadwal Oktober 2026</h2>
+        <div class="legend"><span><i class="pin w"></i>Mingguan (Sabtu)</span><span><i class="pin b"></i>Bulanan (tgl 25)</span><span>Harian: setiap closing</span></div>
+      </div>
+      <div class="cal-scroll"><div class="cal" id="cal"></div></div>
+    </section>
+    <section>
+      <div class="sechead">
+        <h2>Jadwal jatuh tempo</h2>
+        <div class="legend"><span>Mingguan setiap Sabtu, bulanan setiap tanggal 25</span></div>
+      </div>
+      <div class="reg tl" id="sched"></div>
+    </section>
+  </div>
+
+  <div class="foot"><span id="footNote">Status, tautan, dan lampiran disimpan di peramban ini saja dan tidak tersinkron ke perangkat lain. Berkas maks. 1 MB; foto otomatis diperkecil.</span><span>Sumber: Laporan_Divisi_Umum_Okt2026.csv</span></div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="pubbar" id="pubbar" hidden><span id="pubTxt"></span><button type="button" class="xbtn solid" id="pubBtn">Terbitkan ke semua</button></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+(function () {
+  var KEY = "dashboard-divisi-umum-v1";
+  var BIDANG = ["Semua", "GA", "Finance", "HR", "Admin", "Legal"];
+  var BS = BIDANG.slice(1);
+  var OPTIONS = ["Belum", "Proses", "Selesai"];
+  var SCOLOR = { Belum: "var(--todo)", Proses: "var(--wip)", Selesai: "var(--done)" };
+  var ALL = [
+    { no: 1,  name: "Jumlah Pengadaan & Pembelian", b: "GA", w: 1, m: 1 },
+    { no: 2,  name: "Database Aset, Inventaris & Stok", b: "GA", w: 1, m: 1 },
+    { no: 3,  name: "Database Vendor & Subkon", b: "GA", w: 1, m: 1 },
+    { no: 4,  name: "Jumlah Komplain / Klaim Garansi", b: "Admin", b2: "GA", w: 1, m: 1 },
+    { no: 5,  name: "Jumlah Tamu Datang (Konsultasi / Meeting)", b: "Admin", w: 1, m: 1 },
+    { no: 6,  name: "Jumlah Agenda Eksternal (Visit / Survei / Undangan)", b: "Admin", w: 1, m: 1 },
+    { no: 7,  name: "Update Kalender Besar", b: "GA", w: 1, m: 1 },
+    { no: 8,  name: "Rekonsiliasi Keuangan (harian)", b: "Finance", h: 1 },
+    { no: 9,  name: "Rekonsiliasi Keuangan (mingguan)", b: "Finance", w: 1 },
+    { no: 10, name: "Rekonsiliasi Keuangan (bulanan)", b: "Finance", m: 1 },
+    { no: 11, name: "Laporan Tutup Buku", b: "Finance", m: 1 },
+    { no: 12, name: "Jumlah Surat Menyurat (FPP / SPH / SPK / BA / Garansi)", b: "Admin", w: 1, m: 1 },
+    { no: 13, name: "Jumlah Freelance", b: "HR", w: 1, m: 1 },
+    { no: 14, name: "Jumlah Kehadiran", b: "HR", w: 1, m: 1 },
+    { no: 15, name: "Jumlah Payroll", b: "HR", m: 1 }
+  ];
+  var ITEMS = ALL;
+  var TYPE_LABEL = { link: "Tautan", file: "Berkas", pdf: "Berkas", foto: "Foto" };
+  var MAX_FILE = 1024 * 1024;
+
+  var st = {};
+  /* Mode artifact: data tertanam di halaman (#dash-state) dan diterbitkan pemilik untuk semua.
+     Mode lokal (file dibuka langsung): data di localStorage peramban ini. */
+  var EMB = window.__DASH_EMBED || null, ART = !!EMB, readOnly = ART, dirty = 0, artApi = null;
+  var LOCAL = null;
+  try { LOCAL = JSON.parse(localStorage.getItem(KEY)); } catch (e) {}
+  if (ART) st = JSON.parse(JSON.stringify(EMB.st || {})); else st = LOCAL || {};
+  var cur = "Semua";
+
+  function $(id) { return document.getElementById(id); }
+  function q(s) { return document.querySelector(s); }
+  function el(tag, cls, txt) { var n = document.createElement(tag); if (cls) n.className = cls; if (txt != null) n.textContent = txt; return n; }
+  /* status, tautan, dan lampiran disimpan per periode laporan (st.p["W:2026-10-10"][no]) */
+  var PER = { key: "W:0", type: "W", date: null };
+  function perStore(key) { if (!st.p) st.p = {}; if (!st.p[key || PER.key]) st.p[key || PER.key] = {}; return st.p[key || PER.key]; }
+  function rec(no, key) { var S0 = perStore(key); if (!S0[no]) S0[no] = { status: "Belum", link: "", att: [] }; if (!S0[no].att) S0[no].att = []; return S0[no]; }
+  function status(no, key) { var s = rec(no, key).status; return OPTIONS.indexOf(s) < 0 ? "Belum" : s; }
+  function safe(u) { try { return new URL(u).protocol === "https:"; } catch (e) { return false; } }
+  function fmtSize(n) { return n < 1024 * 1024 ? Math.max(1, Math.round(n / 1024)) + " KB" : (n / (1024 * 1024)).toFixed(1) + " MB"; }
+  function freq(it) {
+    if (it.h) return "Harian · sehabis closing";
+    if (it.w && it.m) return "Mingguan (Sabtu) · Bulanan (25)";
+    if (it.w) return "Mingguan · setiap Sabtu";
+    return "Bulanan · tanggal 25";
+  }
+  function freqTags(it) { var t = []; if (it.h) t.push("Harian"); if (it.w) t.push("Mingguan"); if (it.m) t.push("Bulanan"); return t; }
+  function inBidang(it, b) { return it.b === b || it.b2 === b; }
+  function ofBidang(b) { return ITEMS.filter(function (i) { return inBidang(i, b); }); }
+  function counts(list) { var c = { Belum: 0, Proses: 0, Selesai: 0 }; list.forEach(function (it) { c[status(it.no)]++; }); return c; }
+  function save() {
+    st._upd = Date.now();
+    if (ART) {
+      if (readOnly) { toast("Mode lihat: hanya pemilik yang bisa mengubah data."); return false; }
+      markDirty(); return true;
+    }
+    try { localStorage.setItem(KEY, JSON.stringify(st)); return true; }
+    catch (e) { toast("Penyimpanan peramban penuh. Hapus lampiran lama atau gunakan tautan."); return false; }
+  }
+  var tt;
+  function toast(m) { var t = $("toast"); t.textContent = m; t.classList.add("on"); clearTimeout(tt); tt = setTimeout(function () { t.classList.remove("on"); }, 1800); }
+
+  /* ── tanggal ── */
+  var today = new Date(); today.setHours(0, 0, 0, 0);
+  var fmt = new Intl.DateTimeFormat("id-ID", { weekday: "short", day: "numeric", month: "short" });
+  var fmtLong = new Intl.DateTimeFormat("id-ID", { weekday: "long", day: "numeric", month: "long" });
+  function nextSat() { var d = new Date(today); d.setDate(d.getDate() + ((6 - d.getDay() + 7) % 7)); return d; }
+  function next25() { var d = new Date(today.getFullYear(), today.getMonth(), 25); if (d < today) d.setMonth(d.getMonth() + 1); return d; }
+  function daysTo(d) { return Math.round((d - today) / 864e5); }
+  function rel(n) { return n === 0 ? "Hari ini" : n === 1 ? "Besok" : n + " hari lagi"; }
+  var SAT = nextSat(), D25 = next25();
+  function relDue(n) { return n < 0 ? "Lewat " + (-n) + " hari" : rel(n); }
+  function dueOf(it) {
+    if (PER.type === "W" && it.h) return [{ lbl: "Sehabis closing", n: 99, txt: "Harian, s.d. " + fmt.format(PER.date) }];
+    return [{ lbl: fmt.format(PER.date), n: daysTo(PER.date) }];
+  }
+
+  /* ── gedung ── */
+  var NS = "http://www.w3.org/2000/svg";
+  /* Proyeksi isometrik: satuan meter → px. x ke kanan-bawah, y ke kiri-bawah, z ke atas. */
+  var SC = 4.2, CX = 178, CY = 120, CO = 0.866, LH = 3.6, BASE = 0.6;
+  function P(x, y, z) { return [CX + (x - y) * CO * SC, CY + (x + y) * 0.5 * SC - z * SC]; }
+  function pts(a) { return a.map(function (p) { var q = P(p[0], p[1], p[2]); return q[0].toFixed(1) + "," + q[1].toFixed(1); }).join(" "); }
+  function sv(tag, attrs, parent) { var e = document.createElementNS(NS, tag); for (var k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
+  function poly(a, cls, g) { return sv("polygon", { points: pts(a), "class": cls }, g); }
+  function pl(a, cls, g) { return sv("polyline", { points: pts(a), "class": cls }, g); }
+  function txt(t, x, y, attrs, g) { attrs = attrs || {}; attrs.x = x.toFixed(1); attrs.y = y.toFixed(1); var e = sv("text", attrs, g); e.textContent = t; return e; }
+  function box(x0, y0, z0, x1, y1, z1, g, top) {
+    poly([[x0, y1, z0], [x1, y1, z0], [x1, y1, z1], [x0, y1, z1]], "faceL", g);
+    poly([[x1, y1, z0], [x1, y0, z0], [x1, y0, z1], [x1, y1, z1]], "faceR", g);
+    if (top !== false) poly([[x0, y0, z1], [x1, y0, z1], [x1, y1, z1], [x0, y1, z1]], "faceT", g);
+  }
+
+  /* Tapak: satu gedung per bidang, plus direksi keet dan tower crane */
+  var SITES = [
+    { b: "GA",      x: 4,  y: 4,  w: 12, d: 10, F: 6 },
+    { b: "Finance", x: 22, y: 4,  w: 12, d: 10, F: 5 },
+    { b: "HR",      x: 40, y: 4,  w: 12, d: 10, F: 4 },
+    { b: "Admin",   x: 4,  y: 26, w: 12, d: 10, F: 5 },
+    { b: "Legal",   x: 22, y: 26, w: 12, d: 10, F: 3 }
+  ];
+  var OFFICE = { x: 41, y: 27, w: 11, d: 7, h: 3.2 };
+  var CR = { x: 19, y: 20, h: 33, jz: 35, L: 30, back: 9 };
+  var prev = {}, lastB = null, siteG = {}, siteL = {};
+
+  function siteState(s) {
+    var list = ofBidang(s.b), T = list.length, c = counts(list);
+    var fa = T ? (c.Selesai === T ? s.F : Math.floor(c.Selesai / T * s.F)) : 0;
+    var fr = T ? Math.min(s.F, fa + (c.Proses ? Math.ceil(c.Proses / T * s.F) : 0)) : 0;
+    if (T && !fr && c.Selesai) fr = 1;
+    var stage = !T ? "Lahan cadangan" : fa === s.F ? "Serah terima" : fr > fa ? (fa > 0 ? "Fasad & rangka" : "Struktur rangka") : fa > 0 ? "Fasad & finishing" : "Pematokan";
+    return { T: T, c: c, fr: Math.max(fr, fa), fa: fa, stage: stage, top: BASE + Math.max(fr, fa) * LH };
+  }
+
+  function drawSite(s, g) {
+    var st = siteState(s), pv = prev[s.b] || { fr: 0, fa: 0, init: true };
+    var x0 = s.x, y0 = s.y, x1 = s.x + s.w, y1 = s.y + s.d;
+    while (g.firstChild) g.removeChild(g.firstChild);
+    sv("title", {}, g).textContent = s.b + " · " + st.c.Selesai + "/" + st.T + " selesai · " + st.stage;
+    if (st.fr === 0) {
+      poly([[x0, y0, 0], [x1, y0, 0], [x1, y1, 0], [x0, y1, 0]], "hid", g);
+      [[x0, y0], [x1, y0], [x1, y1], [x0, y1]].forEach(function (c) { pl([[c[0], c[1], 0], [c[0], c[1], 1.6]], "ln", g); });
+      poly([[x0, y1, 0], [x1, y1, 0], [x1, y0, 0], [x1, y0, 0.01], [x1, y1, 0.01], [x0, y1, 0.01]], "faceT", g);
+    } else {
+      box(x0 - 0.6, y0 - 0.6, 0, x1 + 0.6, y1 + 0.6, BASE, g);
+    }
+    for (var i = 0; i < st.fr; i++) {
+      var z0 = BASE + i * LH, z1 = z0 + LH, lg = sv("g", {}, g);
+      var isNew = !pv.init && (i >= (i < st.fa ? pv.fa : pv.fr));
+      if (isNew) { lg.setAttribute("class", "grow"); lg.style.animationDelay = ((i - (i < st.fa ? pv.fa : pv.fr)) * 140) + "ms"; }
+      else if (pv.init) { lg.setAttribute("class", "grow"); lg.style.animationDelay = (300 + i * 90) + "ms"; }
+      if (i < st.fa) {
+        box(x0, y0, z0, x1, y1, z1, lg, i === st.fr - 1);
+        var n = 0;
+        for (var bx = 0; bx < 4; bx++, n++) poly([[x0 + bx * 3 + 0.5, y1, z0 + 0.7], [x0 + bx * 3 + 2.5, y1, z0 + 0.7], [x0 + bx * 3 + 2.5, y1, z0 + 2.9], [x0 + bx * 3 + 0.5, y1, z0 + 2.9]], "lit" + ((n * 7 + i * 3) % 5 === 0 ? " dim" : ""), lg);
+        for (var by = 3; by >= 1; by--, n++) poly([[x1, y0 + by * 3 + 0.2, z0 + 0.7], [x1, y0 + by * 3 - 1.8, z0 + 0.7], [x1, y0 + by * 3 - 1.8, z0 + 2.9], [x1, y0 + by * 3 + 0.2, z0 + 2.9]], "lit" + ((n * 7 + i * 3) % 5 === 0 ? " dim" : ""), lg);
+      } else {
+        pl([[x0, y0, z0], [x0, y0, z1]], "hid", lg);
+        [[x0, y1], [x0 + s.w / 2, y1], [x1, y1], [x1, y0 + s.d / 2], [x1, y0]].forEach(function (c) { pl([[c[0], c[1], z0], [c[0], c[1], z1]], "col", lg); });
+        poly([[x0, y0, z1], [x1, y0, z1], [x1, y1, z1], [x0, y1, z1]], "faceT", lg);
+        poly([[x0 - 0.8, y1 + 0.8, z0], [x1 + 0.8, y1 + 0.8, z0], [x1 + 0.8, y1 + 0.8, z1], [x0 - 0.8, y1 + 0.8, z1]], "scaf", lg);
+        poly([[x1 + 0.8, y1 + 0.8, z0], [x1 + 0.8, y0 - 0.8, z0], [x1 + 0.8, y0 - 0.8, z1], [x1 + 0.8, y1 + 0.8, z1]], "scaf", lg);
+      }
+    }
+    if (st.T && st.fa === s.F) {
+      var rz = st.top, rg = sv("g", { "class": pv.fa === s.F || pv.init ? "" : "grow" }, g);
+      box(x0, y0, rz, x1, y1, rz + 0.8, rg);
+      poly([[x0 + 0.6, y0 + 0.6, rz + 0.8], [x1 - 0.6, y0 + 0.6, rz + 0.8], [x1 - 0.6, y1 - 0.6, rz + 0.8], [x0 + 0.6, y1 - 0.6, rz + 0.8]], "thin", rg);
+      var fp = P(x1 - 1, y1 - 1, rz + 0.8), ft = P(x1 - 1, y1 - 1, rz + 6);
+      sv("line", { x1: fp[0], y1: fp[1], x2: ft[0], y2: ft[1], "class": "ln" }, rg);
+      sv("path", { d: "M" + ft[0] + " " + ft[1] + " l13 3.5 l-13 3.5 z", fill: "var(--accent)", "class": "flag" }, rg);
+    }
+    var lg2 = siteL[s.b]; while (lg2.firstChild) lg2.removeChild(lg2.firstChild);
+    var lp = P(s.x + s.w / 2, s.y + s.d / 2, st.top + (st.fa === s.F && st.T ? 9 : 4));
+    txt(s.b.toUpperCase(), lp[0], lp[1] - 9, { "class": "bname", "text-anchor": "middle" }, lg2);
+    txt((st.T ? st.c.Selesai + "/" + st.T + " · " : "") + st.stage.toUpperCase(), lp[0], lp[1], { "class": "bstage" + (st.fa === s.F && st.T ? " done" : ""), "text-anchor": "middle" }, lg2);
+    g.classList.toggle("hlb", cur === s.b);
+    g.setAttribute("aria-label", "Gedung " + s.b + ": " + st.c.Selesai + " dari " + st.T + " selesai, tahap " + st.stage);
+    prev[s.b] = { fr: st.fr, fa: st.fa };
+    return st;
+  }
+
+  function buildTower() {
+    var gr = $("ground"), sc = $("scene");
+    /* lahan, grid, jalan */
+    poly([[-3, -3, 0], [58, -3, 0], [58, 41, 0], [-3, 41, 0]], "hid", gr);
+    for (var gx = 0; gx <= 56; gx += 8) pl([[gx, -3, 0], [gx, 41, 0]], "hid", gr);
+    poly([[-8, 42, 0], [64, 42, 0], [64, 47, 0], [-8, 47, 0]], "road", gr);
+    pl([[-8, 44.5, 0], [64, 44.5, 0]], "hid", gr);
+    poly([[17, 15, 0], [21, 15, 0], [21, 42, 0], [17, 42, 0]], "road", gr);
+    var gp = P(17, 42, 0); txt("GERBANG PROYEK", gp[0] - 4, gp[1] + 12, { "class": "dimt", "text-anchor": "end", style: "font-size:6px;letter-spacing:.14em" }, gr);
+
+    /* objek diurutkan dari belakang ke depan */
+    var objs = SITES.map(function (s) { return { k: s.x + s.w / 2 + s.y + s.d / 2, s: s }; });
+    objs.push({ k: CR.x + CR.y, crane: true });
+    objs.push({ k: OFFICE.x + OFFICE.w / 2 + OFFICE.y + OFFICE.d / 2, office: true });
+    objs.sort(function (a, b) { return a.k - b.k; });
+    objs.forEach(function (o) {
+      if (o.s) {
+        var g = sv("g", { "class": "site", "data-b": o.s.b, tabindex: "0", role: "button" }, sc);
+        siteG[o.s.b] = g; siteL[o.s.b] = sv("g", {}, $("labels"));
+        g.addEventListener("click", function () { setCur(cur === o.s.b ? "Semua" : o.s.b); });
+        g.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setCur(cur === o.s.b ? "Semua" : o.s.b); } });
+        g.addEventListener("mouseenter", function () { g.classList.add("hlb"); });
+        g.addEventListener("mouseleave", function () { g.classList.toggle("hlb", cur === o.s.b); });
+      } else if (o.crane) {
+        var m = sv("g", {}, sc);
+        box(CR.x - 1.6, CR.y - 1.6, 0, CR.x + 1.6, CR.y + 1.6, 1, m);
+        var A = P(CR.x - 0.8, CR.y + 0.8, 1), B = P(CR.x + 0.8, CR.y - 0.8, 1), At = P(CR.x - 0.8, CR.y + 0.8, CR.h), Bt = P(CR.x + 0.8, CR.y - 0.8, CR.h);
+        sv("line", { x1: A[0], y1: A[1], x2: At[0], y2: At[1], "class": "ln draw" }, m);
+        sv("line", { x1: B[0], y1: B[1], x2: Bt[0], y2: Bt[1], "class": "ln draw" }, m);
+        var zz = "";
+        for (var z = 1, k = 0; z < CR.h; z += 2.4, k++) { var p1 = P(CR.x - 0.8, CR.y + 0.8, z), p2 = P(CR.x + 0.8, CR.y - 0.8, z + 2.4); zz += (k % 2 ? "M" + p2[0] + " " + p1[1] + " L" + p1[0] + " " + p2[1] : "M" + p1[0] + " " + p1[1] + " L" + p2[0] + " " + p2[1]) + " "; }
+        sv("path", { d: zz, "class": "thin" }, m);
+      } else {
+        var og = sv("g", {}, sc), O = OFFICE;
+        box(O.x, O.y, 0, O.x + O.w, O.y + O.d, O.h, og);
+        poly([[O.x + 1, O.y + O.d, 0], [O.x + 3, O.y + O.d, 0], [O.x + 3, O.y + O.d, 2.4], [O.x + 1, O.y + O.d, 2.4]], "faceR", og);
+        [[5, 2], [8, 2]].forEach(function (w) { poly([[O.x + w[0], O.y + O.d, 1.2], [O.x + w[0] + w[1], O.y + O.d, 1.2], [O.x + w[0] + w[1], O.y + O.d, 2.4], [O.x + w[0], O.y + O.d, 2.4]], "thin", og); });
+        var sg = sv("g", { id: "sign" }, og);
+        poly([[O.x + 1.5, O.y + O.d, O.h + 0.3], [O.x + O.w - 1.5, O.y + O.d, O.h + 0.3], [O.x + O.w - 1.5, O.y + O.d, O.h + 2.3], [O.x + 1.5, O.y + O.d, O.h + 2.3]], "", sg);
+        var sp = P(O.x + O.w / 2, O.y + O.d, O.h + 0.85);
+        txt("ROEMANTARA", 0, 0, { "text-anchor": "middle", transform: "matrix(.866 .5 0 1 " + sp[0].toFixed(1) + " " + sp[1].toFixed(1) + ")" }, sg);
+        var lb = P(O.x + O.w / 2, O.y + O.d / 2, O.h + 6);
+        txt("DIREKSI KEET", lb[0], lb[1], { "class": "bstage", "text-anchor": "middle" }, og);
+        var b0 = P(O.x + O.w + 2, O.y + O.d + 1, 0), b1 = P(O.x + O.w + 2, O.y + O.d + 1, 7);
+        sv("line", { x1: b0[0], y1: b0[1], x2: b1[0], y2: b1[1], "class": "ln" }, og);
+        sv("circle", { id: "beacon", cx: b1[0], cy: b1[1] - 2, r: 2.2, fill: "var(--accent)" }, og);
+      }
+    });
+
+    /* crane: kabin, jib, troli, kait (diperbarui tiap frame) */
+    var ct = $("craneTop");
+    var cab = P(CR.x, CR.y, CR.h);
+    CRANE_EL.cab = sv("rect", { x: cab[0] - 5, y: cab[1] - 6, width: 10, height: 7, "class": "faceR" }, ct);
+    ["jibA", "jibB", "tieF", "tieB", "cable"].forEach(function (k) { CRANE_EL[k] = sv("line", { "class": k === "cable" ? "" : "ln", stroke: k === "cable" ? "var(--ink)" : null, "stroke-width": k === "cable" ? 1 : null }, ct); });
+    CRANE_EL.cw = sv("rect", { width: 9, height: 6, fill: "var(--line)", "fill-opacity": ".5", stroke: "var(--line)" }, ct);
+    CRANE_EL.trolley = sv("rect", { width: 7, height: 3.5, fill: "var(--accent)" }, ct);
+    CRANE_EL.hook = sv("g", { id: "hookLoad" }, ct);
+    sv("path", { d: "M0 0 v3 m0 0 a2.4 2.4 0 1 1 -2.4 2.4", fill: "none", stroke: "var(--ink)", "stroke-width": 1.2 }, CRANE_EL.hook);
+    sv("line", { x1: -1, y1: 3, x2: -12, y2: 11, stroke: "var(--ink)", "stroke-width": .6 }, CRANE_EL.hook);
+    sv("line", { x1: 1, y1: 3, x2: 12, y2: 11, stroke: "var(--ink)", "stroke-width": .6 }, CRANE_EL.hook);
+    sv("polygon", { points: "-14,11 14,11 16,14 -12,14", fill: "var(--accent)" }, CRANE_EL.hook);
+    
+    /* truk molen di jalan depan */
+    var tr = $("traffic"), tk = sv("g", { "class": "truck" }, tr);
+    var d0 = P(-10, 43.2, 0), d1 = P(66, 43.2, 0);
+    tk.style.setProperty("--dx", (d1[0] - d0[0]).toFixed(1) + "px");
+    tk.style.setProperty("--dy", (d1[1] - d0[1]).toFixed(1) + "px");
+    box(-10, 43.2, 0.4, -4.6, 45.6, 2.6, tk);
+    box(-4.2, 43.2, 0.4, -2, 45.6, 2.8, tk);
+    poly([[-3.9, 45.6, 1.6], [-2.3, 45.6, 1.6], [-2.3, 45.6, 2.5], [-3.9, 45.6, 2.5]], "lit", tk);
+    [-8.6, -6, -3].forEach(function (x) { var w = P(x, 45.6, 0.4); sv("circle", { cx: w[0], cy: w[1], r: 2.2, "class": "faceR" }, tk); });
+    var dr = P(-7.3, 44.4, 3.6); sv("ellipse", { cx: dr[0], cy: dr[1], rx: 11, ry: 6.5, "class": "faceL", transform: "rotate(30 " + dr[0].toFixed(1) + " " + dr[1].toFixed(1) + ")" }, tk);
+  }
+
+  /* ── animasi crane ── */
+  var CRANE_EL = {};
+  var cs = { th: -2.3, r: 14, hz: 12 }, ct0 = null, cTarget = null, cFrom = null, cStart = 0, RM = matchMedia("(prefers-reduced-motion:reduce)").matches;
+  function drawCrane(t) {
+    var c = Math.cos(cs.th), s = Math.sin(cs.th), E = CRANE_EL;
+    var apex = P(CR.x, CR.y, CR.jz + 5), je = P(CR.x + CR.L * c, CR.y + CR.L * s, CR.jz), jb = P(CR.x - CR.back * c, CR.y - CR.back * s, CR.jz);
+    var je2 = P(CR.x + CR.L * c, CR.y + CR.L * s, CR.jz + 1.3), jb2 = P(CR.x - CR.back * c, CR.y - CR.back * s, CR.jz + 1.3);
+    function L(el, a, b) { el.setAttribute("x1", a[0].toFixed(1)); el.setAttribute("y1", a[1].toFixed(1)); el.setAttribute("x2", b[0].toFixed(1)); el.setAttribute("y2", b[1].toFixed(1)); }
+    L(E.jibA, jb, je); L(E.jibB, jb2, je2); L(E.tieF, apex, je2); L(E.tieB, apex, jb2);
+    E.cw.setAttribute("x", (jb[0] - 4.5).toFixed(1)); E.cw.setAttribute("y", (jb[1] - 1).toFixed(1));
+    var tp = P(CR.x + cs.r * c, CR.y + cs.r * s, CR.jz), hp = P(CR.x + cs.r * c, CR.y + cs.r * s, cs.hz);
+    var sway = RM ? 0 : Math.sin((t || 0) / 700) * 1.4;
+    E.trolley.setAttribute("x", (tp[0] - 3.5).toFixed(1)); E.trolley.setAttribute("y", (tp[1] - 1).toFixed(1));
+    L(E.cable, [tp[0], tp[1] + 2.5], [hp[0] + sway, hp[1]]);
+    E.hook.setAttribute("transform", "translate(" + (hp[0] + sway).toFixed(1) + " " + hp[1].toFixed(1) + ")");
+  }
+  function ease(k) { return k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2; }
+  function loop(t) {
+    if (cTarget) {
+      var k = Math.min(1, (t - cStart) / 1900), e = ease(k);
+      cs.th = cFrom.th + (cTarget.th - cFrom.th) * e;
+      cs.r = cFrom.r + (cTarget.r - cFrom.r) * e;
+      /* kait naik dulu, lalu turun ke target */
+      var lift = Math.sin(Math.PI * k) * 6;
+      cs.hz = Math.min(CR.jz - 3, cFrom.hz + (cTarget.hz - cFrom.hz) * e + lift);
+      if (k >= 1) cTarget = null;
+    }
+    drawCrane(t);
+    if (!RM || cTarget) requestAnimationFrame(loop);
+  }
+  function aimCrane(px, py, pz) {
+    var dx = px - CR.x, dy = py - CR.y, th = Math.atan2(dy, dx), r = Math.min(CR.L - 2, Math.max(6, Math.hypot(dx, dy)));
+    while (th - cs.th > Math.PI) th -= 2 * Math.PI;
+    while (th - cs.th < -Math.PI) th += 2 * Math.PI;
+    var tgt = { th: th, r: r, hz: Math.min(CR.jz - 4, pz + 3) };
+    if (RM) { cs = tgt; drawCrane(0); return; }
+    cFrom = { th: cs.th, r: cs.r, hz: cs.hz }; cTarget = tgt; cStart = performance.now();
+  }
+
+  function paintTower() {
+    var states = {};
+    SITES.forEach(function (s) { states[s.b] = drawSite(s, siteG[s.b]); });
+    var all = SITES.every(function (s) { var st = states[s.b]; return !st.T || st.fa === s.F; });
+    $("tower").classList.toggle("topped", all);
+    var pick = lastB && states[lastB] && states[lastB].T ? lastB : null;
+    if (!pick) { var open = SITES.filter(function (s) { var st = states[s.b]; return st.T && st.fa < s.F; }); open.sort(function (a, b) { return states[a.b].fa / a.F - states[b.b].fa / b.F; }); pick = open.length ? open[0].b : null; }
+    if (all || !pick) aimCrane(OFFICE.x + OFFICE.w / 2, OFFICE.y + OFFICE.d / 2, OFFICE.h + 4);
+    else { var s = SITES.filter(function (x) { return x.b === pick; })[0]; aimCrane(s.x + s.w / 2, s.y + s.d / 2, states[pick].top + 1); }
+  }
+  var craneStarted = false;
+  function startCrane() { if (craneStarted) return; craneStarted = true; drawCrane(0); requestAnimationFrame(loop); }
+
+  /* ── ringkasan ── */
+  var CHANGED = {};
+  function ago(t) {
+    var m = Math.round((Date.now() - t) / 60000);
+    return m < 1 ? "baru saja" : m < 60 ? m + " menit lalu" : m < 1440 ? Math.round(m / 60) + " jam lalu" : Math.round(m / 1440) + " hari lalu";
+  }
+  function stamp(t) { return new Date(t).toLocaleString("id-ID", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); }
+  function renderStamp() {
+    var b = $("tbUpd"); b.innerHTML = "";
+    if (ART) {
+      b.appendChild(document.createTextNode("Diterbitkan untuk semua: "));
+      if (EMB.rev) b.appendChild(el("em", "", stamp(EMB.rev) + " (" + ago(EMB.rev) + ")")); else b.appendChild(document.createTextNode("belum pernah diterbitkan"));
+      b.appendChild(document.createTextNode(" · "));
+    }
+    b.appendChild(document.createTextNode("Angka hasil: "));
+    if (HS.importedAt) { b.appendChild(el("em", "", stamp(HS.importedAt) + " (" + ago(HS.importedAt) + ")")); b.appendChild(document.createTextNode(" dari " + HS.source)); }
+    else b.appendChild(document.createTextNode("data awal dari " + HS.source + ", belum pernah diimpor"));
+    b.appendChild(document.createTextNode(" · Status & tautan: "));
+    if (st._upd) b.appendChild(el("em", "", stamp(st._upd) + " (" + ago(st._upd) + ")")); else b.appendChild(document.createTextNode("belum pernah diubah"));
+  }
+  setInterval(function () { renderStamp(); }, 60000);
+  function flashRows() {
+    Object.keys(CHANGED).forEach(function (no) { var r = $("row-" + no); if (!r) return; r.classList.remove("flash"); void r.offsetWidth; r.classList.add("flash"); });
+  }
+  function renderHero() {
+    renderStamp();
+    var c = counts(ITEMS), T = ITEMS.length;
+    $("nDone").textContent = c.Selesai; $("nWip").textContent = c.Proses; $("nTodo").textContent = c.Belum;
+    $("barD").style.width = (c.Selesai / T * 100) + "%"; $("barP").style.width = (c.Proses / T * 100) + "%";
+    $("progressText").textContent = Math.round(c.Selesai / T * 100) + "% · " + c.Selesai + " dari " + T + " laporan selesai · " + c.Proses + " proses · " + c.Belum + " belum";
+    var wkKey = "W:" + isoD(SAT), moKey = "M:" + isoD(D25).slice(0, 7);
+    var keyOf = function (k) { return k === "m" ? moKey : wkKey; };
+    var open = function (k) { return ALL.filter(function (r) { return r[k] && status(r.no, keyOf(k)) !== "Selesai"; }).length; };
+    var total = function (k) { return ALL.filter(function (r) { return r[k]; }).length; };
+    var dS = daysTo(SAT), d25 = daysTo(D25);
+    var cards = [
+      { t: "Harian · sehabis closing", k: "Setiap", u: "hari", f: "h", soon: true },
+      { t: "Mingguan · " + fmtLong.format(SAT), k: dS === 0 ? "Hari" : dS, u: dS === 0 ? "ini" : "hari", f: "w", soon: dS <= 2 },
+      { t: "Bulanan · " + fmtLong.format(D25), k: d25 === 0 ? "Hari" : d25, u: d25 === 0 ? "ini" : "hari", f: "m", soon: d25 <= 3 }
+    ];
+    var box = $("due"); box.innerHTML = "";
+    cards.forEach(function (c) {
+      var hot = c.soon && open(c.f);
+      var d = el("div", "card" + (hot ? " soon" : ""));
+      if (hot) d.appendChild(el("div", "tape"));
+      var k = el("div", "k", String(c.k)); k.appendChild(el("small", "", c.u)); d.appendChild(k);
+      d.appendChild(el("div", "t", c.t));
+      d.appendChild(el("div", "pending", open(c.f) + " / " + total(c.f) + " belum selesai"));
+      box.appendChild(d);
+    });
+  }
+  function renderBidang() {
+    var box = $("bidang"); box.innerHTML = "";
+    BS.forEach(function (b) {
+      var list = ofBidang(b), c = counts(list), T = list.length, p = T ? c.Selesai / T : 0;
+      var cell = el("button", "bcell"); cell.type = "button";
+      cell.setAttribute("aria-pressed", String(cur === b));
+      cell.setAttribute("aria-label", "Bidang " + b + ", " + c.Selesai + " dari " + T + " selesai");
+      var bn = el("div", "bn", b); bn.appendChild(el("em", "", T + " laporan")); cell.appendChild(bn);
+      var pct = el("div", "pct", String(Math.round(p * 100))); pct.appendChild(el("small", "", "%")); cell.appendChild(pct);
+      var bar = el("div", "bar");
+      [["d", c.Selesai], ["p", c.Proses]].forEach(function (s) { var i = el("span", s[0]); i.style.width = (T ? s[1] / T * 100 : 0) + "%"; bar.appendChild(i); });
+      cell.appendChild(bar);
+      cell.appendChild(el("div", "bs", T ? c.Selesai + " / " + T + " selesai · " + c.Proses + " proses" : "Belum ada tugas"));
+      cell.addEventListener("click", function () { setCur(cur === b ? "Semua" : b); });
+      box.appendChild(cell);
+    });
+  }
+  function renderFilters() {
+    var box = $("bfilters"); box.innerHTML = "";
+    BIDANG.forEach(function (b) {
+      var c = el("button", "chip", b === "Semua" ? "Semua bidang" : b); c.type = "button";
+      c.setAttribute("aria-pressed", String(cur === b));
+      c.addEventListener("click", function () { setCur(b); });
+      box.appendChild(c);
+    });
+  }
+
+  /* ── daftar laporan ── */
+  function buildRows() {
+    var reg = $("reg");
+    ALL.forEach(function (it) {
+      var row = el("div", "row"); row.id = "row-" + it.no;
+      var no = el("div", "no", String(it.no).padStart(2, "0")); no.appendChild(el("small", "", "NO")); row.appendChild(no);
+      var nm = el("div"); nm.appendChild(el("div", "name", it.name));
+      var tags = el("div", "tags"); tags.appendChild(el("span", "tag bd", it.b + (it.b2 ? " · " + it.b2 : "")));
+      freqTags(it).forEach(function (t) { tags.appendChild(el("span", "tag", t)); });
+      nm.appendChild(tags);
+      var mk = (HS.meta[it.no] || {}).k; if (mk) nm.appendChild(el("div", "ket", mk));
+      row.appendChild(nm);
+      row.appendChild(el("div", "res"));
+      row.appendChild(el("div", "when"));
+      var sw = el("div", "seg-wrap"), seg = el("div", "seg"); seg.setAttribute("role", "group"); seg.setAttribute("aria-label", "Status " + it.name);
+      OPTIONS.forEach(function (s) {
+        var b = el("button", "", s); b.type = "button"; b.dataset.s = s.toLowerCase();
+        b.addEventListener("click", function () { if (status(it.no) === s) return; rec(it.no).status = s; lastB = it.b; save(); renderAll(); toast("Status diperbarui"); });
+        seg.appendChild(b);
+      });
+      sw.appendChild(seg); row.appendChild(sw);
+      var nw = el("div", "note-wrap"), lk = el("div", "lk");
+      var inp = el("input", "note"); inp.type = "url"; inp.id = "lk-" + it.no; inp.placeholder = "Tempel tautan sumber";
+      inp.setAttribute("aria-label", "Tautan sumber " + it.name); inp.value = rec(it.no).link || "";
+      var a = el("a", "open", "Buka ↗"); a.target = "_blank"; a.rel = "noopener noreferrer";
+      var err = el("p", "err", "Tautan harus diawali https://"); err.hidden = true;
+      function paint() { var v = inp.value.trim(); if (!v) { a.hidden = true; err.hidden = true; return; } if (safe(v)) { a.href = v; a.hidden = false; err.hidden = true; } else { a.hidden = true; err.hidden = false; } }
+      inp.addEventListener("input", paint);
+      inp.addEventListener("change", function () { rec(it.no).link = inp.value.trim(); save(); paint(); toast("Tautan disimpan"); });
+      lk.appendChild(inp); lk.appendChild(a); nw.appendChild(lk); nw.appendChild(err); row.appendChild(nw);
+      paint();
+      row.addEventListener("mouseenter", function () { hl(it.no, true); });
+      row.addEventListener("mouseleave", function () { hl(it.no, false); });
+      reg.appendChild(row);
+    });
+  }
+  function paintRows() {
+    ALL.forEach(function (it) {
+      var row = $("row-" + it.no);
+      if (ITEMS.indexOf(it) < 0) { row.hidden = true; return; }
+      var s = status(it.no);
+      row.hidden = !(cur === "Semua" || inBidang(it, cur));
+      var when = row.querySelector(".when"); when.innerHTML = "";
+      dueOf(it).forEach(function (d) { var x = el("div", "", d.lbl); x.appendChild(el("span", "rel" + (d.n <= 2 ? " soon" : ""), d.txt || relDue(d.n))); when.appendChild(x); });
+      var inp = $("lk-" + it.no); if (inp && document.activeElement !== inp) { inp.value = rec(it.no).link || ""; inp.dispatchEvent(new Event("input")); }
+      row.style.setProperty("--c", SCOLOR[s]);
+      row.querySelectorAll(".seg button").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.s === s.toLowerCase())); });
+    });
+  }
+  function hl(no, on) { $("row-" + no).classList.toggle("hl", on); var it = ALL[no - 1], g = siteG[it.b]; if (g) g.classList.toggle("hlb", on || cur === it.b); }
+  function focusRow(no) {
+    setCur("Semua");
+    var row = $("row-" + no);
+    row.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion:reduce)").matches ? "auto" : "smooth", block: "center" });
+    hl(no, true); setTimeout(function () { hl(no, false); }, 1600);
+  }
+
+  /* ── pratinjau & berkas ── */
+  function openLightbox(src, alt) {
+    var o = el("div", "lightbox"), im = el("img"); im.src = src; im.alt = alt || "Foto lampiran";
+    o.appendChild(im); o.addEventListener("click", function () { o.remove(); }); document.body.appendChild(o);
+  }
+  function toBlob(dataUrl) {
+    var parts = dataUrl.split(","), mime = (parts[0].match(/:(.*?);/) || [, "application/octet-stream"])[1];
+    var bin = atob(parts[1]), arr = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+    return new Blob([arr], { type: mime });
+  }
+  var dlP = null;
+  function downloadsApi() {
+    if (!dlP) dlP = (window.claude && window.claude.use) ? window.claude.use("downloads").catch(function () { return null; }) : Promise.resolve(null);
+    return dlP;
+  }
+  function openFileLocal(f) {
+    try {
+      var u = URL.createObjectURL(toBlob(f.data));
+      var a = document.createElement("a"); a.href = u; a.target = "_blank"; a.rel = "noopener";
+      if (!/^data:(application\/pdf|image\/|text\/)/.test(f.data)) a.download = f.fname || f.name;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function () { URL.revokeObjectURL(u); }, 60000);
+    } catch (e) { toast("Berkas tidak dapat dibuka di halaman ini."); }
+  }
+  function openFile(f) {
+    downloadsApi().then(function (dl) {
+      if (!dl) return openFileLocal(f);
+      dl.save({ filename: f.fname || f.name, data: toBlob(f.data) }).catch(function (e) {
+        var c = e && e.code;
+        if (c === "declined") return;
+        if (c === "rejected_extension" || c === "extension_not_enabled") toast("Format berkas ini tidak bisa diunduh di sini.");
+        else if (c === "rate_limited") toast("Tunggu sebentar, lalu coba lagi.");
+        else openFileLocal(f);
+      });
+    });
+  }
+  function compressImage(file, cb) {
+    var rd = new FileReader();
+    rd.onload = function () {
+      var img = new Image();
+      img.onload = function () {
+        var max = 1280, w = img.width, h = img.height;
+        if (w > max || h > max) { var k = max / Math.max(w, h); w = Math.round(w * k); h = Math.round(h * k); }
+        var c = document.createElement("canvas"); c.width = w; c.height = h;
+        c.getContext("2d").drawImage(img, 0, 0, w, h);
+        cb(c.toDataURL("image/jpeg", 0.82));
+      };
+      img.onerror = function () { toast("Foto tidak dapat dibaca."); cb(null); };
+      img.src = rd.result;
+    };
+    rd.onerror = function () { toast("Foto tidak dapat dibaca."); cb(null); };
+    rd.readAsDataURL(file);
+  }
+  function readFile(file, cb) {
+    var rd = new FileReader();
+    rd.onload = function () { cb(rd.result); };
+    rd.onerror = function () { toast("Berkas tidak dapat dibaca."); cb(null); };
+    rd.readAsDataURL(file);
+  }
+
+  /* ── Hasil kegiatan (angka dari Excel Laporan Divisi Umum) ── */
+  var HKEY = "dashboard-divisi-umum-hasil-v1";
+  var DEFAULT_HASIL = {"source": "Laporan_Dashboard_Direksi.xlsx", "periode": {"mulai": "2026-09-26", "selesai": "2026-10-25", "bulan": "2026-10-01", "sabtu1": "2026-10-10"}, "weeks": ["2026-10-10", "2026-10-17", "2026-10-24", "2026-10-31", "2026-11-07"], "months": ["2026-10-01", "2026-11-01", "2026-12-01", "2027-01-01", "2027-02-01", "2027-03-01", "2027-04-01", "2027-05-01", "2027-06-01", "2027-07-01", "2027-08-01", "2027-09-01"], "weekly": {"1": [4, null, null, null, null], "4": [0, null, null, null, null], "5": [1, null, null, null, null], "12": [6, null, null, null, null], "13": [2, null, null, null, null]}, "monthly": {}, "daily": [], "meta": {"1": {"u": "Transaksi", "m": "Jumlah", "k": "Jumlah transaksi pengadaan & pembelian (PO/nota) yang diproses"}, "2": {"u": "Item", "m": "Akhir", "k": "Jumlah item aset, inventaris & stok tercatat di database (posisi akhir periode)"}, "3": {"u": "Vendor", "m": "Akhir", "k": "Jumlah vendor & subkon aktif yang terdaftar di database (posisi akhir periode)"}, "4": {"u": "Kasus", "m": "Jumlah", "k": "Jumlah komplain / klaim garansi yang diterima"}, "5": {"u": "Orang", "m": "Jumlah", "k": "Jumlah tamu yang datang untuk konsultasi / meeting"}, "6": {"u": "Agenda", "m": "Jumlah", "k": "Jumlah kegiatan visit, survei, dan undangan eksternal"}, "7": {"u": "Kali Update", "m": "Jumlah", "k": "Jumlah pembaruan kalender besar kegiatan"}, "8": {"u": "Rp", "m": "Jumlah", "k": "Selisih saldo buku vs kas/bank setiap selesai closing harian (detail di Tabel B)"}, "9": {"u": "Rp", "m": "Jumlah", "k": "Selisih rekonsiliasi keuangan per minggu"}, "10": {"u": "Rp", "m": "Jumlah", "k": "Selisih rekonsiliasi keuangan per bulan (closing tgl 25)"}, "11": {"u": "Dokumen", "m": "Jumlah", "k": "Laporan tutup buku yang diselesaikan (1 = selesai)"}, "12": {"u": "Dokumen", "m": "Jumlah", "k": "Jumlah surat FPP / SPH / SPK / BA / Garansi yang diterbitkan"}, "13": {"u": "Orang", "m": "Akhir", "k": "Jumlah tenaga freelance aktif (posisi akhir periode)"}, "14": {"u": "%", "m": "Rata-rata", "k": "Persentase kehadiran karyawan"}, "15": {"u": "Rp", "m": "Jumlah", "k": "Total nilai payroll yang dibayarkan"}}};
+  var HS = DEFAULT_HASIL;
+  var HLOCAL = null;
+  try { var hsv = JSON.parse(localStorage.getItem(HKEY)); if (hsv && hsv.weeks) HLOCAL = hsv; } catch (e) {}
+  if (ART) { if (EMB.hs && EMB.hs.weeks) HS = EMB.hs; } else if (HLOCAL) HS = HLOCAL;
+  function isoD(d) {
+    if (d instanceof Date) { var t = new Date(d.getTime() + 43200000); return t.getUTCFullYear() + "-" + String(t.getUTCMonth() + 1).padStart(2, "0") + "-" + String(t.getUTCDate()).padStart(2, "0"); }
+    if (typeof d === "number" && d > 20000) return isoD(new Date(Date.UTC(1899, 11, 30) + d * 864e5));
+    return null;
+  }
+  function pd(iso) { var a = iso.split("-"); return new Date(+a[0], a[1] - 1, +a[2]); }
+  var fD = new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "short" }), fM = new Intl.DateTimeFormat("id-ID", { month: "short", year: "numeric" });
+  function numV(v) { if (v === "" || v == null) return null; if (typeof v === "number") return isFinite(v) ? v : null; var n = parseFloat(String(v).replace(/[^\d,.-]/g, "").replace(/\./g, "").replace(",", ".")); return isFinite(n) ? n : null; }
+  function rekap(vals, m) {
+    var f = (vals || []).filter(function (v) { return v != null; });
+    if (!f.length) return null;
+    if (m === "Jumlah") return f.reduce(function (a, b) { return a + b; }, 0);
+    if (m === "Rata-rata") return f.reduce(function (a, b) { return a + b; }, 0) / f.length;
+    return f[f.length - 1];
+  }
+  function fmtV(v, u) {
+    if (v == null) return "–";
+    if (u === "Rp") return "Rp " + Math.round(v).toLocaleString("id-ID");
+    if (u === "%") { var pc = Math.abs(v) <= 1.5 ? v * 100 : v; return (Math.round(pc * 10) / 10).toLocaleString("id-ID") + "%"; }
+    return (Math.round(v * 100) / 100).toLocaleString("id-ID");
+  }
+  function unitLbl(u) { return u === "Rp" || u === "%" ? "" : u; }
+  function curWeekIdx() { var t = today.getTime(), k = -1; HS.weeks.forEach(function (w, i) { if (w && pd(w).getTime() - 6 * 864e5 <= t) k = i; }); return k; }
+  function curMonthIdx() { var k = -1; HS.months.forEach(function (m, i) { if (!m) return; var d = pd(m); if (d.getFullYear() === today.getFullYear() && d.getMonth() === today.getMonth()) k = i; }); return k; }
+  function dailyStats() {
+    var tot = 0, bad = 0, ok = 0;
+    HS.daily.forEach(function (r) { if (r.b == null || r.a == null) return; var d = r.a - r.b; tot += d; if (d === 0) ok++; else bad++; });
+    return { tot: tot, bad: bad, ok: ok, n: ok + bad };
+  }
+  /* ringkasan satu tugas: angka utama, keterangan, dan nilai per minggu untuk grafik kecil */
+  function hasilOf(it) {
+    var m = HS.meta[it.no] || {}, u = m.u || "", me = m.m || "Jumlah";
+    if (it.h) { var ds = dailyStats(); return { v: ds.n ? ds.tot : null, u: "Rp", me: me, lbl: ds.n ? "Selisih · " + ds.bad + " hari tidak sesuai dari " + ds.n : "Rekonsiliasi harian belum diisi", bars: null }; }
+    if (it.w) { var wv = HS.weekly[it.no] || []; return { v: rekap(wv, me), u: u, me: me, lbl: "Rekap mingguan · " + me, bars: [0, 1, 2, 3, 4].map(function (i) { return wv[i] == null ? null : wv[i]; }) }; }
+    var mi = curMonthIdx(), mv = HS.monthly[it.no] || [];
+    return { v: mi >= 0 ? (mv[mi] == null ? null : mv[mi]) : rekap(mv, me), u: u, me: me, lbl: "Bulan " + (mi >= 0 ? fM.format(pd(HS.months[mi])) : "ini") + " · " + me, bars: null };
+  }
+  function paintRes() {
+    var cw = curWeekIdx();
+    ALL.forEach(function (it) {
+      var box = q("#row-" + it.no + " .res"); box.innerHTML = "";
+      var h = hasilOf(it), w = el("div");
+      var rv = el("div", "rv" + (h.v == null ? " none" : ""), fmtV(h.v, h.u));
+      if (h.v != null && unitLbl(h.u)) rv.appendChild(el("small", "", unitLbl(h.u)));
+      if (CHANGED[it.no]) rv.appendChild(el("span", "newtag", "BARU"));
+      w.appendChild(rv); w.appendChild(el("div", "rm", h.lbl)); box.appendChild(w);
+      if (h.bars) {
+        var mx = Math.max.apply(null, h.bars.map(function (v) { return Math.abs(v || 0); }).concat([1]));
+        var sp = el("div", "spark"); sp.title = h.bars.map(function (v, i) { return "M" + (i + 1) + ": " + (v == null ? "–" : fmtV(v, h.u)); }).join(" · ");
+        h.bars.forEach(function (v, i) { var b = el("i", (v == null ? "nil" : "") + (i === cw ? " now" : "")); if (v != null) b.style.height = Math.max(2, Math.abs(v) / mx * 24) + "px"; sp.appendChild(b); });
+        box.appendChild(sp);
+      }
+    });
+  }
+  function renderHasil() {
+    var cw = curWeekIdx(), cm = curMonthIdx();
+    $("hSrc").textContent = "Sumber: " + (HS.source || "-") + (HS.importedAt ? " · diimpor " + new Date(HS.importedAt).toLocaleString("id-ID", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : " · data awal");
+    var filled = 0; Object.keys(HS.weekly).forEach(function (k) { HS.weekly[k].forEach(function (v) { if (v != null) filled++; }); });
+    var mfilled = 0; Object.keys(HS.monthly).forEach(function (k) { HS.monthly[k].forEach(function (v) { if (v != null) mfilled++; }); });
+    var ds = dailyStats(), per = HS.periode || {};
+    var sum = $("hSum"); sum.innerHTML = "";
+    [["Periode", per.mulai ? fD.format(pd(per.mulai)) + " – " + fD.format(pd(per.selesai)) : "–", "Closing setiap tanggal 25"],
+     ["Minggu berjalan", cw >= 0 ? "Minggu " + (cw + 1) : "–", cw >= 0 ? "Sabtu, " + fD.format(pd(HS.weeks[cw])) : "Belum mulai"],
+     ["Isian mingguan", String(filled), "nilai terisi dari 11 tugas × 5 minggu"],
+     ["Rekonsiliasi harian", ds.n ? fmtV(ds.tot, "Rp") : "–", ds.n ? ds.bad + " hari selisih · " + ds.ok + " hari sesuai" : "Belum ada hari yang diisi"]
+    ].forEach(function (c) { var d = el("div"); d.appendChild(el("span", "eyebrow", c[0])); d.appendChild(el("b", "", c[1])); d.appendChild(el("span", "s", c[2])); sum.appendChild(d); });
+
+    function table(id, cols, colLbl, rowsIt, getVals, cur) {
+      var t = $(id); t.innerHTML = "";
+      var th = el("thead"), tr = el("tr");
+      [["NO", ""], ["TUGAS", "l"], ["SATUAN", ""], ["METODE", ""]].forEach(function (h) { tr.appendChild(el("th", h[1], h[0])); });
+      cols.forEach(function (c, i) { var x = el("th", i === cur ? "cur" : "", colLbl(i)); x.appendChild(el("small", "", c ? colSub(c) : "–")); tr.appendChild(x); });
+      tr.appendChild(el("th", "rk", "Rekap")); th.appendChild(tr); t.appendChild(th);
+      var tb = el("tbody");
+      rowsIt.forEach(function (it) {
+        var m = HS.meta[it.no] || {}, vals = getVals(it), r = el("tr");
+        r.appendChild(el("td", "", String(it.no)));
+        var n = el("td", "l", it.name); n.appendChild(el("span", "", it.b)); r.appendChild(n);
+        r.appendChild(el("td", "", m.u || "")); r.appendChild(el("td", "", m.m || ""));
+        cols.forEach(function (c, i) { var v = vals[i]; r.appendChild(el("td", (v == null ? "nil" : "") + (i === cur ? " cur" : ""), v == null ? "·" : fmtV(v, m.u))); });
+        r.appendChild(el("td", "rk", fmtV(rekap(vals, m.m), m.u)));
+        tb.appendChild(r);
+      });
+      t.appendChild(tb);
+    }
+    function colSub(iso) { return iso.slice(8) === "01" ? "" : fD.format(pd(iso)); }
+    table("tWeek", HS.weeks, function (i) { return "Minggu " + (i + 1); }, ALL.filter(function (it) { return it.w; }), function (it) { return HS.weekly[it.no] || []; }, cw);
+    table("tMonth", HS.months, function (i) { return HS.months[i] ? fM.format(pd(HS.months[i])) : "–"; }, ALL.filter(function (it) { return it.m; }), function (it) { return HS.monthly[it.no] || []; }, cm);
+
+    /* rekonsiliasi harian: kotak per hari periode + tabel hari yang diisi */
+    var g = $("dGrid"); g.innerHTML = "";
+    var byD = {}; HS.daily.forEach(function (r) { byD[r.d] = r; });
+    if (per.mulai) {
+      for (var d = pd(per.mulai); d <= pd(per.selesai); d.setDate(d.getDate() + 1)) {
+        var k = isoD(d), r = byD[k], cls = "dc";
+        if (r && r.a != null && r.b != null) cls += r.a - r.b === 0 ? " ok" : " bad"; else if (d > today) cls += " fut";
+        var c = el("div", cls, String(d.getDate())); c.appendChild(el("small", "", new Intl.DateTimeFormat("id-ID", { weekday: "short" }).format(d).slice(0, 3)));
+        c.title = fD.format(d) + (r && r.a != null && r.b != null ? " · selisih " + fmtV(r.a - r.b, "Rp") : " · belum diisi");
+        g.appendChild(c);
+      }
+    }
+    var t = $("tDay"); t.innerHTML = "";
+    var hr = el("tr"); ["Tanggal", "Saldo buku / sistem", "Saldo aktual kas / bank", "Selisih", "Status"].forEach(function (h, i) { hr.appendChild(el("th", i ? "" : "l", h)); });
+    var th2 = el("thead"); th2.appendChild(hr); t.appendChild(th2);
+    var tb2 = el("tbody");
+    if (!HS.daily.length) { var er = el("tr"), ec = el("td", "l", "Belum ada data rekonsiliasi harian di file Excel. Isi Tabel B (saldo buku dan saldo aktual), lalu impor ulang."); ec.colSpan = 5; er.appendChild(ec); tb2.appendChild(er); }
+    HS.daily.forEach(function (r) {
+      var row = el("tr"), df = r.a != null && r.b != null ? r.a - r.b : null;
+      row.appendChild(el("td", "l", fD.format(pd(r.d))));
+      row.appendChild(el("td", "", fmtV(r.b, "Rp"))); row.appendChild(el("td", "", fmtV(r.a, "Rp"))); row.appendChild(el("td", "", fmtV(df, "Rp")));
+      row.appendChild(el("td", "", df == null ? "–" : df === 0 ? "Sesuai" : "Ada selisih"));
+      tb2.appendChild(row);
+    });
+    t.appendChild(tb2);
+  }
+
+  /* membaca format "Laporan Divisi Umum": tabel A (keterangan), B (harian), C (mingguan), D (bulanan) */
+  function U(v) { return String(v == null ? "" : v).trim().toUpperCase(); }
+  /* nomor tugas dari kolom NO; bila sel rumus kosong, cocokkan dari nama tugas */
+  function noOf(row, flag) {
+    var n = parseInt(numV(row[0]), 10); if (n) return n;
+    var nm = U(row[1]).replace(/\s+/g, " "); if (!nm) return 0;
+    var hit = ALL.filter(function (it) { return it[flag] && U(it.name).replace(/\s*\((HARIAN|MINGGUAN|BULANAN)\)/, "").replace(/\s+/g, " ") === nm.replace(/\/ /g, "/ ").replace(/\s+/g, " "); });
+    if (!hit.length) hit = ALL.filter(function (it) { return it[flag] && U(it.name).replace(/[^A-Z]/g, "").indexOf(nm.replace(/[^A-Z]/g, "").slice(0, 18)) === 0; });
+    return hit.length ? hit[0].no : 0;
+  }
+  function parseHasilBook(wb) {
+    var out = null;
+    wb.SheetNames.some(function (sn) {
+      var rows = XLSX.utils.sheet_to_json(wb.Sheets[sn], { header: 1, defval: "", raw: true });
+      var res = { periode: {}, weeks: [], months: [], weekly: {}, monthly: {}, daily: [], meta: {} }, found = 0;
+      for (var r = 0; r < rows.length; r++) {
+        var row = rows[r], a = U(row[0]);
+        var lb = U(row[1]);
+        if (/PERIODE MULAI/.test(lb)) res.periode.mulai = isoD(row[2]);
+        else if (/PERIODE SELESAI/.test(lb)) res.periode.selesai = isoD(row[2]);
+        else if (/BULAN MULAI/.test(lb)) res.periode.bulan = isoD(row[2]);
+        else if (/MINGGU PERTAMA/.test(lb)) res.periode.sabtu1 = isoD(row[2]);
+        if (a !== "NO") continue;
+        var h1 = U(row[1]), h2 = U(row[2]), h4 = U(row[4]);
+        var i = r + 1;
+        if (h1 === "TUGAS" && h4 === "SATUAN") {                      /* Tabel A */
+          for (; i < rows.length && numV(rows[i][0]); i++) res.meta[parseInt(rows[i][0], 10)] = { u: String(rows[i][4] || "").trim(), m: String(rows[i][5] || "").trim() || "Jumlah", k: String(rows[i][6] || "").trim() };
+          found++;
+        } else if (h1 === "TANGGAL") {                                  /* Tabel B */
+          for (; i < rows.length && numV(rows[i][0]); i++) { var d = isoD(rows[i][1]), b = numV(rows[i][2]), ak = numV(rows[i][3]); if (b != null || ak != null) res.daily.push({ d: d, n: parseInt(rows[i][0], 10), b: b, a: ak }); }
+          found++;
+        } else if (h1 === "TUGAS" && /MINGGU 1/.test(h4)) {             /* Tabel C */
+          if (/TANGGAL/i.test(String(rows[i][1]))) { res.weeks = [4, 5, 6, 7, 8].map(function (c) { return isoD(rows[i][c]); }); i++; }
+          var wl = ALL.filter(function (it) { return it.w; });
+          for (var k = 0; k < wl.length && i < rows.length; k++, i++) { var nw = noOf(rows[i], "w") || (U(rows[i][0]) || U(rows[i][1]) ? 0 : wl[k].no); if (!nw) break; res.weekly[nw] = [4, 5, 6, 7, 8].map(function (c) { return numV(rows[i][c]); }); }
+          found++;
+        } else if (h1 === "TUGAS" && h2 === "SATUAN") {                 /* Tabel D */
+          res.months = []; for (var c = 4; c < 16; c++) res.months.push(isoD(rows[r][c]));
+          var ml = ALL.filter(function (it) { return it.m; });
+          for (var k2 = 0; k2 < ml.length && i < rows.length; k2++, i++) { var nm2 = noOf(rows[i], "m") || (U(rows[i][0]) || U(rows[i][1]) ? 0 : ml[k2].no); if (!nm2) break; var mv = []; for (var c2 = 4; c2 < 16; c2++) mv.push(numV(rows[i][c2])); res.monthly[nm2] = mv; }
+          found++;
+        }
+      }
+      if (found >= 2) { out = res; return true; }
+      return false;
+    });
+    if (!out) return null;
+    /* tanggal dari sel rumus bisa kosong bila file disimpan tanpa hasil hitung: hitung ulang seperti rumus Excel */
+    function addD(iso, n) { var d = pd(iso); d.setDate(d.getDate() + n); return isoD(d); }
+    function addM(iso, n) { var d = pd(iso); return isoD(new Date(d.getFullYear(), d.getMonth() + n, d.getDate())); }
+    var P0 = out.periode;
+    if (P0.mulai && !P0.selesai) P0.selesai = addD(addM(P0.mulai, 1), -1);
+    if (P0.sabtu1) out.weeks = [0, 1, 2, 3, 4].map(function (k) { return (out.weeks[k]) || addD(P0.sabtu1, 7 * k); });
+    if (P0.bulan) { var mm = []; for (var k = 0; k < 12; k++) mm.push(out.months[k] || addM(P0.bulan, k)); out.months = mm; }
+    out.daily = out.daily.map(function (r) { if (!r.d && P0.mulai && r.n) r.d = addD(P0.mulai, r.n - 1); return { d: r.d, b: r.b, a: r.a }; }).filter(function (r) { return r.d && (!P0.selesai || r.d <= P0.selesai); });
+    if (!out.weeks.length) out.weeks = HS.weeks;
+    if (!out.months.length) out.months = HS.months;
+    if (!Object.keys(out.meta).length) out.meta = HS.meta;
+    if (!out.periode.mulai) out.periode = HS.periode;
+    if (out.weeks.some(function (w) { return !w; })) out.weeks = HS.weeks;
+    if (out.months.some(function (m) { return !m; })) out.months = HS.months;
+    return out;
+  }
+  function cntFilled(o) { var n = 0; Object.keys(o).forEach(function (k) { o[k].forEach(function (v) { if (v != null) n++; }); }); return n; }
+  var pendingH = null;
+  function showHasilPreview(res, fname) {
+    var box = $(currentView === "hasil" ? "xlPrev2" : "xlPrev"); box.innerHTML = ""; box.hidden = false;
+    pendingH = res; pendingH.source = fname;
+    box.appendChild(el("h3", "", "Data hasil kegiatan terbaca"));
+    box.appendChild(el("p", "eyebrow", "Dari file " + fname + (res.periode.mulai ? " · periode " + fD.format(pd(res.periode.mulai)) + " – " + fD.format(pd(res.periode.selesai)) : "") + ". Periksa dulu sebelum diterapkan."));
+    var ul = el("ul");
+    [["Nilai mingguan terisi", cntFilled(res.weekly)], ["Nilai bulanan terisi", cntFilled(res.monthly)], ["Hari rekonsiliasi terisi", res.daily.length]].forEach(function (x) {
+      var li = el("li"); li.appendChild(el("b", "", String(x[1]))); li.appendChild(el("span", "", x[0])); li.appendChild(el("span", "ch", "")); ul.appendChild(li);
+    });
+    var save0 = HS; HS = res;
+    ALL.filter(function (it) { var h = hasilOf(it); return h.v != null; }).forEach(function (it) {
+      var h = hasilOf(it), li = el("li"); li.appendChild(el("b", "", String(it.no).padStart(2, "0"))); li.appendChild(el("span", "", it.name));
+      li.appendChild(el("span", "ch", fmtV(h.v, h.u) + (unitLbl(h.u) ? " " + unitLbl(h.u) : ""))); ul.appendChild(li);
+    });
+    HS = save0;
+    box.appendChild(ul);
+    var act = el("div", "act");
+    var ap = el("button", "xbtn solid", "Terapkan data hasil"); ap.type = "button";
+    ap.addEventListener("click", function () {
+      if (!pendingH) return;
+      pendingH.importedAt = Date.now();
+      var before = {}; ALL.forEach(function (it) { before[it.no] = hasilOf(it).v; });
+      HS = pendingH; pendingH = null;
+      CHANGED = {}; var nch = 0;
+      ALL.forEach(function (it) { if (hasilOf(it).v !== before[it.no]) { CHANGED[it.no] = true; nch++; } });
+      if (ART) { if (readOnly) return; markDirty(); }
+      else { try { localStorage.setItem(HKEY, JSON.stringify(HS)); } catch (e) { toast("Data hasil diterapkan, tapi tidak bisa disimpan di peramban ini."); } }
+      box.hidden = true; renderAll(); flashRows();
+      toast(nch ? nch + " angka hasil berubah · ditandai BARU di Daftar Laporan" : "Data hasil diimpor · tidak ada angka yang berubah");
+    });
+    var cn = el("button", "xbtn", "Batal"); cn.type = "button"; cn.addEventListener("click", function () { pendingH = null; box.hidden = true; });
+    act.appendChild(ap); act.appendChild(cn); box.appendChild(act);
+  }
+
+  /* ── Excel: unduh & impor ── */
+  function xlsxReady() { if (window.XLSX) return true; toast("Modul Excel belum termuat. Periksa koneksi lalu muat ulang halaman."); return false; }
+  function excelDown() {
+    if (!xlsxReady()) return;
+    var rows = [["NO", "LAPORAN KEGIATAN", "BIDANG", "FREKUENSI", "STATUS", "TAUTAN SUMBER"]];
+    ITEMS.forEach(function (it) { rows.push([it.no, it.name, it.b + (it.b2 ? " / " + it.b2 : ""), freq(it), status(it.no), rec(it.no).link || ""]); });
+    var ws = XLSX.utils.aoa_to_sheet(rows);
+    ws["!cols"] = [{ wch: 5 }, { wch: 52 }, { wch: 14 }, { wch: 32 }, { wch: 12 }, { wch: 48 }];
+    var help = XLSX.utils.aoa_to_sheet([
+      ["Petunjuk pengisian"],
+      ["1. Isi kolom STATUS dengan salah satu: Belum, Proses, atau Selesai."],
+      ["2. Kolom TAUTAN SUMBER boleh dikosongkan; jika diisi harus diawali https://"],
+      ["3. Jangan ubah kolom NO, karena dashboard mencocokkan baris berdasarkan nomor laporan."],
+      ["4. Simpan file, lalu buka dashboard dan klik Impor Excel."]
+    ]);
+    help["!cols"] = [{ wch: 90 }];
+    var wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Laporan");
+    XLSX.utils.book_append_sheet(wb, help, "Petunjuk");
+    var buf = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+    var d = new Date(), name = "Laporan_Divisi_Umum_" + PER.key.replace(":", "_") + "_dibuat_" + d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0") + ".xlsx";
+    var blob = new Blob([buf], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+    downloadsApi().then(function (dl) {
+      if (dl) return dl.save({ filename: name, data: blob }).then(function () { toast("File Excel disimpan"); }, function (e) { if (!e || e.code !== "declined") toast("File Excel tidak bisa diunduh di sini."); });
+      var u = URL.createObjectURL(blob), a = document.createElement("a"); a.href = u; a.download = name;
+      document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(u); }, 60000);
+    });
+  }
+  function normStatus(v) {
+    var t = String(v == null ? "" : v).trim().toLowerCase();
+    if (!t) return null;
+    if (/selesai|done|complete|sudah|ok|✓/.test(t)) return "Selesai";
+    if (/proses|progress|berjalan|on ?going|dikerjakan/.test(t)) return "Proses";
+    if (/belum|todo|to do|pending|not/.test(t)) return "Belum";
+    return undefined;
+  }
+  function parseSheet(rows) {
+    var hi = -1, col = {};
+    for (var r = 0; r < Math.min(rows.length, 15); r++) {
+      var h = rows[r].map(function (c) { return String(c == null ? "" : c).trim().toUpperCase(); });
+      if (h.indexOf("STATUS") >= 0 && (h.indexOf("NO") >= 0 || h.indexOf("NO.") >= 0)) {
+        hi = r;
+        h.forEach(function (n, i) {
+          if (n === "NO" || n === "NO.") col.no = i;
+          else if (n === "STATUS") col.st = i;
+          else if (/TAUTAN|LINK|URL/.test(n)) col.lk = i;
+          else if (n === "KETERANGAN") col.ket = i;
+          else if (/LAPORAN/.test(n)) col.nm = i;
+        });
+        break;
+      }
+    }
+    if (hi < 0) return { err: "Kolom NO dan STATUS tidak ditemukan. Gunakan file dari tombol Unduh Excel." };
+    var changes = [], warns = [];
+    for (var i = hi + 1; i < rows.length; i++) {
+      var row = rows[i], no = parseInt(row[col.no], 10);
+      if (!no) continue;
+      var it = ALL[no - 1];
+      if (!it) { warns.push("Baris NO " + row[col.no] + " tidak dikenal, dilewati."); continue; }
+      if (ITEMS.indexOf(it) < 0) { warns.push("No " + no + " tidak termasuk periode " + PER.label + ", dilewati."); continue; }
+      var ns = normStatus(row[col.st]);
+      if (ns === undefined) { warns.push("No " + no + ": status \"" + row[col.st] + "\" tidak dikenal, dilewati."); ns = null; }
+      var lk = col.lk != null ? String(row[col.lk] == null ? "" : row[col.lk]).trim() : null;
+      if (lk == null && col.ket != null && /^https:\/\//i.test(String(row[col.ket] || "").trim())) lk = String(row[col.ket]).trim();
+      if (lk && !safe(lk)) { warns.push("No " + no + ": tautan harus diawali https://, dilewati."); lk = null; }
+      var c = { no: no, name: it.name, b: it.b };
+      if (ns && ns !== status(no)) { c.from = status(no); c.to = ns; }
+      if (lk != null && lk !== (rec(no).link || "")) c.link = lk;
+      if (c.to || c.link != null) changes.push(c);
+    }
+    return { changes: changes, warns: warns };
+  }
+  var pending = null;
+  function showPreview(res, fname) {
+    var box = $("xlPrev"); box.innerHTML = ""; box.hidden = false;
+    if (res.err) {
+      box.appendChild(el("h3", "", "File tidak bisa dibaca"));
+      box.appendChild(el("p", "warn", res.err));
+      var ok = el("button", "xbtn", "Tutup"); ok.type = "button"; ok.addEventListener("click", function () { box.hidden = true; }); box.appendChild(ok);
+      return;
+    }
+    pending = res.changes;
+    box.appendChild(el("h3", "", res.changes.length ? res.changes.length + " laporan akan diperbarui" : "Tidak ada perubahan"));
+    box.appendChild(el("p", "eyebrow", "Dari file " + fname + ". Periksa dulu sebelum diterapkan."));
+    if (res.changes.length) {
+      var ul = el("ul");
+      res.changes.forEach(function (c) {
+        var li = el("li"); li.appendChild(el("b", "", String(c.no).padStart(2, "0")));
+        li.appendChild(el("span", "", c.name));
+        li.appendChild(el("span", "ch", (c.to ? c.from + " → " + c.to : "") + (c.to && c.link != null ? " · " : "") + (c.link != null ? (c.link ? "tautan baru" : "tautan dihapus") : "")));
+        ul.appendChild(li);
+      });
+      box.appendChild(ul);
+    }
+    res.warns.forEach(function (w) { box.appendChild(el("p", "warn", w)); });
+    var act = el("div", "act");
+    if (res.changes.length) { var ap = el("button", "xbtn solid", "Terapkan perubahan"); ap.type = "button"; ap.addEventListener("click", applyImport); act.appendChild(ap); }
+    var cn = el("button", "xbtn", res.changes.length ? "Batal" : "Tutup"); cn.type = "button"; cn.addEventListener("click", function () { pending = null; box.hidden = true; }); act.appendChild(cn);
+    box.appendChild(act);
+  }
+  function applyImport() {
+    if (!pending) return;
+    var n = pending.length;
+    CHANGED = {};
+    pending.forEach(function (c) { var r = rec(c.no); CHANGED[c.no] = true; if (c.to) { r.status = c.to; lastB = c.b; } if (c.link != null) r.link = c.link; });
+    pending = null;
+    if (!save()) return;
+    ITEMS.forEach(function (it) { var inp = $("lk-" + it.no); if (inp) { inp.value = rec(it.no).link || ""; inp.dispatchEvent(new Event("input")); } });
+    $("xlPrev").hidden = true;
+    renderAll(); flashRows(); toast(n + " laporan diperbarui dari Excel · ditandai BARU");
+  }
+  function excelUp(file) {
+    if (!file || !xlsxReady()) return;
+    var rd = new FileReader();
+    rd.onload = function () {
+      try {
+        var wb = XLSX.read(new Uint8Array(rd.result), { type: "array", cellDates: true });
+        var hres = parseHasilBook(wb);
+        if (hres) { showHasilPreview(hres, file.name); return; }
+        var ws = wb.Sheets["Laporan"] || wb.Sheets[wb.SheetNames[0]];
+        showPreview(parseSheet(XLSX.utils.sheet_to_json(ws, { header: 1, defval: "" })), file.name);
+      } catch (e) { showPreview({ err: "File tidak dapat dibaca sebagai Excel atau CSV." }, file.name); }
+    };
+    rd.onerror = function () { toast("File tidak dapat dibaca."); };
+    rd.readAsArrayBuffer(file);
+  }
+  $("xlDown").addEventListener("click", excelDown);
+  $("xlFile").addEventListener("change", function (e) { excelUp(e.target.files[0]); e.target.value = ""; });
+  $("xlFile2").addEventListener("change", function (e) { excelUp(e.target.files[0]); e.target.value = ""; });
+
+  /* ── lampiran ── */
+  function renderLampiran() {
+    var box = $("att"); box.innerHTML = "";
+    var done = ITEMS.filter(function (it) { return status(it.no) === "Selesai"; });
+    if (!done.length) {
+      var e = el("div", "empty");
+      e.appendChild(el("b", "", "Belum ada tugas yang selesai"));
+      e.appendChild(document.createTextNode("Lampiran muncul di sini setelah status laporan diubah menjadi Selesai."));
+      box.appendChild(e); return;
+    }
+    done.forEach(function (it) {
+      var r = rec(it.no);
+      var card = el("section", "ac"), h = el("header"), t = el("div");
+      t.appendChild(el("h3", "", it.name));
+      t.appendChild(el("p", "m", "No " + String(it.no).padStart(2, "0") + " · " + it.b + " · " + freq(it)));
+      h.appendChild(t); h.appendChild(el("span", "cnt", r.att.length + " lampiran")); card.appendChild(h);
+
+      var files = el("div", "files");
+      r.att.forEach(function (f, idx) {
+        if (!f.type) f.type = "link";
+        var row = el("div", "file");
+        if (f.type === "foto" && f.data) {
+          var im = el("img", "thumb"); im.src = f.data; im.alt = f.name;
+          im.addEventListener("click", function () { openLightbox(f.data, f.name); }); row.appendChild(im);
+        } else row.appendChild(el("span", "tb", f.type === "link" ? "URL" : (f.ext || "FILE").toUpperCase().slice(0, 4)));
+        var info = el("div", "fi");
+        info.appendChild(el("span", "fn", f.name));
+        info.appendChild(el("span", "fm", TYPE_LABEL[f.type] + (f.size ? " · " + fmtSize(f.size) : "")));
+        row.appendChild(info);
+        var act;
+        if (f.type === "link") { act = el("a", "act", "Buka ↗"); act.href = f.url; act.target = "_blank"; act.rel = "noopener noreferrer"; }
+        else if (f.type === "foto") { act = el("button", "act", "Lihat"); act.type = "button"; act.addEventListener("click", function () { openLightbox(f.data, f.name); }); }
+        else { act = el("button", "act", "Buka"); act.type = "button"; act.addEventListener("click", function () { openFile(f); }); }
+        row.appendChild(act);
+        var rm = el("button", "rm", "Hapus"); rm.type = "button";
+        rm.addEventListener("click", function () { rec(it.no).att.splice(idx, 1); save(); renderAll(); toast("Lampiran dihapus"); });
+        row.appendChild(rm);
+        files.appendChild(row);
+      });
+      card.appendChild(files);
+
+      var form = el("form", "addf");
+      var type = el("select", "fld"); type.id = "at-" + it.no;
+      [["link", "Tautan"], ["file", "Berkas"], ["foto", "Foto"]].forEach(function (o) { var op = el("option", "", o[1]); op.value = o[0]; type.appendChild(op); });
+      type.setAttribute("aria-label", "Jenis lampiran untuk " + it.name);
+      var fn = el("input", "fld"); fn.type = "text"; fn.id = "an-" + it.no; fn.placeholder = "Nama lampiran"; fn.maxLength = 120;
+      fn.setAttribute("aria-label", "Nama lampiran untuk " + it.name);
+      var fu = el("input", "fld"); fu.type = "url"; fu.id = "au-" + it.no; fu.placeholder = "Tautan https://";
+      fu.setAttribute("aria-label", "Tautan untuk " + it.name);
+      var pick = el("label", "pick"), ff = el("input", "vh"); ff.type = "file"; ff.id = "af-" + it.no;
+      ff.setAttribute("aria-label", "Berkas untuk " + it.name);
+      var pb = el("span", "pb"), pn = el("span", "pn", "Belum ada berkas dipilih");
+      pick.appendChild(ff); pick.appendChild(pb); pick.appendChild(pn);
+      ff.addEventListener("change", function () { pn.textContent = ff.files[0] ? ff.files[0].name : "Belum ada berkas dipilih"; });
+      var add = el("button", "add", "Tambah"); add.type = "submit";
+      function syncType() {
+        var v = type.value;
+        fu.hidden = v !== "link"; pick.hidden = v === "link";
+        pb.textContent = v === "foto" ? "Pilih foto" : "Pilih berkas";
+        ff.accept = v === "foto" ? "image/*" : ".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.csv,.txt,.zip,application/pdf";
+        ff.value = ""; pn.textContent = "Belum ada berkas dipilih";
+      }
+      type.addEventListener("change", syncType); syncType();
+      form.appendChild(type); form.appendChild(fn); form.appendChild(fu); form.appendChild(pick); form.appendChild(add);
+      form.addEventListener("submit", function (ev) {
+        ev.preventDefault();
+        var v = type.value, rr = rec(it.no);
+        if (v === "link") {
+          var url = fu.value.trim();
+          if (!safe(url)) { toast("Tautan harus diawali https://"); return; }
+          rr.att.push({ type: "link", name: fn.value.trim() || url, url: url });
+          if (!save()) { rr.att.pop(); return; }
+          renderAll(); toast("Tautan ditambahkan"); return;
+        }
+        var file = ff.files && ff.files[0];
+        if (!file) { toast("Pilih berkas terlebih dahulu"); return; }
+        var name2 = fn.value.trim() || file.name, ext = (file.name.split(".").pop() || "").slice(0, 5);
+        if (v === "file") {
+          if (file.size > MAX_FILE) { toast("Berkas maksimal 1 MB. Untuk berkas besar, gunakan tautan."); return; }
+          readFile(file, function (data) {
+            if (!data) return;
+            rr.att.push({ type: "file", name: name2, fname: file.name, ext: ext, data: data, size: file.size });
+            if (!save()) { rr.att.pop(); return; }
+            renderAll(); toast("Berkas ditambahkan");
+          });
+        } else {
+          if (!/^image\//.test(file.type)) { toast("Berkas harus berupa foto"); return; }
+          compressImage(file, function (data) {
+            if (!data) return;
+            rr.att.push({ type: "foto", name: name2, data: data, size: Math.round(data.length * 0.75) });
+            if (!save()) { rr.att.pop(); return; }
+            renderAll(); toast("Foto ditambahkan");
+          });
+        }
+      });
+      card.appendChild(form);
+      box.appendChild(card);
+    });
+  }
+
+  /* ── jadwal ── */
+  function buildCal() {
+    var y = today.getFullYear(), m = today.getMonth(), n = new Date(y, m + 1, 0).getDate();
+    var monthName = new Intl.DateTimeFormat("id-ID", { month: "long", year: "numeric" }).format(today);
+    $("calTitle").textContent = "Jadwal " + monthName;
+    var dw = new Intl.DateTimeFormat("id-ID", { weekday: "short" }), cal = $("cal");
+    for (var d = 1; d <= n; d++) {
+      var dt = new Date(y, m, d), c = el("div", "day" + (dt.getDay() === 0 ? " sun" : "") + (+dt === +today ? " today" : "") + (dt < today ? " past" : ""));
+      c.appendChild(el("div", "dw", dw.format(dt).slice(0, 3)));
+      c.appendChild(el("div", "dn", String(d)));
+      var pins = el("div", "pins");
+      if (dt.getDay() === 6) { var p1 = el("i", "pin w"); p1.title = "Laporan mingguan"; pins.appendChild(p1); }
+      if (d === 25) { var p2 = el("i", "pin b"); p2.title = "Laporan bulanan & tutup buku"; pins.appendChild(p2); }
+      c.appendChild(pins); cal.appendChild(c);
+    }
+  }
+  function renderJadwal() {
+    var box = $("sched"); box.innerHTML = "";
+    var wk = ALL.filter(function (i) { return i.w; }).length, mo = ALL.filter(function (i) { return i.m; }).length, hr = ALL.filter(function (i) { return i.h; }).length;
+    var isOct = today.getFullYear() === 2026 && today.getMonth() === 9, td = today.getDate();
+    [
+      { d: "Sabtu, 10 Okt", day: 10, k: "Laporan mingguan", n: wk, c: "var(--line)" },
+      { d: "Sabtu, 17 Okt", day: 17, k: "Laporan mingguan", n: wk, c: "var(--line)" },
+      { d: "Sabtu, 24 Okt", day: 24, k: "Laporan mingguan", n: wk, c: "var(--line)" },
+      { d: "Minggu, 25 Okt", day: 25, k: "Laporan bulanan dan tutup buku", n: mo, c: "var(--accent)" },
+      { d: "Sabtu, 31 Okt", day: 31, k: "Laporan mingguan", n: wk, c: "var(--line)" },
+      { d: "Setiap closing", k: "Rekonsiliasi keuangan harian", n: hr, c: "var(--done)" }
+    ].forEach(function (r) {
+      var row = el("div", "row"); row.style.setProperty("--c", r.c);
+      var key = r.day ? (r.day === 25 ? "M:2026-10" : "W:2026-10-" + String(r.day).padStart(2, "0")) : null;
+      if (key && PERIODS.some(function (x) { return x.key === key; })) {
+        var lst = ALL.filter(function (it) { return key[0] === "M" ? it.m : (it.w || it.h); });
+        var dn = lst.filter(function (it) { return status(it.no, key) === "Selesai"; }).length;
+        r.k += " · " + dn + "/" + lst.length + " selesai";
+        row.style.cursor = "pointer"; row.title = "Buka periode ini di Ringkasan";
+        row.addEventListener("click", function () { setPer(key); setView("ringkasan"); });
+      }
+      var d = el("div", "d", r.d);
+      if (isOct && r.day === td) d.appendChild(el("span", "today", "HARI INI"));
+      row.appendChild(d); row.appendChild(el("div", "k", r.k));
+      var n = el("div", "n", String(r.n)); n.appendChild(el("small", "", "laporan")); row.appendChild(n);
+      box.appendChild(row);
+    });
+  }
+
+  function renderAll() { renderPerBar(); renderHero(); renderBidang(); renderFilters(); paintRows(); paintRes(); paintTower(); renderHasil(); renderLampiran(); renderJadwal(); }
+  function setCur(b) { cur = b; renderBidang(); renderFilters(); paintRows(); SITES.forEach(function (x) { siteG[x.b].classList.toggle("hlb", cur === x.b); }); }
+
+  /* ── menu ── */
+  var currentView = "ringkasan";
+  function setView(v) {
+    currentView = v;
+    $("perbar1").hidden = (v === "hasil" || v === "jadwal");
+    ["ringkasan", "hasil", "lampiran", "jadwal"].forEach(function (x) { $("v-" + x).hidden = x !== v; });
+    document.querySelectorAll(".tabs button").forEach(function (b) { b.setAttribute("aria-selected", String(b.getAttribute("data-view") === v)); });
+    window.scrollTo({ top: 0 });
+    if (v === "jadwal") requestAnimationFrame(function () { var t = q(".cal .today"), s = q(".cal-scroll"); if (t) s.scrollLeft = Math.max(0, t.offsetLeft - s.clientWidth / 2); });
+  }
+  document.querySelectorAll(".tabs button").forEach(function (b) { b.addEventListener("click", function () { setView(b.getAttribute("data-view")); }); });
+
+  function tick() { $("clock").textContent = new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false }); }
+  tick(); setInterval(tick, 1000);
+
+  /* ── terbitkan ke semua (capability artifact) ── */
+  var SKEL = '<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>';
+  var SKEY = "dashboard-divisi-umum-pending";
+  function buildDoc(state) {
+    var E = "</scr" + "ipt>";
+    return SKEL + "<title>Dashboard Divisi Umum</title>\n" +
+      '<script type="application/json" id="dash-state">' + JSON.stringify(state).replace(/</g, "\\u003c") + E + "\n" +
+      '<template id="dash-src">' + window.__DASH_TPL + "</temp" + "late>\n" +
+      '<script id="dash-boot">' + document.getElementById("dash-boot").textContent + E + "</body></html>";
+  }
+  function stash() { try { sessionStorage.setItem(SKEY, JSON.stringify({ rev: EMB.rev || 0, n: dirty, st: st, hs: HS })); } catch (e) {} }
+  function markDirty() { dirty++; stash(); paintPub(); }
+  function paintPub() {
+    var bar = $("pubbar");
+    bar.hidden = !(ART && !readOnly && dirty > 0);
+    $("pubTxt").innerHTML = "";
+    $("pubTxt").appendChild(document.createTextNode(""));
+    var b = el("b", "", dirty + " perubahan"); $("pubTxt").appendChild(b);
+    $("pubTxt").appendChild(document.createTextNode(" belum diterbitkan · baru terlihat oleh Anda"));
+  }
+  function setMode() {
+    document.body.classList.toggle("ro", readOnly);
+    var t = $("modeTag"); t.hidden = !ART; t.className = "mode" + (readOnly ? "" : " w"); t.textContent = readOnly ? "Mode lihat" : "Mode pemilik";
+    document.querySelectorAll(".note").forEach(function (i) { i.readOnly = readOnly; });
+    if (ART) $("footNote").textContent = readOnly
+      ? "Data yang tampil adalah versi terakhir yang diterbitkan pemilik. Halaman ini ikut diperbarui otomatis setiap kali pemilik menerbitkan."
+      : "Mode pemilik: perubahan Anda tersimpan sementara dan baru terlihat oleh semua orang setelah Anda klik Terbitkan ke semua.";
+    paintPub();
+  }
+  function publishNow() {
+    if (!artApi || readOnly || !dirty) return;
+    var btn = $("pubBtn"); btn.disabled = true; btn.textContent = "Menerbitkan…";
+    var html = buildDoc({ rev: Date.now(), st: st, hs: HS });
+    stash();
+    artApi.publish(html).then(function () {
+      try { sessionStorage.removeItem(SKEY); } catch (e) {}
+      dirty = 0; paintPub(); toast("Diterbitkan · semua yang membuka link melihat data terbaru");
+    }, function (e) {
+      btn.disabled = false; btn.textContent = "Terbitkan ke semua";
+      var c = e && e.code;
+      if (c === "conflict") { try { sessionStorage.removeItem(SKEY); } catch (x) {} toast("Ada versi yang lebih baru. Halaman dimuat ulang, silakan ulangi perubahan."); }
+      else if (c === "not_writer" || c === "not_granted" || c === "not_declared" || c === "consent_required" || c === "capability_disabled" || c === "capability_removed") { readOnly = true; setMode(); toast("Akun ini hanya bisa melihat, tidak bisa menerbitkan."); }
+      else if (c === "too_large") toast("Halaman terlalu besar untuk diterbitkan. Hapus beberapa lampiran foto/berkas atau ganti dengan tautan.");
+      else if (c === "rate_limited") toast("Terlalu sering menerbitkan. Tunggu sebentar, lalu coba lagi.");
+      else toast("Gagal menerbitkan. Coba lagi sebentar lagi.");
+    });
+  }
+  $("pubBtn").addEventListener("click", publishNow);
+  function initArt() {
+    if (!ART || !window.claude || !window.claude.use) return;
+    Promise.all([window.claude.use("artifact"), window.claude.use("user")]).then(function (r) {
+      artApi = r[0]; var user = r[1];
+      if (!artApi || !user) return;
+      return user.canEdit().then(function (ok) {
+        if (!ok) return;
+        readOnly = false;
+        /* perubahan yang belum terbit (mis. halaman sempat dimuat ulang) */
+        var p = null; try { p = JSON.parse(sessionStorage.getItem(SKEY)); } catch (e) {}
+        if (p && p.rev === (EMB.rev || 0) && p.n > 0) { st = migrate(p.st); HS = p.hs; dirty = p.n; }
+        else if (!EMB.rev && (LOCAL || HLOCAL)) {
+          /* pertama kali: bawa data yang sudah diisi di peramban ini */
+          if (LOCAL) st = LOCAL; if (HLOCAL) HS = HLOCAL; dirty = 1; stash();
+          toast("Data dari peramban ini dimuat. Klik Terbitkan agar terlihat oleh semua.");
+        }
+        ITEMS.forEach(function (it) { var inp = $("lk-" + it.no); if (inp) { inp.value = rec(it.no).link || ""; inp.dispatchEvent(new Event("input")); } });
+        setMode(); renderPerBar(); renderAll();
+      });
+    }).catch(function () {});
+  }
+
+  /* ── periode laporan ── */
+  var PERIODS = [];
+  function buildPeriods() {
+    PERIODS = [];
+    HS.weeks.forEach(function (w, i) { if (w) PERIODS.push({ key: "W:" + w, type: "W", date: pd(w), label: "Mgg " + (i + 1) + " · Sab " + fD.format(pd(w)), short: "Sab " + fD.format(pd(w)) }); });
+    HS.months.forEach(function (m, i) {
+      if (!m) return; var d = pd(m), due = new Date(d.getFullYear(), d.getMonth(), 25);
+      if (i === 0 || due.getTime() - 40 * 864e5 <= today.getTime()) PERIODS.push({ key: "M:" + m.slice(0, 7), type: "M", date: due, label: "Bulanan · " + fD.format(due), short: "Bulanan " + fM.format(due) });
+    });
+  }
+  /* data lama (sebelum ada periode) dipindah ke periode yang tenggatnya tampil saat data diisi:
+     Sabtu terdekat (hari itu atau sesudahnya) dari waktu pembaruan terakhir; tugas bulanan ke bulan itu */
+  function migrate(o) {
+    if (!o || o.p) return o;
+    var n = { p: {} }, any = false;
+    var base = o._upd ? new Date(o._upd) : new Date(today); base.setHours(0, 0, 0, 0);
+    var wk = HS.weeks.filter(function (w) { return w && pd(w).getTime() >= base.getTime(); })[0] || HS.weeks[HS.weeks.length - 1];
+    var mo = HS.months.filter(function (m) { if (!m) return false; var d = pd(m); return new Date(d.getFullYear(), d.getMonth(), 25).getTime() >= base.getTime(); })[0] || HS.months[0];
+    Object.keys(o).forEach(function (k) {
+      if (!/^\d+$/.test(k)) { n[k] = o[k]; return; }
+      var it = ALL[+k - 1]; if (!it) return; any = true;
+      var key = (it.w || it.h) ? "W:" + wk : "M:" + mo.slice(0, 7);
+      (n.p[key] = n.p[key] || {})[k] = o[k];
+    });
+    return any ? n : (o.p = {}, o);
+  }
+  function defaultPer() {
+    /* minggu berjalan: Sabtu terdekat hari ini atau sesudahnya */
+    var t = today.getTime(), w = PERIODS.filter(function (x) { return x.type === "W"; });
+    var pick = w.filter(function (x) { return x.date.getTime() >= t; })[0] || w[w.length - 1];
+    /* minggu berjalan masih kosong: tampilkan minggu terakhir yang sudah berisi data */
+    function hasData(x) { var o = (st.p || {})[x.key] || {}; return Object.keys(o).some(function (k) { var r = o[k]; return r && (r.status && r.status !== "Belum" || r.link || (r.att && r.att.length)); }); }
+    if (pick && !hasData(pick)) { var prev = w.filter(function (x) { return x.date.getTime() < pick.date.getTime() && hasData(x); }); if (prev.length) pick = prev[prev.length - 1]; }
+    return pick ? pick.key : PERIODS[0].key;
+  }
+  function setPer(key, quiet) {
+    var x = PERIODS.filter(function (y) { return y.key === key; })[0] || PERIODS[0];
+    PER = x;
+    ITEMS = ALL.filter(function (it) { return x.type === "M" ? it.m : (it.w || it.h); });
+    try { localStorage.setItem("dashboard-divisi-umum-periode", x.key); } catch (e) {}
+    if (!quiet) { renderPerBar(); renderAll(); }
+  }
+  function renderPerBar() {
+    document.querySelectorAll(".perbar").forEach(function (bar) {
+      bar.innerHTML = "";
+      bar.appendChild(el("span", "eyebrow", "Periode laporan"));
+      PERIODS.forEach(function (x) {
+        var lst = ALL.filter(function (it) { return x.type === "M" ? it.m : (it.w || it.h); });
+        var dn = lst.filter(function (it) { return status(it.no, x.key) === "Selesai"; }).length;
+        var b = el("button", "chip pchip", x.label); b.type = "button";
+        b.setAttribute("aria-pressed", String(x.key === PER.key));
+        var n = daysTo(x.date);
+        b.appendChild(el("small", "", dn + "/" + lst.length + (n < 0 ? " · lewat" : n === 0 ? " · hari ini" : "")));
+        b.addEventListener("click", function () { setPer(x.key); toast("Periode " + x.short + " dipilih"); });
+        bar.appendChild(b);
+      });
+    });
+    $("perLbl").textContent = PER.label;
+    $("perLbl2").textContent = PER.label;
+  }
+  buildPeriods();
+  st = migrate(st); if (LOCAL) LOCAL = migrate(LOCAL); if (EMB && EMB.st) EMB.st = migrate(EMB.st);
+  (function () { var k = null; try { k = localStorage.getItem("dashboard-divisi-umum-periode"); } catch (e) {} setPer(PERIODS.some(function (x) { return x.key === k; }) ? k : defaultPer(), true); })();
+
+  buildTower(); buildRows(); buildCal(); renderPerBar(); renderAll(); startCrane(); setView("ringkasan"); setMode(); initArt();
+})();
+</script>
+<!--PAGE-END-->
+</body>
+</html>
