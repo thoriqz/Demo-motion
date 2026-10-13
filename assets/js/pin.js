@@ -80,7 +80,9 @@
 
   /* ---------- Status ---------- */
   let lastActive = Date.now();
-  const session = () => ss.get(K_SESSION);
+  let memSession = null; // cadangan bila sessionStorage diblokir browser
+  const session = () => ss.get(K_SESSION) || memSession;
+  const setSession = (v) => { memSession = v; ss.set(K_SESSION, v); };
   function apply() {
     const s = session();
     const open = !!s;
@@ -94,7 +96,7 @@
   }
   function lock(reason) {
     if (!session()) return;
-    ss.set(K_SESSION, null);
+    setSession(null);
     apply();
     document.dispatchEvent(new CustomEvent("du:fin-lock"));
     if (reason) say(reason);
@@ -142,7 +144,7 @@
     if (role) {
       const roleId = role.id;
       ls.set(K_TRIES, null);
-      ss.set(K_SESSION, { role: roleId, at: Date.now() });
+      setSession({ role: roleId, at: Date.now() });
       input.value = ""; paintDots();
       lastActive = Date.now();
       apply();
