@@ -226,10 +226,31 @@
       </div>
 
       <div class="modpanel" id="ga-asset" role="tabpanel" hidden>
-        <div class="grid grid--3">
-          <article class="panel"><h3 class="panel__title mono">A. INVENTARIS ASET</h3><div class="asset-list" id="assetList"></div></article>
-          <article class="panel"><h3 class="panel__title mono">B. JADWAL PEMELIHARAAN</h3><ol class="timeline" id="maintList"></ol></article>
-          <article class="panel"><h3 class="panel__title mono">C. STOK ATK &amp; LOGISTIK</h3><div class="bars" id="stockBars"></div></article>
+        <div class="stat-row" id="invStats"></div>
+        <div class="grid grid--2-1">
+          <article class="panel">
+            <div class="panel__head">
+              <h3 class="panel__title mono">DAFTAR ASET</h3>
+              <div class="toolbar">
+                <select id="invCat" class="select" aria-label="Filter kategori"><option value="all">Semua kategori</option></select>
+                <input class="search" type="search" id="invSearch" placeholder="Cari kode atau nama aset…" aria-label="Cari aset">
+              </div>
+            </div>
+            <div class="chips chips--wrap" id="invChips" role="group" aria-label="Filter kelompok aset"></div>
+            <div class="table-wrap"><table class="table">
+              <thead><tr><th>Kode</th><th>Nama Aset</th><th>Kategori</th><th class="num">Jumlah</th><th>Kondisi</th><th>Lokasi</th><th>Perawatan</th></tr></thead>
+              <tbody id="invBody"></tbody>
+            </table></div>
+            <p class="note mono" id="invNote"></p>
+          </article>
+          <article class="panel">
+            <h3 class="panel__title mono">PERAWATAN TERDEKAT</h3>
+            <div id="invDue"></div>
+            <h3 class="panel__title mono panel__title--sub">KELENGKAPAN DATA</h3>
+            <div class="bars" id="invGaps"></div>
+            <h3 class="panel__title mono panel__title--sub">SUMBER DATA</h3>
+            <p class="note" id="invSource"></p>
+          </article>
         </div>
       </div>
 
@@ -551,6 +572,7 @@
   <div class="toast mono" id="toast" role="status" aria-live="polite"></div>
 
   <script src="assets/js/data.js"></script>
+  <script src="assets/js/inventaris.js"></script>
   <script src="assets/js/app.js"></script>
   <script src="assets/js/pin.js"></script>
 </body>

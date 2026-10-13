@@ -323,22 +323,72 @@
   }
 
   function renderAssets() {
-    $("#assetList").innerHTML = D.assets.map((a) => {
-      const pct = Math.round((a.good / a.qty) * 100);
-      const cls = pct < 70 ? "danger" : pct < 90 ? "warn" : "";
-      return `<div class="asset"><div class="asset__top"><span>${esc(a.name)}</span><b>${a.good}/${a.qty} baik</b></div>
-        <div class="meter"><i class="${cls}" data-w="${pct}"></i></div></div>`;
+    const I = D.inventory;
+    if (!I) return;
+    const num = (n, d = 2) => (n == null ? "—" : Number(n).toLocaleString("id-ID", { maximumFractionDigits: d }));
+    const dTo = (iso) => (iso ? Math.round((new Date(iso + "T00:00:00") - new Date(today.toDateString())) / 864e5) : null);
+    const fd = (iso) => (iso ? fmtDate(new Date(iso + "T00:00:00"), { day: "2-digit", month: "short", year: "numeric" }) : "—");
+    // stok saat ini = jumlah awal + masuk − keluar (dari riwayat transaksi sumber)
+    const assets = I.assets.map((a) => {
+      let q = a.qty;
+      I.logs.filter((l) => l.code === a.code).forEach((l) => { if (q == null) q = 0; q += /^Masuk/.test(l.type) ? l.qty : /^Keluar/.test(l.type) ? -l.qty : 0; });
+      return { ...a, now: q, moved: I.logs.filter((l) => l.code === a.code), due: dTo(a.perawatan) };
+    });
+    const named = assets.filter((a) => a.name);
+    const dueSoon = assets.filter((a) => a.due != null && a.due <= 30);
+    const noCond = assets.filter((a) => !a.kondisi).length;
+    $("#invStats").innerHTML =
+      stat("Aset tercatat", `<span data-count="${assets.length}">${assets.length}</span>`, I.groups.map((g) => `${g} ${assets.filter((a) => a.group === g).length}`).join(" · ")) +
+      stat("Kondisi baik / cukup", `<span data-count="${assets.filter((a) => /Baik|Cukup/.test(a.kondisi)).length}">${assets.filter((a) => /Baik|Cukup/.test(a.kondisi)).length}</span>`, `${noCond} aset belum diisi kondisinya`, noCond ? "warn" : "ok") +
+      stat("Perawatan ≤ 30 hari", `<span data-count="${dueSoon.length}">${dueSoon.length}</span>`, dueSoon.length ? `terdekat ${fd(dueSoon.map((a) => a.perawatan).sort()[0])}` : "tidak ada", dueSoon.length ? "warn" : "ok") +
+      stat("Transaksi keluar-masuk", `<span data-count="${I.logs.length}">${I.logs.length}</span>`, I.logs.length ? `${I.logs[0].type.replace(/^(Masuk|Keluar) - /, "")} · ${I.logs[0].code}` : "belum ada");
+
+    const chips = $("#invChips"), sel = $("#invCat"), search = $("#invSearch"), body = $("#invBody");
+    chips.innerHTML = ["Semua"].concat(I.groups).map((g, i) => `<button type="button" aria-pressed="${i === 0}" data-g="${esc(g)}">${esc(g)} <b>${g === "Semua" ? assets.length : assets.filter((a) => a.group === g).length}</b></button>`).join("");
+    let group = "Semua";
+    const fillCats = () => {
+      const cats = {};
+      assets.filter((a) => group === "Semua" || a.group === group).forEach((a) => { const c = a.cat || "Belum dikategorikan"; cats[c] = (cats[c] || 0) + 1; });
+      sel.innerHTML = `<option value="all">Semua kategori</option>` + Object.entries(cats).sort((x, y) => y[1] - x[1]).map(([c, n]) => `<option value="${esc(c)}">${esc(c)} (${n})</option>`).join("");
+    };
+    const kTone = { Baik: "ok", Cukup: "info", "Rusak Ringan": "warn", "Rusak Berat": "danger", Hilang: "danger" };
+    const draw = () => {
+      const q = norm(search.value), c = sel.value;
+      const rows = assets.filter((a) => (group === "Semua" || a.group === group) && (c === "all" || (a.cat || "Belum dikategorikan") === c) && (!q || norm(a.code + " " + a.name).includes(q)));
+      body.innerHTML = rows.map((a) => `<tr>
+        <td class="mono">${a.code.startsWith("NOKODE") ? `<span class="t-warn">Belum ada kode</span>` : esc(a.code)}</td>
+        <td>${a.name ? esc(a.name) : `<span class="t-warn">Tanpa nama</span>`}${a.moved.length ? `<small class="mono sub">${a.moved.map((l) => `${esc(l.type.split(" - ")[0])} ${num(l.qty)} · ${esc(l.project || l.to)}`).join("; ")}</small>` : ""}</td>
+        <td>${a.cat ? esc(a.cat) : "—"}</td>
+        <td class="num">${num(a.now)} ${esc(a.unit || "")}${a.moved.length ? `<small class="mono sub">awal ${num(a.qty)}</small>` : ""}</td>
+        <td>${a.kondisi ? pill(a.kondisi, kTone[a.kondisi] || "muted") : `<span class="note">belum diisi</span>`}</td>
+        <td>${esc(a.lokasi || "—")}</td>
+        <td>${a.perawatan ? `<span class="${a.due < 0 ? "t-danger" : a.due <= 7 ? "t-warn" : ""}">${fd(a.perawatan)}</span>${a.due != null ? `<small class="mono sub">${a.due < 0 ? Math.abs(a.due) + " hari terlambat" : a.due === 0 ? "hari ini" : a.due + " hari lagi"}</small>` : ""}` : "—"}</td>
+      </tr>`).join("") || `<tr><td colspan="7" class="empty">Tidak ada aset yang cocok.</td></tr>`;
+      $("#invNote").textContent = `${rows.length} dari ${assets.length} aset ditampilkan`;
+    };
+    pressGroup(chips, (b) => { group = b.dataset.g; fillCats(); draw(); });
+    sel.addEventListener("change", draw);
+    search.addEventListener("input", draw);
+    fillCats(); draw();
+
+    // Perawatan terdekat, dikelompokkan per tanggal
+    const byDate = {};
+    assets.filter((a) => a.perawatan).forEach((a) => (byDate[a.perawatan] = (byDate[a.perawatan] || []).concat(a)));
+    $("#invDue").innerHTML = Object.keys(byDate).length ? `<ol class="timeline">${Object.keys(byDate).sort().slice(0, 4).map((d) => {
+      const xs = byDate[d], days = dTo(d), gs = {};
+      xs.forEach((a) => (gs[a.group] = (gs[a.group] || 0) + 1));
+      return `<li class="${days < 0 ? "" : ""}"><span class="t-date">${esc(up(fd(d)))} · ${days < 0 ? up(Math.abs(days) + " hari terlambat") : days === 0 ? up("hari ini") : up(days + " hari lagi")}</span>
+        <span class="t-title">${xs.length} aset dijadwalkan perawatan<span class="tag">${Object.entries(gs).map(([g, n]) => `${esc(g)} ${n}`).join(" · ")}</span></span></li>`;
+    }).join("")}</ol>` : `<p class="note">Belum ada jadwal perawatan.</p>`;
+
+    // Kelengkapan kolom penting
+    const fields = [["Nama aset", (a) => a.name], ["Kategori", (a) => a.cat], ["Kondisi", (a) => a.kondisi], ["Lokasi", (a) => a.lokasi], ["Status", (a) => a.status], ["Nilai perolehan", (a) => a.nilai]];
+    $("#invGaps").innerHTML = fields.map(([n, f]) => {
+      const filled = assets.filter(f).length, pct = Math.round((filled / assets.length) * 100);
+      const cls = pct < 50 ? "danger" : pct < 90 ? "warn" : "";
+      return `<div class="bar-row"><span>${n}</span><b class="${cls ? "t-" + cls : ""}">${filled}/${assets.length}</b><div class="meter"><i class="${cls}" data-w="${pct}"></i></div></div>`;
     }).join("");
-    $("#maintList").innerHTML = D.maintenance.map((m) => `
-      <li class="${m.status === "selesai" ? "done" : ""}">
-        <span class="t-date">${esc(m.date)} · ${up(m.status)}</span>
-        <span class="t-title">${esc(m.title)}<span class="tag">${esc(m.tag)}</span></span>
-      </li>`).join("");
-    $("#stockBars").innerHTML = D.stock.map((s) => {
-      const cls = s.value < s.min ? "danger" : s.value < s.min * 1.25 ? "warn" : "";
-      return `<div class="bar-row"><span>${esc(s.name)}</span><b class="${cls ? "t-" + cls : ""}">${s.value}%</b>
-        <div class="meter"><i class="${cls}" data-w="${s.value}"></i><span class="min" style="left:${s.min}%" title="Batas minimum ${s.min}%"></span></div></div>`;
-    }).join("") + `<p class="note mono">▮ garis = batas minimum stok</p>`;
+    $("#invSource").innerHTML = `Disalin dari <a href="${esc(I.source.url)}" target="_blank" rel="noopener">${esc(I.source.name)}</a> · tanggal laporan ${fd(I.source.asOf)}. Perubahan di aplikasi sumber belum otomatis masuk ke sini.`;
   }
 
   const stars = (r) => `<span class="stars" aria-label="Rating ${r} dari 5"><i style="width:${(r / 5) * 100}%"></i></span><b class="mono">${r.toFixed(1)}</b>`;

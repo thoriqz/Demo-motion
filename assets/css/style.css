@@ -804,3 +804,8 @@ body.fin-locked [data-secure="finance"]::after {
 body.fin-locked .kpi[data-secure="finance"]::after { z-index: 1; width: auto; height: auto; left: 0; right: 0; top: 0; bottom: 0; background: var(--panel); color: var(--muted); }
 .pin-dots i.is-new { animation: pop .3s cubic-bezier(.34,1.8,.5,1) both; }
 @keyframes pop { from { opacity: 0; transform: scale(.6); } }
+
+/* tabel inventaris panjang: gulir di dalam, judul kolom tetap terlihat */
+#ga-asset .table-wrap { max-height: 620px; overflow: auto; }
+#ga-asset .table thead th { position: sticky; top: 0; z-index: 1; background: var(--bg); }
+[data-skin="sage"] #ga-asset .table thead th { background: var(--panel); }

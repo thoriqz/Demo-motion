@@ -191,7 +191,11 @@
   function buildNotes() {
     const items = [];
     D.legalDocs.filter((d) => d.daysLeft != null && d.daysLeft <= 45).forEach((d) => items.push({ t: `${d.title} berakhir ${d.daysLeft} hari lagi`, v: "legal", tone: d.daysLeft <= 30 ? "danger" : "warn" }));
-    D.stock.filter((s) => s.value < s.min).forEach((s) => items.push({ t: `Stok ${s.name} di bawah minimum (${s.value}%)`, v: "ga", tab: "ga-asset", tone: "warn" }));
+    if (D.inventory) {
+      const t0 = new Date(today.toDateString());
+      const due = D.inventory.assets.filter((a) => a.perawatan && (new Date(a.perawatan + "T00:00:00") - t0) / 864e5 <= 7);
+      if (due.length) items.push({ t: `${due.length} aset jadwal perawatan dalam 7 hari`, v: "ga", tab: "ga-asset", tone: "warn" });
+    }
     D.clientRequests.filter((c) => c.status === "Menunggu").forEach((c) => items.push({ t: `${c.client} menunggu respons`, v: "ga", tab: "ga-client", tone: "warn" }));
     const proc = get("du-proc", null) || D.procurement;
     const wait = proc.filter((p) => p.step <= 1).length;

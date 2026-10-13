@@ -27,28 +27,6 @@ window.DU_DATA = {
     { no: "PR-2026-113", item: "APD proyek (helm, rompi, sepatu)", project: "Gudang Cikarang", vendor: "CV Safety Indo", value: 7450000, step: 0 }
   ],
 
-  assets: [
-    { name: "Laptop & PC Desain", qty: 42, good: 38 },
-    { name: "Kendaraan Operasional", qty: 6, good: 5 },
-    { name: "Peralatan Survey (Total Station, Laser)", qty: 11, good: 10 },
-    { name: "Furnitur Kantor", qty: 126, good: 119 },
-    { name: "Plotter & Printer A0–A3", qty: 5, good: 3 }
-  ],
-  maintenance: [
-    { date: "14 Okt", title: "Servis AC Lt.2 & ruang meeting", tag: "Fasilitas", status: "terjadwal" },
-    { date: "16 Okt", title: "Kalibrasi Total Station", tag: "Alat", status: "terjadwal" },
-    { date: "20 Okt", title: "Servis berkala Hilux B 9123 RMT", tag: "Kendaraan", status: "terjadwal" },
-    { date: "09 Okt", title: "Penggantian head plotter A0", tag: "IT", status: "selesai" },
-    { date: "03 Okt", title: "Pemeriksaan APAR & jalur evakuasi", tag: "K3", status: "selesai" }
-  ],
-  stock: [
-    { name: "Kertas A3 / A1", value: 34, min: 30 },
-    { name: "Tinta Plotter", value: 18, min: 25 },
-    { name: "APD Proyek (helm, rompi)", value: 76, min: 40 },
-    { name: "Map Arsip & Ordner", value: 55, min: 30 },
-    { name: "Materai & Stempel", value: 22, min: 20 }
-  ],
-
   /* Sumber: DAFTAR_VENDOR_MATERIAL.xlsx (66 baris, 18 jenis). Lokasi di Bandar Lampung. */
   vendorCats: ["Toko Bangunan", "Material Alam", "Panglong Kayu", "Toko Interior", "Toko Cat", "Toko Listrik", "Toko Keramik", "Sanitari", "Toko Atap", "Toko Kaca", "Toko Plafon PVC", "Toko Gypsum", "Toko Batu Alam", "Toko Elektronik", "Toko Kain & Karpet", "Toko Hordeng", "Toko Teknik", "Toko Pre-Cast"],
   vendors: [
