@@ -4,15 +4,25 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Divisi Umum — Roemantara</title>
-  <meta name="description" content="Webapp Divisi Umum Roemantara Indonesia dengan tampilan Sage Soft: General Affairs, Administrasi, Finance & Accounting, Human Resources, dan Legal.">
+  <meta name="description" content="Webapp Divisi Umum Roemantara Indonesia dengan tampilan Gambar Kerja arsitek: General Affairs, Administrasi, Finance & Accounting, Human Resources, dan Legal.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css">
   <link rel="stylesheet" href="assets/css/sage.css">
+  <link rel="stylesheet" href="assets/css/kerja.css">
 </head>
-<body data-skin="sage">
+<body data-skin="sage" data-look="kerja">
+  <div class="cad" id="cad" aria-hidden="true">
+    <div class="cad__h"></div><div class="cad__v"></div>
+    <div class="cad__box"></div>
+    <div class="cad__coord mono" id="cadCoord">X 0000 · Y 0000</div>
+  </div>
   <div class="app">
+    <div class="gk-frame" aria-hidden="true">
+      <div class="gk-ax gk-ax--x"><span data-l="1" style="--k:1"></span><span data-l="2" style="--k:2"></span><span data-l="3" style="--k:3"></span><span data-l="4" style="--k:4"></span><span data-l="5" style="--k:5"></span><span data-l="6" style="--k:6"></span><span data-l="7" style="--k:7"></span><span data-l="8" style="--k:8"></span><span data-l="9" style="--k:9"></span><span data-l="10" style="--k:10"></span></div>
+      <div class="gk-ax gk-ax--y"><span data-l="A" style="--k:0"></span><span data-l="B" style="--k:1"></span><span data-l="C" style="--k:2"></span><span data-l="D" style="--k:3"></span><span data-l="E" style="--k:4"></span><span data-l="F" style="--k:5"></span><span data-l="G" style="--k:6"></span></div>
+    </div>
     <a class="s-logo" href="#home" aria-label="Beranda Divisi Umum">
       <svg viewBox="0 0 40 40" aria-hidden="true"><g>
         <line x1="20" y1="3" x2="20" y2="12"/><line x1="20" y1="28" x2="20" y2="37"/><line x1="3" y1="20" x2="12" y2="20"/><line x1="28" y1="20" x2="37" y2="20"/>
@@ -23,8 +33,10 @@
 
     <header class="s-top">
       <div class="s-greet">
+        <span class="gk-code" id="gkCode" aria-hidden="true"><b>A-00</b><small>LBR</small></span>
         <h1 id="viewTitle">Halo, Divisi Umum!</h1>
         <p id="viewLead">Pantau informasi dan aktivitas operasional kantor &amp; proyek</p>
+        <div class="gk-dim" id="gkDim" aria-hidden="true"><i></i><span id="gkDimTxt">16 MODUL</span><i></i></div>
       </div>
       <div class="s-tools">
         <div class="s-search" role="search">
@@ -347,6 +359,16 @@
         <div class="modpanel" id="tg-umum" role="tabpanel" hidden><div id="tugasApp"></div></div>
       </section>
     </main>
+
+    <footer class="gk-kop" aria-label="Kop gambar">
+      <div class="gk-firm"><small>Perusahaan</small><b>Roemantara Indonesia</b><span>Konstruksi · Arsitektur · Interior</span></div>
+      <div><small>Proyek</small><b>Sistem Divisi Umum</b></div>
+      <div><small>Judul gambar</small><b id="gkKopTitle">Beranda</b></div>
+      <div class="gk-no"><small>No. lembar</small><b id="gkKopNo">A-00</b></div>
+      <div><small>Skala</small><b>1 : 100</b></div>
+      <div><small>Tanggal</small><b id="gkKopDate">—</b></div>
+      <div class="gk-sign"><small>Diperiksa</small><b>Head of General Dept.</b></div>
+    </footer>
   </div>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -363,5 +385,6 @@
   <script src="assets/js/tugas.js"></script>
   <script src="assets/js/harian.js"></script>
   <script src="assets/js/sage.js"></script>
+  <script src="assets/js/kerja.js"></script>
 </body>
 </html>

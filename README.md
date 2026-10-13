@@ -21,8 +21,11 @@ Divisi digambarkan sebagai gedung 5 lantai — tiap lantai satu bidang:
 
 ## Dua tampilan
 - `index.html` — tampilan **Blueprint CAD** (gambar kerja, gelap/kalkir).
-- `sage.html` — tampilan **Sage Soft** (Opsi I): sidebar, Beranda ringkas, satu bidang per halaman,
-  pencarian modul, dan notifikasi. Isi dan logika 16 modul sama persis (`assets/js/app.js`).
+- `sage.html` — tampilan **Gambar Kerja** (lembar gambar arsitek): kertas kalkir bergrid, bingkai lembar + sumbu,
+  kop gambar dengan nomor lembar per menu (`A-00`, `GA-01`, … `TG-06`), judul detail bernomor, kursor CAD, dan
+  bingkai kartu yang tergambar setiap kali tampil. Tata letaknya (sidebar, Beranda, satu bidang per halaman, pencarian,
+  notifikasi) memakai kerangka Sage (`assets/css/sage.css`) dengan lapisan gaya `assets/css/kerja.css` + `assets/js/kerja.js`.
+  Isi dan logika modul sama persis (`assets/js/app.js`).
 
 ## Lampiran PDF (Procurement, Admin & Legal)
 Procurement, Admin, dan Legal punya arsip PDF: unggah satu atau beberapa PDF (maks. 20 MB per file), pilih jenis dokumen,
