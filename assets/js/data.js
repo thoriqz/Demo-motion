@@ -8,8 +8,8 @@ window.DU_DATA = {
     finance: {
       minLength: 4, maxLength: 6, idleMinutes: 15, maxTries: 5, lockSeconds: 60,
       roles: [
-        { id: "umum", label: "Divisi Umum", hash: "a58f06e9390a31930922cc1ed7467bd2a7e9ea55c77d423ec1ca9aa09b923de6" },
-        { id: "direksi", label: "Direksi", hash: "c6ec823c85c2ee7539f4137aabd360e6407ba29088a1ec54965106a5249feec9" }
+        /* Satu PIN bersama untuk Divisi Umum & Direksi */
+        { id: "keuangan", label: "Divisi Umum & Direksi", hash: "a58f06e9390a31930922cc1ed7467bd2a7e9ea55c77d423ec1ca9aa09b923de6" }
       ]
     }
   },

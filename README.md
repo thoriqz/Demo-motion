@@ -26,11 +26,11 @@ Divisi digambarkan sebagai gedung 5 lantai — tiap lantai satu bidang:
 
 ## Kunci PIN Keuangan
 Menu Finance & Accounting (dan kartu angka keuangan di Beranda/Ringkasan) terkunci PIN 4–6 digit,
-khusus **Divisi Umum** dan **Direksi**. Peran terdeteksi dari PIN yang dimasukkan.
+khusus **Divisi Umum** dan **Direksi**, memakai satu PIN bersama.
 - Terkunci lagi otomatis setelah 15 menit tidak ada aktivitas, saat tab ditutup, atau lewat tombol "Kunci sekarang".
 - 5 kali salah → input dikunci 60 detik.
 - Yang disimpan di `assets/js/data.js` hanya hash PIN (`access.finance.roles`). Untuk mengganti PIN:
-  buka halaman, jalankan `DUPin.hash("PIN_BARU")` di console browser, tempel hasilnya ke `hash` peran terkait.
+  buka halaman, jalankan `DUPin.hash("PIN_BARU")` di console browser, tempel hasilnya ke `hash` di `access.finance.roles`.
 
 **Batasan:** ini kunci tampilan di browser. Data keuangan tetap ada di file `data.js` dan bisa dibaca
 siapa pun yang membuka kode halaman. Untuk keamanan penuh, data keuangan harus disajikan dari server

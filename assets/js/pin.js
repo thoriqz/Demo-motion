@@ -92,7 +92,7 @@
     bar.hidden = !open;
     if (open) {
       const role = CFG.roles.find((r) => r.id === s.role);
-      bar.querySelector("#pinWho").textContent = `Dibuka sebagai ${role ? role.label : s.role} · terkunci otomatis setelah ${CFG.idleMinutes} menit tidak aktif`;
+      bar.querySelector("#pinWho").textContent = `${CFG.roles.length > 1 ? "Dibuka sebagai " + (role ? role.label : s.role) : "Akses keuangan terbuka"} · terkunci otomatis setelah ${CFG.idleMinutes} menit tidak aktif`;
     }
   }
   function lock(reason) {
@@ -159,7 +159,7 @@
       apply();
       fin.classList.remove("pin-opened"); void fin.offsetWidth; fin.classList.add("pin-opened");
       document.dispatchEvent(new CustomEvent("du:fin-unlock", { detail: { role: roleId } }));
-      say(`Akses keuangan dibuka · ${role.label}`);
+      say(CFG.roles.length > 1 ? `Akses keuangan dibuka · ${role.label}` : "Akses keuangan dibuka");
       return;
     }
     const t = ls.get(K_TRIES) || { n: 0 };
