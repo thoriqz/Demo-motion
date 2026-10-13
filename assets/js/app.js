@@ -253,7 +253,7 @@
     const grid = $("#kpiGrid");
     if (!grid) return;
     grid.innerHTML = kpi.map((k, i) => `
-      <a class="kpi reveal" style="--d:${i}" href="${k.href}">
+      <a class="kpi reveal" style="--d:${i}" href="${k.href}"${k.href === "#fin" ? ' data-secure="finance"' : ""}>
         <span class="kpi__floor mono">${k.floor}</span>
         <div class="kpi__value"><span data-count="${k.value}">${k.value}</span><small>${esc(k.unit)}</small></div>
         <span class="kpi__label">${esc(k.label)}</span>

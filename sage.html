@@ -56,16 +56,16 @@
         <div class="hc kp" style="--i:0"><div><span class="lb">PR/PO berjalan</span><b class="big" id="hPo">0</b><span class="lb sm" id="hPoSub"></span></div><span class="mini-bars" id="hPoBars"></span></div>
         <div class="hc kp" style="--i:1"><span class="circ"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span><div><span class="lb">Surat bulan ini</span><b class="big" id="hLetters">0</b></div></div>
         <div class="hc kp" style="--i:2"><span class="circ sand"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0"/><circle cx="17" cy="9" r="2.4"/><path d="M16 14a5 5 0 0 1 5 5"/></svg></span><div><span class="lb">Karyawan + freelancer</span><b class="big" id="hPeople">0</b></div></div>
-        <a class="hc kp dark" style="--i:3" href="#fin" data-tab="fin-close"><div><span class="lb">Progres tutup buku</span><b class="big" id="hClose">0%</b></div>
+        <a class="hc kp dark" data-secure="finance" style="--i:3" href="#fin" data-tab="fin-close"><div><span class="lb">Progres tutup buku</span><b class="big" id="hClose">0%</b></div>
           <svg class="mini" viewBox="0 0 70 22" aria-hidden="true"><path class="sq" pathLength="1" d="M0 20 C 6 20, 8 2, 16 4 S 22 20, 30 16 S 40 2, 50 6 S 62 4, 70 2"/></svg></a>
 
-        <div class="hc h-cash" style="--i:4">
+        <div class="hc h-cash" data-secure="finance" style="--i:4">
           <div class="hd"><h3>Arus kas</h3><span class="ok">Surplus</span><a class="per" href="#fin" data-tab="fin-report">Lihat laporan →</a></div>
           <div class="chips2" id="hCashChips"></div>
           <svg class="wave" id="hWave" viewBox="0 0 300 90" preserveAspectRatio="none" aria-label="Grafik pemasukan bulanan Januari sampai Oktober 2026" role="img"></svg>
           <div class="wave-x" id="hWaveX"></div>
         </div>
-        <div class="hc h-gauge" style="--i:5">
+        <div class="hc h-gauge" data-secure="finance" style="--i:5">
           <h3>Realisasi anggaran</h3><span class="lb">Total realisasi proyek</span><b class="big g" id="hBudget"></b><span class="lb" id="hBudgetSub"></span>
           <svg class="gau" viewBox="0 0 100 58" aria-hidden="true">
             <defs><linearGradient id="sGau" x1="0" x2="1"><stop offset="0" stop-color="#86ad96"/><stop offset="1" stop-color="#3f6b55"/></linearGradient></defs>
@@ -424,6 +424,7 @@
 
   <script src="assets/js/data.js"></script>
   <script src="assets/js/app.js"></script>
+  <script src="assets/js/pin.js"></script>
   <script src="assets/js/sage.js"></script>
 </body>
 </html>

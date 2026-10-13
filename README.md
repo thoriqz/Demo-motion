@@ -24,6 +24,18 @@ Divisi digambarkan sebagai gedung 5 lantai — tiap lantai satu bidang:
 - `sage.html` — tampilan **Sage Soft** (Opsi I): sidebar, Beranda ringkas, satu bidang per halaman,
   pencarian modul, dan notifikasi. Isi dan logika 16 modul sama persis (`assets/js/app.js`).
 
+## Kunci PIN Keuangan
+Menu Finance & Accounting (dan kartu angka keuangan di Beranda/Ringkasan) terkunci PIN 6 digit,
+khusus **Divisi Umum** dan **Direksi**. Peran terdeteksi dari PIN yang dimasukkan.
+- Terkunci lagi otomatis setelah 15 menit tidak ada aktivitas, saat tab ditutup, atau lewat tombol "Kunci sekarang".
+- 5 kali salah → input dikunci 60 detik.
+- Yang disimpan di `assets/js/data.js` hanya hash PIN (`access.finance.roles`). Untuk mengganti PIN:
+  buka halaman, jalankan `DUPin.hash("PIN_BARU")` di console browser, tempel hasilnya ke `hash` peran terkait.
+
+**Batasan:** ini kunci tampilan di browser. Data keuangan tetap ada di file `data.js` dan bisa dibaca
+siapa pun yang membuka kode halaman. Untuk keamanan penuh, data keuangan harus disajikan dari server
+yang memeriksa login (mis. Google Apps Script/Sheets dengan akses terbatas, atau backend sendiri).
+
 ## Menjalankan
 Tanpa build. Buka `index.html` di browser, atau:
 
