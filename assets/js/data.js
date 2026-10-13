@@ -109,27 +109,8 @@ window.DU_DATA = {
     { client: "Ibu Larasati", req: "Permintaan penawaran desain dapur", channel: "Instagram", at: "14.02", mins: null, status: "Menunggu" }
   ],
 
-  calendar: {
-    year: 2026, month: 9, // 0 = Januari
-    events: [
-      { d: 2, t: "10.00", title: "Termin 2 PT Graha Sentosa", type: "Eksternal" },
-      { d: 5, t: "09.00", title: "Rapat koordinasi mingguan", type: "Internal" },
-      { d: 7, t: "13.00", title: "Survey lokasi Showroom Arunika", type: "Eksternal" },
-      { d: 9, t: "09.00", title: "Aanwijzing tender Dinas PUPR", type: "Eksternal" },
-      { d: 12, t: "09.00", title: "Rapat koordinasi mingguan", type: "Internal" },
-      { d: 12, t: "14.00", title: "Review RAB Rumah Kemang", type: "Internal" },
-      { d: 14, t: "08.30", title: "Servis AC Lt.2", type: "Internal" },
-      { d: 14, t: "13.00", title: "Presentasi desain PT Graha Sentosa", type: "Eksternal" },
-      { d: 15, t: "—", title: "Batas bayar BPJS & PPh 21", type: "Internal" },
-      { d: 16, t: "15.00", title: "Safety briefing site Cikarang", type: "Eksternal" },
-      { d: 19, t: "09.00", title: "Rapat koordinasi mingguan", type: "Internal" },
-      { d: 21, t: "10.00", title: "Serah terima Kafe Senopati", type: "Eksternal" },
-      { d: 23, t: "15.00", title: "Town hall & ulang tahun karyawan", type: "Internal" },
-      { d: 26, t: "09.00", title: "Rapat koordinasi mingguan", type: "Internal" },
-      { d: 28, t: "10.00", title: "Audit ISO surveillance", type: "Eksternal" },
-      { d: 30, t: "16.00", title: "Cut-off tutup buku Oktober", type: "Internal" }
-    ]
-  },
+  /* Kalender Google yang dipakai modul Kalender (lihat assets/js/gcal.js) */
+  googleCalendar: { calendarId: "roemantaraindonesia@gmail.com", timeZone: "Asia/Jakarta" },
 
   /* =====================================================
      LT.02 ADMINISTRASI

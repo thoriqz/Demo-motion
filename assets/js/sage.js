@@ -159,6 +159,8 @@
     const lastLegal = docs ? docs.latest("legal", 1)[0] : null;
     $("#hSecSub").textContent = lastLegal ? `Terakhir: ${lastLegal.name}` : "Belum ada dokumen yang diunggah";
 
+    renderCal();
+
     // Akses cepat
     $("#hMods").innerHTML = ["ga", "adm", "fin", "hr", "legal"].map((v) => `
       <div class="modgrp"><span class="lb">${esc(VIEWS[v].title)}</span>
@@ -166,6 +168,21 @@
   }
   document.addEventListener("du:change", () => { if (current === "home") renderHome(); });
   document.addEventListener("du:docs", () => { if (current === "home") renderHome(); });
+  document.addEventListener("du:cal", () => { if (current === "home") renderCal(); buildNotes(); });
+
+  /* Agenda Google Calendar di Beranda */
+  function renderCal() {
+    const C = window.DUCal, ul = $("#hCal"), st = $("#hCalState");
+    if (!C || !ul) return;
+    const evs = C.upcoming().slice(0, 6), mode = C.mode();
+    st.textContent = mode === "live" ? "14 hari ke depan" : mode === "local" ? "hanya di versi claude.ai" : mode === "error" ? "belum tersambung" : "memuat…";
+    ul.innerHTML = evs.length ? evs.map((e, k) => {
+      const d = e.firstDay;
+      return `<li style="--k:${k}"><a href="${esc(e.link)}" target="_blank" rel="noopener">
+        <span class="h-cal__date"><b>${d.getDate()}</b><small>${esc(d.toLocaleDateString("id-ID", { month: "short" }))}</small></span>
+        <span class="h-cal__txt"><b>${esc(e.short)}</b><small>${esc(e.allDay ? (+e.firstDay === +e.lastDay ? "Seharian" : "s.d. " + e.lastDay.toLocaleDateString("id-ID", { day: "numeric", month: "short" })) : e.time)}${e.tag ? " · " + esc(e.tag) : ""}</small></span></a></li>`;
+    }).join("") : `<li class="h-cal__empty">${esc(mode === "live" ? "Tidak ada agenda dalam 14 hari ke depan." : mode === "error" ? C.error() : "Agenda dari Google Calendar akan tampil di sini.")}</li>`;
+  }
 
   /* ---------- Pencarian modul ---------- */
   const input = $("#sSearch"), results = $("#sResults");
@@ -195,6 +212,10 @@
       const t0 = new Date(today.toDateString());
       const due = D.inventory.assets.filter((a) => a.perawatan && (new Date(a.perawatan + "T00:00:00") - t0) / 864e5 <= 7);
       if (due.length) items.push({ t: `${due.length} aset jadwal perawatan dalam 7 hari`, v: "ga", tab: "ga-asset", tone: "warn" });
+    }
+    if (window.DUCal) {
+      const t0 = new Date(today.toDateString()), t2 = new Date(t0); t2.setDate(t0.getDate() + 2);
+      window.DUCal.upcoming().filter((e) => e.firstDay < t2 && e.lastDay >= t0).slice(0, 4).forEach((e) => items.push({ t: `${+e.firstDay <= +t0 ? "Hari ini" : "Besok"}: ${e.short}`, v: "ga", tab: "ga-cal", tone: "info" }));
     }
     D.clientRequests.filter((c) => c.status === "Menunggu").forEach((c) => items.push({ t: `${c.client} menunggu respons`, v: "ga", tab: "ga-client", tone: "warn" }));
     $("#sNoteList").innerHTML = items.map((n) => `<li><a href="#${n.v}" ${n.tab ? `data-tab="${n.tab}"` : ""}><i class="tone tone--${n.tone}"></i>${esc(n.t)}</a></li>`).join("");

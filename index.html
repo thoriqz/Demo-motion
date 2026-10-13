@@ -192,7 +192,7 @@
         <button role="tab" data-panel="ga-vendor"><span class="mono">03</span>Vendor &amp; Subkon</button>
         <button role="tab" data-panel="ga-serv"><span class="mono">04</span>Pelayanan Umum</button>
         <button role="tab" data-panel="ga-client"><span class="mono">05</span>Layanan Klien</button>
-        <button role="tab" data-panel="ga-cal"><span class="mono">06</span>Kalender</button>
+        <button role="tab" data-panel="ga-cal"><span class="mono">06</span>Kalender Google</button>
       </div>
 
       <div class="modpanel" id="ga-proc" role="tabpanel">
@@ -279,25 +279,7 @@
         </div>
       </div>
 
-      <div class="modpanel" id="ga-cal" role="tabpanel" hidden>
-        <div class="grid grid--2-1">
-          <article class="panel">
-            <div class="panel__head">
-              <h3 class="panel__title mono">A. KALENDER · <span id="calMonth"></span></h3>
-              <div class="tabs" role="group" id="calFilter" aria-label="Filter jenis agenda">
-                <button type="button" aria-pressed="true" data-filter="all">Semua</button>
-                <button type="button" aria-pressed="false" data-filter="Internal">Internal</button>
-                <button type="button" aria-pressed="false" data-filter="Eksternal">Eksternal</button>
-              </div>
-            </div>
-            <div class="cal" id="calGrid"></div>
-          </article>
-          <article class="panel">
-            <h3 class="panel__title mono">B. AGENDA MENDATANG</h3>
-            <ol class="timeline" id="calUpcoming"></ol>
-          </article>
-        </div>
-      </div>
+      <div class="modpanel" id="ga-cal" role="tabpanel" hidden></div>
     </section>
 
     <!-- ============ LT.02 ADMINISTRASI ============ -->
@@ -535,5 +517,6 @@
   <script src="assets/js/app.js"></script>
   <script src="assets/js/pin.js"></script>
   <script src="assets/js/docs.js"></script>
+  <script src="assets/js/gcal.js"></script>
 </body>
 </html>

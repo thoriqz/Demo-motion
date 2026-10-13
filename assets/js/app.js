@@ -440,33 +440,6 @@
       <div class="bars">${Object.entries(byCh).map(([k, v]) => `<div class="bar-row"><span>${esc(k)}</span><b>${v}</b><div class="meter"><i data-w="${(v / reqs.length) * 100}"></i></div></div>`).join("")}</div>`;
   }
 
-  function renderCalendar() {
-    const { year, month, events } = D.calendar;
-    const first = new Date(year, month, 1);
-    const days = new Date(year, month + 1, 0).getDate();
-    const lead = (first.getDay() + 6) % 7;
-    const isThisMonth = today.getFullYear() === year && today.getMonth() === month;
-    $("#calMonth").textContent = up(fmtDate(first, { month: "long", year: "numeric" }));
-    const grid = $("#calGrid");
-    const draw = (filter) => {
-      let html = ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"].map((d) => `<div class="cal__hd mono">${d}</div>`).join("");
-      for (let i = 0; i < lead; i++) html += `<div class="cal__day is-off"></div>`;
-      for (let d = 1; d <= days; d++) {
-        const ev = events.filter((e) => e.d === d && (filter === "all" || e.type === filter));
-        const isToday = isThisMonth && today.getDate() === d;
-        html += `<div class="cal__day ${isToday ? "is-today" : ""}" style="--d:${d}"><span class="cal__num mono">${d}</span>
-          ${ev.map((e) => `<span class="cal__ev cal__ev--${e.type === "Internal" ? "in" : "ex"}" title="${esc(e.t)} · ${esc(e.title)}">${esc(e.title)}</span>`).join("")}</div>`;
-      }
-      grid.innerHTML = html;
-    };
-    pressGroup($("#calFilter"), (b) => draw(b.dataset.filter));
-    draw("all");
-    const from = isThisMonth ? today.getDate() : 1;
-    $("#calUpcoming").innerHTML = events.filter((e) => e.d >= from).slice(0, 7).map((e) => `
-      <li><span class="t-date">${String(e.d).padStart(2, "0")} ${fmtDate(first, { month: "short" })} · ${esc(e.t)}</span>
-      <span class="t-title">${esc(e.title)}<span class="tag tag--${e.type === "Internal" ? "in" : "ex"}">${esc(e.type)}</span></span></li>`).join("");
-  }
-
   /* =========================================================
      LT.02 ADMINISTRASI
      ========================================================= */
@@ -826,7 +799,7 @@
   $$("[data-date]").forEach((el) => (el.textContent = up(fmtDate(today, { day: "2-digit", month: "long", year: "numeric" }))));
   initTheme();
   renderKpi();
-  renderAssets(); renderVendors(); renderServices(); renderClient(); renderCalendar();
+  renderAssets(); renderVendors(); renderServices(); renderClient();
   renderLetters(); renderArchive(); renderMinutes();
   renderRecon(); renderReports(); renderClosing();
   renderEmployees(); renderFreelancers(); renderAttendance();

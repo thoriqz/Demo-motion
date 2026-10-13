@@ -845,3 +845,29 @@ body.fin-locked .kpi[data-secure="finance"]::after { z-index: 1; width: auto; he
 .stat b.stat__sm { font-size: 18px; line-height: 1.3; }
 .mini-btn.is-armed { background: var(--danger); border-color: var(--danger); color: #fff; }
 @media (max-width: 700px) { .doclib__drop { grid-template-columns: 1fr; } }
+
+/* =========================================================
+   GOOGLE CALENDAR
+   ========================================================= */
+.gc-status { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; font-size: 13px; color: var(--muted); }
+.gc-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--warn); box-shadow: 0 0 0 4px color-mix(in srgb, var(--warn) 18%, transparent); animation: gcPulse 1.6s ease-in-out infinite; }
+.gc-status[data-state="live"] .gc-dot { background: var(--ok); box-shadow: 0 0 0 4px color-mix(in srgb, var(--ok) 18%, transparent); animation: none; }
+.gc-status[data-state="error"] .gc-dot { background: var(--danger); animation: none; }
+.gc-status[data-state="error"] { color: var(--danger); }
+.gc-status[data-state="local"] .gc-dot { background: var(--muted); animation: none; }
+@keyframes gcPulse { 50% { opacity: .35; } }
+a.cal__ev { color: inherit; text-decoration: none; display: -webkit-box; }
+a.cal__ev:hover { filter: brightness(1.15); text-decoration: underline; }
+.cal__more { font-size: 10px; color: var(--muted); }
+.gc-form .gc-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.gc-form .gc-row[hidden] { display: none; }
+.gc-check { display: flex !important; align-items: center; gap: 8px; text-transform: none !important; letter-spacing: 0 !important; font-size: 13px !important; color: var(--ink) !important; cursor: pointer; }
+.gc-check input { width: auto; accent-color: var(--accent); }
+.gc-link { color: inherit; text-decoration: none; display: block; }
+.gc-link:hover { color: var(--accent); }
+.gc-help { margin: 0 0 12px; }
+.gc-auto { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.gc-auto li { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px dashed var(--line-soft); }
+.gc-auto li b { display: block; font-size: 14px; }
+.gc-auto li small { color: var(--muted); font-size: 12px; }
+.mini-btn[disabled] { opacity: .45; cursor: not-allowed; }

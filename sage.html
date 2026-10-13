@@ -88,7 +88,11 @@
           <h3 id="hSecTitle">Arsip legal</h3><span class="lb" id="hSecSub"></span><a class="btn-s" href="#legal">Lihat dokumen</a>
         </div>
 
-        <div class="hc h-mods" style="--i:10"><h3>Akses cepat modul</h3><div class="modgrid" id="hMods"></div></div>
+        <div class="hc h-cal" style="--i:10">
+          <div class="hd"><h3>Agenda Google Calendar</h3><span class="lb" id="hCalState"></span><a class="per" href="#ga" data-tab="ga-cal">Buka kalender →</a></div>
+          <ul class="h-cal__list" id="hCal"></ul>
+        </div>
+        <div class="hc h-mods" style="--i:11"><h3>Akses cepat modul</h3><div class="modgrid" id="hMods"></div></div>
       </section>
 
 <!-- GENERAL AFFAIRS -->
@@ -100,7 +104,7 @@
         <button role="tab" data-panel="ga-vendor"><span class="mono">03</span>Vendor &amp; Subkon</button>
         <button role="tab" data-panel="ga-serv"><span class="mono">04</span>Pelayanan Umum</button>
         <button role="tab" data-panel="ga-client"><span class="mono">05</span>Layanan Klien</button>
-        <button role="tab" data-panel="ga-cal"><span class="mono">06</span>Kalender</button>
+        <button role="tab" data-panel="ga-cal"><span class="mono">06</span>Kalender Google</button>
       </div>
 
       <div class="modpanel" id="ga-proc" role="tabpanel">
@@ -187,25 +191,7 @@
         </div>
       </div>
 
-      <div class="modpanel" id="ga-cal" role="tabpanel" hidden>
-        <div class="grid grid--2-1">
-          <article class="panel">
-            <div class="panel__head">
-              <h3 class="panel__title mono">Kalender · <span id="calMonth"></span></h3>
-              <div class="tabs" role="group" id="calFilter" aria-label="Filter jenis agenda">
-                <button type="button" aria-pressed="true" data-filter="all">Semua</button>
-                <button type="button" aria-pressed="false" data-filter="Internal">Internal</button>
-                <button type="button" aria-pressed="false" data-filter="Eksternal">Eksternal</button>
-              </div>
-            </div>
-            <div class="cal" id="calGrid"></div>
-          </article>
-          <article class="panel">
-            <h3 class="panel__title mono">Agenda mendatang</h3>
-            <ol class="timeline" id="calUpcoming"></ol>
-          </article>
-        </div>
-      </div>
+      <div class="modpanel" id="ga-cal" role="tabpanel" hidden></div>
     </section>
 
     <!-- ADMINISTRASI -->
@@ -407,6 +393,7 @@
   <script src="assets/js/app.js"></script>
   <script src="assets/js/pin.js"></script>
   <script src="assets/js/docs.js"></script>
+  <script src="assets/js/gcal.js"></script>
   <script src="assets/js/sage.js"></script>
 </body>
 </html>

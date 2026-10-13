@@ -30,6 +30,17 @@ lalu jumlah file dan total ukuran dihitung otomatis. File disimpan di penyimpana
 database artifact (koleksi `files`), jadi **hanya berfungsi di versi claude.ai**. Mengunggah dan menghapus butuh akses
 edit ke artifact; anggota lain bisa melihat dan membuka file. Logika ada di `assets/js/docs.js`.
 
+## Google Calendar & notifikasi ponsel
+Modul GA → Kalender Google membaca dan menulis langsung ke Google Calendar kantor
+(`googleCalendar.calendarId` di `data.js`) lewat connector claude.ai "Google Calendar" (`assets/js/gcal.js`):
+- tampilan bulan + agenda 14 hari ke depan (juga di Beranda Sage dan lonceng notifikasi),
+- form "Tambah agenda" langsung membuat acara di Google Calendar dengan pengingat pop-up,
+- "Pengingat otomatis" membuat acara untuk jadwal perawatan aset dan batas tutup buku (notifikasi H-2 & H-1 pukul 09.00).
+
+Notifikasi ponsel datang dari aplikasi Google Calendar di ponsel (login akun yang sama, notifikasi diizinkan).
+Setiap penampil memakai connector Google Calendar miliknya sendiri, jadi akun Google-nya harus punya akses ke kalender kantor.
+Hanya berfungsi di versi claude.ai.
+
 ## Kunci PIN Keuangan
 Menu Finance & Accounting (dan kartu angka keuangan di Beranda/Ringkasan) terkunci PIN 4–6 digit,
 khusus **Divisi Umum** dan **Direksi**, memakai satu PIN bersama.
