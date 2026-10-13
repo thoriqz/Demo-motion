@@ -196,33 +196,7 @@
       </div>
 
       <div class="modpanel" id="ga-proc" role="tabpanel">
-        <div class="stat-row" id="procStats"></div>
-        <div class="grid grid--2-1">
-          <article class="panel">
-            <div class="panel__head">
-              <h3 class="panel__title mono">A. PERMINTAAN (PR) &amp; PEMBELIAN (PO)</h3>
-              <input class="search" type="search" id="procSearch" placeholder="Cari barang, proyek, vendor…" aria-label="Cari pengadaan">
-            </div>
-            <div class="table-wrap"><table class="table">
-              <thead><tr><th>No.</th><th>Barang / Jasa</th><th>Proyek</th><th>Vendor</th><th class="num">Nilai</th><th>Tahap</th><th></th></tr></thead>
-              <tbody id="procBody"></tbody>
-            </table></div>
-            <p class="note mono">Tekan "Lanjut" untuk memajukan tahap: PR → Approval → PO → Dikirim → Diterima.</p>
-          </article>
-          <article class="panel">
-            <h3 class="panel__title mono">B. AJUKAN PR BARU</h3>
-            <form class="form" id="procForm" autocomplete="off">
-              <label for="procItem">Barang / Jasa<input id="procItem" name="item" required placeholder="mis. Semen 50 sak"></label>
-              <label for="procProject">Proyek / Unit
-                <select id="procProject" name="project"><option>Kantor</option><option>Rumah Kemang</option><option>Gudang Cikarang</option><option>Fit-out Kafe Senopati</option><option>Showroom Arunika</option></select>
-              </label>
-              <label for="procVendor">Calon Vendor<input id="procVendor" name="vendor" placeholder="opsional"></label>
-              <label for="procValue">Estimasi Nilai (Rp)<input id="procValue" name="value" type="number" min="0" step="1000" required placeholder="mis. 12500000"></label>
-              <output class="form__preview mono" id="procPreview">—</output>
-              <button class="btn btn--solid" type="submit">Ajukan PR</button>
-            </form>
-          </article>
-        </div>
+        <div class="doclib" data-area="procurement" data-label="Procurement" data-kinds="PR / Permintaan|Penawaran Vendor|PO / Purchase Order|Invoice / Tagihan|Surat Jalan / BAST|Lainnya"></div>
       </div>
 
       <div class="modpanel" id="ga-asset" role="tabpanel" hidden>
@@ -530,25 +504,10 @@
       <header class="sec-head reveal">
         <p class="eyebrow mono">LT.05 · ELV +14.00 · GBR LGL-01</p>
         <h2>Legal</h2>
-        <p class="sec-lead">Arsip seluruh dokumen eksternal: perizinan, kontrak, akta, asuransi, dan sertifikat — lengkap dengan pengingat masa berlaku.</p>
+        <p class="sec-lead">Arsip seluruh dokumen eksternal dalam bentuk PDF: perizinan, kontrak, akta, asuransi, dan sertifikat.</p>
         <div class="dimline"><span></span><em class="mono">PENGARSIPAN EKSTERNAL</em><span></span></div>
       </header>
-      <div class="stat-row stat-row--3 reveal" id="legalStats"></div>
-      <article class="panel panel--wide reveal">
-        <h3 class="panel__title mono">A. SEGERA JATUH TEMPO (≤ 90 HARI)</h3>
-        <div class="licenses licenses--row" id="licenses"></div>
-      </article>
-      <article class="panel panel--wide reveal">
-        <div class="panel__head">
-          <h3 class="panel__title mono">B. ARSIP DOKUMEN EKSTERNAL</h3>
-          <input class="search" type="search" id="legalSearch" placeholder="Cari dokumen, nomor, pihak…" aria-label="Cari dokumen legal">
-        </div>
-        <div class="chips chips--wrap" id="legalChips" role="group" aria-label="Filter kategori dokumen"></div>
-        <div class="table-wrap"><table class="table">
-          <thead><tr><th>No. Dokumen</th><th>Nama Dokumen</th><th>Kategori</th><th>Pihak / Penerbit</th><th>Terbit</th><th>Berlaku s.d.</th><th>Lokasi Arsip</th></tr></thead>
-          <tbody id="legalBody"></tbody>
-        </table></div>
-      </article>
+      <div class="doclib" data-area="legal" data-label="Legal" data-kinds="Perizinan|Kontrak Klien|Kontrak Vendor &amp; Subkon|Akta &amp; Legalitas|Asuransi &amp; Jaminan|Sertifikat|Lainnya"></div>
     </section>
   </main>
 
@@ -575,5 +534,6 @@
   <script src="assets/js/inventaris.js"></script>
   <script src="assets/js/app.js"></script>
   <script src="assets/js/pin.js"></script>
+  <script src="assets/js/docs.js"></script>
 </body>
 </html>

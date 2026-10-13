@@ -53,7 +53,7 @@
     <main class="s-main" id="main">
       <!-- Beranda -->
       <section class="view s-home" id="home" data-view="home">
-        <div class="hc kp" style="--i:0"><div><span class="lb">PR/PO berjalan</span><b class="big" id="hPo">0</b><span class="lb sm" id="hPoSub"></span></div><span class="mini-bars" id="hPoBars"></span></div>
+        <div class="hc kp" style="--i:0"><div><span class="lb">PDF procurement</span><b class="big" id="hPo">0</b><span class="lb sm" id="hPoSub"></span></div><span class="mini-bars" id="hPoBars"></span></div>
         <div class="hc kp" style="--i:1"><span class="circ"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span><div><span class="lb">Surat bulan ini</span><b class="big" id="hLetters">0</b></div></div>
         <div class="hc kp" style="--i:2"><span class="circ sand"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0"/><circle cx="17" cy="9" r="2.4"/><path d="M16 14a5 5 0 0 1 5 5"/></svg></span><div><span class="lb">Karyawan + freelancer</span><b class="big" id="hPeople">0</b></div></div>
         <a class="hc kp dark" data-secure="finance" style="--i:3" href="#fin" data-tab="fin-close"><div><span class="lb">Progres tutup buku</span><b class="big" id="hClose">0%</b></div>
@@ -79,13 +79,13 @@
         </div>
 
         <div class="hc h-stack" style="--i:7">
-          <div><h3>Kontrak aktif</h3><p>Kontrak klien dan subkon yang sedang berjalan. Arahkan kursor ke tumpukan untuk membukanya.</p><a class="btn-s" href="#legal">Buka arsip legal</a></div>
+          <div><h3>Arsip legal terbaru</h3><p>Tiga PDF legal yang terakhir diunggah. Arahkan kursor ke tumpukan untuk membukanya.</p><a class="btn-s" href="#legal">Buka arsip legal</a></div>
           <div class="iso" id="hIso"></div>
         </div>
         <div class="hc h-act" style="--i:8"><h3>Aktivitas terbaru</h3><ul id="hAct"></ul></div>
         <div class="hc h-sec" style="--i:9">
           <svg viewBox="0 0 48 48" aria-hidden="true"><path pathLength="1" d="M24 4 L40 10 V22 C40 33 33 41 24 44 C15 41 8 33 8 22 V10 Z"/><path pathLength="1" d="M17 24 l5 5 l9 -10" style="--k:1"/></svg>
-          <h3 id="hSecTitle">Izin tetap aman</h3><span class="lb" id="hSecSub"></span><a class="btn-s" href="#legal">Lihat dokumen</a>
+          <h3 id="hSecTitle">Arsip legal</h3><span class="lb" id="hSecSub"></span><a class="btn-s" href="#legal">Lihat dokumen</a>
         </div>
 
         <div class="hc h-mods" style="--i:10"><h3>Akses cepat modul</h3><div class="modgrid" id="hMods"></div></div>
@@ -104,33 +104,7 @@
       </div>
 
       <div class="modpanel" id="ga-proc" role="tabpanel">
-        <div class="stat-row" id="procStats"></div>
-        <div class="grid grid--2-1">
-          <article class="panel">
-            <div class="panel__head">
-              <h3 class="panel__title mono">Permintaan (PR) &amp; pembelian (PO)</h3>
-              <input class="search" type="search" id="procSearch" placeholder="Cari barang, proyek, vendor…" aria-label="Cari pengadaan">
-            </div>
-            <div class="table-wrap"><table class="table">
-              <thead><tr><th>No.</th><th>Barang / Jasa</th><th>Proyek</th><th>Vendor</th><th class="num">Nilai</th><th>Tahap</th><th></th></tr></thead>
-              <tbody id="procBody"></tbody>
-            </table></div>
-            <p class="note mono">Tekan "Lanjut" untuk memajukan tahap: PR → Approval → PO → Dikirim → Diterima.</p>
-          </article>
-          <article class="panel">
-            <h3 class="panel__title mono">Ajukan PR baru</h3>
-            <form class="form" id="procForm" autocomplete="off">
-              <label for="procItem">Barang / Jasa<input id="procItem" name="item" required placeholder="mis. Semen 50 sak"></label>
-              <label for="procProject">Proyek / Unit
-                <select id="procProject" name="project"><option>Kantor</option><option>Rumah Kemang</option><option>Gudang Cikarang</option><option>Fit-out Kafe Senopati</option><option>Showroom Arunika</option></select>
-              </label>
-              <label for="procVendor">Calon Vendor<input id="procVendor" name="vendor" placeholder="opsional"></label>
-              <label for="procValue">Estimasi Nilai (Rp)<input id="procValue" name="value" type="number" min="0" step="1000" required placeholder="mis. 12500000"></label>
-              <output class="form__preview mono" id="procPreview">—</output>
-              <button class="btn btn--solid" type="submit">Ajukan PR</button>
-            </form>
-          </article>
-        </div>
+        <div class="doclib" data-area="procurement" data-label="Procurement" data-kinds="PR / Permintaan|Penawaran Vendor|PO / Purchase Order|Invoice / Tagihan|Surat Jalan / BAST|Lainnya"></div>
       </div>
 
       <div class="modpanel" id="ga-asset" role="tabpanel" hidden>
@@ -420,23 +394,8 @@
 
     <!-- LEGAL -->
     <section class="view" hidden id="legal" data-floor="5">
-      <header class="view-head" hidden><h2>Legal</h2><p>Arsip seluruh dokumen eksternal: perizinan, kontrak, akta, asuransi, dan sertifikat — lengkap dengan pengingat masa berlaku.</p></header>
-      <div class="stat-row stat-row--3" id="legalStats"></div>
-      <article class="panel panel--wide">
-        <h3 class="panel__title mono">Segera jatuh tempo (≤ 90 hari)</h3>
-        <div class="licenses licenses--row" id="licenses"></div>
-      </article>
-      <article class="panel panel--wide">
-        <div class="panel__head">
-          <h3 class="panel__title mono">Arsip dokumen eksternal</h3>
-          <input class="search" type="search" id="legalSearch" placeholder="Cari dokumen, nomor, pihak…" aria-label="Cari dokumen legal">
-        </div>
-        <div class="chips chips--wrap" id="legalChips" role="group" aria-label="Filter kategori dokumen"></div>
-        <div class="table-wrap"><table class="table">
-          <thead><tr><th>No. Dokumen</th><th>Nama Dokumen</th><th>Kategori</th><th>Pihak / Penerbit</th><th>Terbit</th><th>Berlaku s.d.</th><th>Lokasi Arsip</th></tr></thead>
-          <tbody id="legalBody"></tbody>
-        </table></div>
-      </article>
+      <header class="view-head" hidden><h2>Legal</h2><p>Arsip seluruh dokumen eksternal dalam bentuk PDF: perizinan, kontrak, akta, asuransi, dan sertifikat.</p></header>
+      <div class="doclib" data-area="legal" data-label="Legal" data-kinds="Perizinan|Kontrak Klien|Kontrak Vendor &amp; Subkon|Akta &amp; Legalitas|Asuransi &amp; Jaminan|Sertifikat|Lainnya"></div>
     </section>
       </main>
   </div>
@@ -447,6 +406,7 @@
   <script src="assets/js/inventaris.js"></script>
   <script src="assets/js/app.js"></script>
   <script src="assets/js/pin.js"></script>
+  <script src="assets/js/docs.js"></script>
   <script src="assets/js/sage.js"></script>
 </body>
 </html>

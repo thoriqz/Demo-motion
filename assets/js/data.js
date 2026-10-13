@@ -17,16 +17,6 @@ window.DU_DATA = {
   /* =====================================================
      LT.01 GENERAL AFFAIRS
      ===================================================== */
-  procurementSteps: ["PR", "Approval", "PO", "Dikirim", "Diterima"],
-  procurement: [
-    { no: "PR-2026-118", item: "Besi beton D13 (2 ton)", project: "Gudang Cikarang", vendor: "PT Baja Prima", value: 38400000, step: 3 },
-    { no: "PR-2026-117", item: "HPL & multiplek 18 mm (60 lbr)", project: "Fit-out Kafe Senopati", vendor: "CV Kayu Lestari", value: 27850000, step: 4 },
-    { no: "PR-2026-116", item: "Tinta & head plotter A0", project: "Kantor", vendor: "PT Graphika Prima", value: 9600000, step: 2 },
-    { no: "PR-2026-115", item: "Sewa scaffolding 3 bulan", project: "Rumah Kemang", vendor: "PT Rangka Jaya", value: 36000000, step: 4 },
-    { no: "PR-2026-114", item: "Lampu downlight & track (120 pcs)", project: "Showroom Arunika", vendor: "PT Sinar Terang", value: 21300000, step: 1 },
-    { no: "PR-2026-113", item: "APD proyek (helm, rompi, sepatu)", project: "Gudang Cikarang", vendor: "CV Safety Indo", value: 7450000, step: 0 }
-  ],
-
   /* Sumber: DAFTAR_VENDOR_MATERIAL.xlsx (66 baris, 18 jenis). Lokasi di Bandar Lampung. */
   vendorCats: ["Toko Bangunan", "Material Alam", "Panglong Kayu", "Toko Interior", "Toko Cat", "Toko Listrik", "Toko Keramik", "Sanitari", "Toko Atap", "Toko Kaca", "Toko Plafon PVC", "Toko Gypsum", "Toko Batu Alam", "Toko Elektronik", "Toko Kain & Karpet", "Toko Hordeng", "Toko Teknik", "Toko Pre-Cast"],
   vendors: [
@@ -310,26 +300,5 @@ window.DU_DATA = {
     { name: "Yoga Firmansyah", in: "07.05", out: "—", loc: "Site Kemang", status: "Dinas Lapangan" },
     { name: "Laras Wulandari", in: "—", out: "—", loc: "—", status: "Sakit" }
   ],
-  attendanceSummary: { Hadir: 47, Terlambat: 3, "Dinas Lapangan": 5, Izin: 2, Sakit: 1 },
-
-  /* =====================================================
-     LT.05 LEGAL — arsip dokumen eksternal
-     daysLeft relatif terhadap hari ini (null = tanpa masa berlaku)
-     ===================================================== */
-  legalCats: ["Perizinan", "Kontrak Klien", "Kontrak Vendor & Subkon", "Akta & Legalitas", "Asuransi & Jaminan", "Sertifikat"],
-  legalDocs: [
-    { no: "9120001234567", title: "NIB (OSS-RBA)", cat: "Perizinan", party: "Kementerian Investasi/BKPM", issued: "2021-03-15", daysLeft: null, loc: "Brankas L-1 · Drive/Legal/Izin" },
-    { no: "SBU-BG-2024-0881", title: "SBU Jasa Konstruksi — Bangunan Gedung", cat: "Perizinan", party: "LPJK", issued: "2024-11-28", daysLeft: 412, loc: "Brankas L-1 · Drive/Legal/Izin" },
-    { no: "SBU-AR-2023-1402", title: "SBU Konsultan Arsitektur", cat: "Perizinan", party: "LPJK", issued: "2023-11-19", daysLeft: 38, loc: "Brankas L-1 · Drive/Legal/Izin" },
-    { no: "SKK-PJT-2023-5521", title: "SKK Penanggung Jawab Teknik", cat: "Perizinan", party: "LPJK", issued: "2023-10-24", daysLeft: 12, loc: "Brankas L-1 · Drive/Legal/Izin" },
-    { no: "KTR/RMT/2026/014", title: "Kontrak Design & Build Rumah Kemang", cat: "Kontrak Klien", party: "Bpk. H. Santoso", issued: "2026-03-02", daysLeft: 141, loc: "Rak L-2 · Drive/Legal/Kontrak" },
-    { no: "KTR/RMT/2026/019", title: "Kontrak Gudang Logistik Cikarang", cat: "Kontrak Klien", party: "PT Logistik Andalan", issued: "2026-06-10", daysLeft: 236, loc: "Rak L-2 · Drive/Legal/Kontrak" },
-    { no: "SPK/SUB/2026/009", title: "SPK Subkon MEP Gudang", cat: "Kontrak Vendor & Subkon", party: "PT Elektrika Nusa", issued: "2026-10-08", daysLeft: 118, loc: "Rak L-3 · Drive/Legal/Subkon" },
-    { no: "PKS/VEN/2026/004", title: "Perjanjian Kerja Sama Supply Besi", cat: "Kontrak Vendor & Subkon", party: "PT Baja Prima", issued: "2026-01-05", daysLeft: 85, loc: "Rak L-3 · Drive/Legal/Vendor" },
-    { no: "AHU-0012345.AH.01.01", title: "Akta Pendirian & SK Kemenkumham", cat: "Akta & Legalitas", party: "Notaris R. Wijaya, S.H.", issued: "2015-02-10", daysLeft: null, loc: "Brankas L-1 (asli)" },
-    { no: "NPWP 01.234.567.8-012.000", title: "NPWP & SPPKP Perusahaan", cat: "Akta & Legalitas", party: "DJP", issued: "2015-03-01", daysLeft: null, loc: "Brankas L-1 · Drive/Legal/Pajak" },
-    { no: "CAR-2026-77812", title: "Polis Asuransi CAR Proyek Cikarang", cat: "Asuransi & Jaminan", party: "PT Asuransi Mitra", issued: "2026-06-12", daysLeft: 74, loc: "Rak L-4 · Drive/Legal/Asuransi" },
-    { no: "JP-2026-0331", title: "Jaminan Pelaksanaan Gudang Cikarang", cat: "Asuransi & Jaminan", party: "Bank Mandiri", issued: "2026-06-15", daysLeft: 236, loc: "Rak L-4 · Drive/Legal/Jaminan" },
-    { no: "QMS-ID-2024-889", title: "Sertifikat ISO 9001:2015", cat: "Sertifikat", party: "Badan Sertifikasi", issued: "2024-04-20", daysLeft: 190, loc: "Dinding lobi · Drive/Legal/Sertifikat" }
-  ]
+  attendanceSummary: { Hadir: 47, Terlambat: 3, "Dinas Lapangan": 5, Izin: 2, Sakit: 1 }
 };

@@ -24,6 +24,12 @@ Divisi digambarkan sebagai gedung 5 lantai — tiap lantai satu bidang:
 - `sage.html` — tampilan **Sage Soft** (Opsi I): sidebar, Beranda ringkas, satu bidang per halaman,
   pencarian modul, dan notifikasi. Isi dan logika 16 modul sama persis (`assets/js/app.js`).
 
+## Lampiran PDF (Procurement & Legal)
+Procurement dan Legal kini berupa arsip PDF: unggah satu atau beberapa PDF (maks. 20 MB per file), pilih jenis dokumen,
+lalu jumlah file dan total ukuran dihitung otomatis. File disimpan di penyimpanan artifact claude.ai dan daftarnya di
+database artifact (koleksi `files`), jadi **hanya berfungsi di versi claude.ai**. Mengunggah dan menghapus butuh akses
+edit ke artifact; anggota lain bisa melihat dan membuka file. Logika ada di `assets/js/docs.js`.
+
 ## Kunci PIN Keuangan
 Menu Finance & Accounting (dan kartu angka keuangan di Beranda/Ringkasan) terkunci PIN 4–6 digit,
 khusus **Divisi Umum** dan **Direksi**, memakai satu PIN bersama.

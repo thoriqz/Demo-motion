@@ -233,22 +233,21 @@
      RINGKASAN
      ========================================================= */
   const state = {
-    procurement: store.get("du-proc", null) || D.procurement.map((p) => ({ ...p })),
     letters: store.get("du-letters", []).concat(D.letters),
     closing: store.get("du-close", null) || D.closing.tasks.map((t) => t.done),
     recon: store.get("du-recon", {})
   };
 
   function renderKpi() {
-    const poOpen = state.procurement.filter((p) => p.step < 4).length;
+    const docs = window.DUDocs;
+    const procN = docs ? docs.count("procurement") : 0, legalN = docs ? docs.count("legal") : 0;
     const closePct = Math.round((state.closing.filter(Boolean).length / state.closing.length) * 100);
-    const expiring = D.legalDocs.filter((d) => d.daysLeft != null && d.daysLeft <= 90).length;
     const kpi = [
-      { label: "PR/PO Berjalan", value: poOpen, unit: "dokumen", floor: "LT.01 · GA", href: "#ga" },
+      { label: "PDF Procurement", value: procN, unit: "file", floor: "LT.01 · GA", href: "#ga" },
       { label: "Surat Bulan Ini", value: state.letters.length, unit: "surat", floor: "LT.02 · ADM", href: "#adm" },
       { label: "Progres Tutup Buku", value: closePct, unit: "%", floor: "LT.03 · FIN", href: "#fin" },
       { label: "Karyawan + Freelancer", value: 58 + D.freelancers.length, unit: "orang", floor: "LT.04 · HR", href: "#hr" },
-      { label: "Dokumen Jatuh Tempo ≤90 hr", value: expiring, unit: "dok", floor: "LT.05 · LGL", href: "#legal" }
+      { label: "Arsip Legal (PDF)", value: legalN, unit: "file", floor: "LT.05 · LGL", href: "#legal" }
     ];
     const grid = $("#kpiGrid");
     if (!grid) return;
@@ -269,59 +268,6 @@
   /* =========================================================
      LT.01 GENERAL AFFAIRS
      ========================================================= */
-  function renderProcurement() {
-    const steps = D.procurementSteps;
-    const body = $("#procBody"), search = $("#procSearch");
-    const save = () => store.set("du-proc", state.procurement);
-
-    const drawStats = () => {
-      const list = state.procurement;
-      const total = list.filter((p) => p.step >= 2).reduce((s, p) => s + p.value, 0);
-      $("#procStats").innerHTML =
-        stat("Nilai PO bulan ini", rpShort(total), `${list.filter((p) => p.step >= 2).length} PO terbit`) +
-        stat("Menunggu approval", list.filter((p) => p.step <= 1).length, "PR baru & dalam review", "warn") +
-        stat("Dalam pengiriman", list.filter((p) => p.step === 3).length, "barang menuju lokasi") +
-        stat("Sudah diterima", list.filter((p) => p.step === 4).length, "lengkap dengan BA terima", "ok");
-    };
-    const draw = (highlight) => {
-      const q = norm(search.value);
-      const rows = state.procurement.filter((p) => !q || norm(p.no + p.item + p.project + p.vendor).includes(q));
-      body.innerHTML = rows.map((p) => `
-        <tr class="${p.no === highlight ? "is-new" : ""}">
-          <td>${esc(p.no)}</td><td>${esc(p.item)}</td><td>${esc(p.project)}</td><td>${esc(p.vendor || "—")}</td>
-          <td class="num">${rp(p.value)}</td>
-          <td><div class="pstep" title="${steps[p.step]}">${steps.map((s, i) => `<i class="${i <= p.step ? "on" : ""}"></i>`).join("")}</div><small class="mono">${up(steps[p.step])}</small></td>
-          <td>${p.step < steps.length - 1 ? `<button class="mini-btn" type="button" data-no="${esc(p.no)}">Lanjut →</button>` : pill("Selesai", "ok")}</td>
-        </tr>`).join("") || `<tr><td colspan="7" class="empty">Tidak ada data yang cocok.</td></tr>`;
-    };
-    body.addEventListener("click", (e) => {
-      const b = e.target.closest("[data-no]");
-      if (!b) return;
-      const p = state.procurement.find((x) => x.no === b.dataset.no);
-      p.step++;
-      save(); draw(); drawStats(); refreshKpi();
-      toast(`${p.no} → ${steps[p.step]}`);
-    });
-    search.addEventListener("input", () => draw());
-
-    const form = $("#procForm"), preview = $("#procPreview");
-    const nextNo = () => {
-      const n = Math.max(0, ...state.procurement.map((p) => parseInt(p.no.split("-").pop(), 10) || 0)) + 1;
-      return `PR-${today.getFullYear()}-${String(n).padStart(3, "0")}`;
-    };
-    preview.textContent = nextNo();
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const p = { no: nextNo(), item: form.item.value.trim(), project: form.project.value, vendor: form.vendor.value.trim(), value: +form.value.value || 0, step: 0 };
-      if (!p.item) return;
-      state.procurement.unshift(p);
-      save(); draw(p.no); drawStats(); refreshKpi();
-      form.reset(); preview.textContent = nextNo();
-      toast(`${p.no} diajukan, menunggu approval`);
-    });
-    draw(); drawStats();
-  }
-
   function renderAssets() {
     const I = D.inventory;
     if (!I) return;
@@ -876,57 +822,16 @@
     $("#attNote").textContent = up(`Rata-rata kehadiran ${(total / n).toFixed(1)}%`);
   }
 
-  /* =========================================================
-     LT.05 LEGAL
-     ========================================================= */
-  function renderLegal() {
-    const docs = D.legalDocs.map((d) => {
-      if (d.daysLeft == null) return { ...d, tone: "ok", until: "Tanpa batas", exp: null };
-      const exp = new Date(today); exp.setDate(today.getDate() + d.daysLeft);
-      return { ...d, exp, tone: d.daysLeft <= 30 ? "danger" : d.daysLeft <= 90 ? "warn" : "ok", until: fmtDate(exp) };
-    });
-    const soon = docs.filter((d) => d.exp && d.daysLeft <= 90).sort((a, b) => a.daysLeft - b.daysLeft);
-    $("#legalStats").innerHTML =
-      stat("Total dokumen eksternal", `<span data-count="${docs.length}">${docs.length}</span>`, `${D.legalCats.length} kategori arsip`) +
-      stat("Jatuh tempo ≤ 90 hari", `<span data-count="${soon.length}">${soon.length}</span>`, `${soon.filter((d) => d.daysLeft <= 30).length} di antaranya ≤ 30 hari`, soon.length ? "warn" : "ok") +
-      stat("Dokumen aktif", `<span data-count="${docs.length}">${docs.length}</span>`, "tidak ada yang kedaluwarsa", "ok");
-    onIn($("#legalStats"), (el) => animateIn(el));
-
-    const lic = $("#licenses");
-    lic.innerHTML = soon.map((d) => `
-      <div class="lic ${d.tone === "danger" ? "is-urgent" : ""}">
-        ${ring(Math.min(1, d.daysLeft / 365), d.tone, d.daysLeft + "h")}
-        <div class="lic__name">${esc(d.title)}<small>${esc(d.party)} · ${esc(d.cat)}</small></div>
-        <div class="lic__left t-${d.tone}">${d.daysLeft} ${up("hari")}<small>s.d. ${d.until}</small></div>
-      </div>`).join("") || `<p class="note">Tidak ada dokumen yang jatuh tempo dalam 90 hari.</p>`;
-    onIn(lic.closest(".panel"), (p) => animateIn(p));
-
-    const chips = $("#legalChips"), search = $("#legalSearch"), body = $("#legalBody");
-    let cat = "Semua";
-    chips.innerHTML = ["Semua"].concat(D.legalCats).map((c, i) => `<button type="button" aria-pressed="${i === 0}" data-cat="${esc(c)}">${esc(c)} <b>${c === "Semua" ? docs.length : docs.filter((d) => d.cat === c).length}</b></button>`).join("");
-    const draw = () => {
-      const q = norm(search.value);
-      const rows = docs.filter((d) => (cat === "Semua" || d.cat === cat) && (!q || norm(d.no + d.title + d.party).includes(q)));
-      body.innerHTML = rows.map((d) => `<tr><td class="mono small">${esc(d.no)}</td><td>${esc(d.title)}</td><td>${esc(d.cat)}</td><td>${esc(d.party)}</td>
-        <td>${fmtDate(new Date(d.issued + "T00:00:00"))}</td>
-        <td>${d.exp ? `<span class="t-${d.tone}">${d.until}</span><small class="mono sub">${d.daysLeft} hari lagi</small>` : pill("Tanpa batas", "ok")}</td>
-        <td class="mono small">${esc(d.loc)}</td></tr>`).join("") || `<tr><td colspan="7" class="empty">Tidak ada dokumen yang cocok.</td></tr>`;
-    };
-    pressGroup(chips, (b) => { cat = b.dataset.cat; draw(); });
-    search.addEventListener("input", draw);
-    draw();
-  }
-
   /* ---------------- INIT ---------------- */
   $$("[data-date]").forEach((el) => (el.textContent = up(fmtDate(today, { day: "2-digit", month: "long", year: "numeric" }))));
   initTheme();
   renderKpi();
-  renderProcurement(); renderAssets(); renderVendors(); renderServices(); renderClient(); renderCalendar();
+  renderAssets(); renderVendors(); renderServices(); renderClient(); renderCalendar();
   renderLetters(); renderArchive(); renderMinutes();
   renderRecon(); renderReports(); renderClosing();
   renderEmployees(); renderFreelancers(); renderAttendance();
-  renderLegal();
   initModTabs();
+  document.addEventListener("du:docs", () => refreshKpi());
   $$(".reveal, .sec-head").forEach((el) => onIn(el));
   initBuilding();
   initScroll();

@@ -91,18 +91,17 @@
   }
 
   function renderHome() {
-    const proc = get("du-proc", null) || D.procurement;
+    const docs = window.DUDocs;
     const letters = get("du-letters", []).length + D.letters.length;
     const closing = get("du-close", null) || D.closing.tasks.map((t) => t.done);
     const closePct = Math.round((closing.filter(Boolean).length / closing.length) * 100);
-    const open = proc.filter((p) => p.step < 4);
-
-    countTo($("#hPo"), open.length);
-    $("#hPoSub").textContent = `${proc.filter((p) => p.step <= 1).length} menunggu approval`;
-    $("#hPoBars").innerHTML = D.procurementSteps.map((s, k) => {
-      const n = proc.filter((p) => p.step === k).length;
-      return `<i style="--h:${20 + n * 26}%;--k:${k}" class="${k === 4 ? "lo" : ""}" title="${esc(s)}: ${n}"></i>`;
-    }).join("");
+    const procN = docs ? docs.count("procurement") : 0;
+    const legalN = docs ? docs.count("legal") : 0;
+    const kinds = docs ? docs.byKind("procurement") : {};
+    $("#hPo").textContent = procN;
+    $("#hPoSub").textContent = procN ? `${Object.keys(kinds).length} jenis dokumen` : "belum ada lampiran";
+    const kv = Object.values(kinds), kmax = Math.max(1, ...kv);
+    $("#hPoBars").innerHTML = (kv.length ? kv : [0, 0, 0, 0]).slice(0, 5).map((n, k) => `<i style="--h:${16 + (n / kmax) * 84}%;--k:${k}" class="${n ? "" : "lo"}"></i>`).join("");
     countTo($("#hLetters"), letters);
     countTo($("#hPeople"), 58 + D.freelancers.length);
     countTo($("#hClose"), closePct, "%");
@@ -143,9 +142,10 @@
     tasks += (get("du-serv", null) || D.services).filter((s) => s.stage === 0).length;
     countTo($("#hTasks"), tasks);
 
-    // Tumpukan kontrak
-    const contracts = D.legalDocs.filter((d) => d.cat.startsWith("Kontrak")).slice(0, 3).reverse();
-    $("#hIso").innerHTML = contracts.map((c, k) => `<div class="cd" style="--k:${k}">${esc(c.title)}<small>${esc(c.party)} · ${c.daysLeft} hari lagi</small></div>`).join("");
+    // Tumpukan PDF legal terbaru
+    const latest = docs ? docs.latest("legal", 3).reverse() : [];
+    const cards = latest.length ? latest.map((f) => ({ t: f.name, s: f.jenis })) : [{ t: "Belum ada PDF", s: "unggah di menu Legal" }, { t: "Arsip legal", s: "perizinan · kontrak · akta" }, { t: "Divisi Umum", s: "Roemantara" }];
+    $("#hIso").innerHTML = cards.map((c, k) => `<div class="cd" style="--k:${k}">${esc(c.t)}<small>${esc(c.s)}</small></div>`).join("");
 
     // Aktivitas terbaru
     const acts = [
@@ -154,10 +154,10 @@
     ];
     $("#hAct").innerHTML = acts.map((a, k) => `<li style="--k:${k}"><div><b>${esc(a.t)}</b><small>${esc(a.s)}</small></div><span class="pill pill--${a.tone}">${esc(a.p)}</span></li>`).join("");
 
-    // Izin terdekat
-    const next = D.legalDocs.filter((d) => d.daysLeft != null).sort((a, b) => a.daysLeft - b.daysLeft)[0];
-    $("#hSecTitle").textContent = next.daysLeft <= 30 ? "Segera perpanjang" : "Izin tetap aman";
-    $("#hSecSub").textContent = `${next.title} berakhir dalam ${next.daysLeft} hari`;
+    // Arsip legal
+    $("#hSecTitle").textContent = `${legalN} PDF legal`;
+    const lastLegal = docs ? docs.latest("legal", 1)[0] : null;
+    $("#hSecSub").textContent = lastLegal ? `Terakhir: ${lastLegal.name}` : "Belum ada dokumen yang diunggah";
 
     // Akses cepat
     $("#hMods").innerHTML = ["ga", "adm", "fin", "hr", "legal"].map((v) => `
@@ -165,6 +165,7 @@
         ${MODULES.filter((m) => m.view === v).map((m) => `<a href="#${v}" ${m.id ? `data-tab="${m.id}"` : ""}>${esc(m.name)}</a>`).join("")}</div>`).join("");
   }
   document.addEventListener("du:change", () => { if (current === "home") renderHome(); });
+  document.addEventListener("du:docs", () => { if (current === "home") renderHome(); });
 
   /* ---------- Pencarian modul ---------- */
   const input = $("#sSearch"), results = $("#sResults");
@@ -190,16 +191,12 @@
   const bell = $("#sBell"), notes = $("#sNotes");
   function buildNotes() {
     const items = [];
-    D.legalDocs.filter((d) => d.daysLeft != null && d.daysLeft <= 45).forEach((d) => items.push({ t: `${d.title} berakhir ${d.daysLeft} hari lagi`, v: "legal", tone: d.daysLeft <= 30 ? "danger" : "warn" }));
     if (D.inventory) {
       const t0 = new Date(today.toDateString());
       const due = D.inventory.assets.filter((a) => a.perawatan && (new Date(a.perawatan + "T00:00:00") - t0) / 864e5 <= 7);
       if (due.length) items.push({ t: `${due.length} aset jadwal perawatan dalam 7 hari`, v: "ga", tab: "ga-asset", tone: "warn" });
     }
     D.clientRequests.filter((c) => c.status === "Menunggu").forEach((c) => items.push({ t: `${c.client} menunggu respons`, v: "ga", tab: "ga-client", tone: "warn" }));
-    const proc = get("du-proc", null) || D.procurement;
-    const wait = proc.filter((p) => p.step <= 1).length;
-    if (wait) items.push({ t: `${wait} PR menunggu approval`, v: "ga", tab: "ga-proc", tone: "info" });
     $("#sNoteList").innerHTML = items.map((n) => `<li><a href="#${n.v}" ${n.tab ? `data-tab="${n.tab}"` : ""}><i class="tone tone--${n.tone}"></i>${esc(n.t)}</a></li>`).join("");
     $("#sDot").hidden = !items.length;
   }

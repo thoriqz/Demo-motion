@@ -809,3 +809,39 @@ body.fin-locked .kpi[data-secure="finance"]::after { z-index: 1; width: auto; he
 #ga-asset .table-wrap { max-height: 620px; overflow: auto; }
 #ga-asset .table thead th { position: sticky; top: 0; z-index: 1; background: var(--bg); }
 [data-skin="sage"] #ga-asset .table thead th { background: var(--panel); }
+
+/* =========================================================
+   LAMPIRAN PDF (Procurement & Legal)
+   ========================================================= */
+.doclib__drop { display: grid; grid-template-columns: 1fr auto; gap: 14px; align-items: stretch; margin-bottom: 14px; }
+.doclib__drop[hidden] { display: none; }
+.doclib__zone {
+  display: flex; align-items: center; gap: 16px; padding: 18px 20px; cursor: pointer;
+  border: 1.5px dashed var(--line-soft); transition: border-color .2s, background .2s;
+}
+.doclib__zone:hover, .doclib__zone.is-over, .doclib__zone:focus-within { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, transparent); }
+.doclib__zone svg { width: 42px; height: 42px; flex: none; fill: none; stroke: var(--accent); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.doclib__zone.is-over svg { animation: dropBob .8s ease-in-out infinite; }
+@keyframes dropBob { 50% { transform: translateY(-4px); } }
+.doclib__zone b { display: block; font-size: 15px; }
+.doclib__zone small { color: var(--muted); font-size: 12px; }
+.doclib__kind { display: grid; gap: 4px; font: 10px var(--f-mono); color: var(--muted); text-transform: uppercase; letter-spacing: .08em; align-content: center; }
+.doclib__queue { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 6px; }
+.doclib__queue:empty { display: none; }
+.doclib__queue li { position: relative; display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; padding: 8px 12px; border: 1px solid var(--line-soft); overflow: hidden; font-size: 13px; animation: panelIn .4s var(--ease) both; }
+.doclib__queue .q-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.doclib__queue .q-state { font: 11px var(--f-mono); color: var(--muted); }
+.doclib__queue .q-bar { position: absolute; left: 0; bottom: 0; height: 2px; width: 30%; background: var(--accent); animation: qbar 1.2s ease-in-out infinite; }
+.doclib__queue li.is-ok .q-bar, .doclib__queue li.is-err .q-bar { animation: none; width: 100%; }
+.doclib__queue li.is-ok .q-bar { background: var(--ok); }
+.doclib__queue li.is-ok .q-state { color: var(--ok); }
+.doclib__queue li.is-err .q-bar { background: var(--danger); }
+.doclib__queue li.is-err .q-state { color: var(--danger); }
+@keyframes qbar { 0% { transform: translateX(-100%); } 100% { transform: translateX(340%); } }
+.doclib__notice { margin: 0 0 12px; padding: 10px 12px; border-left: 3px solid var(--warn); background: color-mix(in srgb, var(--warn) 10%, transparent); }
+.doclib__file { display: inline-flex; align-items: center; gap: 10px; color: inherit; text-decoration: none; word-break: break-word; }
+.doclib__file:hover { color: var(--accent); }
+.doclib__ico { flex: none; display: inline-grid; place-items: center; width: 30px; height: 34px; font: 700 9px var(--f-mono); color: #fff; background: var(--danger); clip-path: polygon(0 0, 72% 0, 100% 22%, 100% 100%, 0 100%); }
+.stat b.stat__sm { font-size: 18px; line-height: 1.3; }
+.mini-btn.is-armed { background: var(--danger); border-color: var(--danger); color: #fff; }
+@media (max-width: 700px) { .doclib__drop { grid-template-columns: 1fr; } }
