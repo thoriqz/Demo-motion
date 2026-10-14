@@ -9,6 +9,7 @@
   if (!root || !window.DUStore) return;
   const D = window.DU_DATA || {};
   const $ = (s, el = document) => el.querySelector(s);
+  const $$ = (s, el = document) => Array.from(el.querySelectorAll(s));
   const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const SKIN = document.body.dataset.skin || "blueprint";
   const up = (s) => (SKIN === "blueprint" ? String(s).toUpperCase() : String(s));
@@ -23,7 +24,7 @@
   const WHO = { Material: ["Proyek", "mis. Rumah Kemang"], Divisi: ["Divisi", "mis. Operational"], "Kebutuhan Kantor": ["Pemohon", "mis. Admin Kantor"] };
   const STATUS = ["Diajukan", "Disetujui", "Dibeli", "Ditolak"];
   const TONE = { Diajukan: "warn", Disetujui: "info", Dibeli: "ok", Ditolak: "danger" };
-  const S = { rows: [], mode: "loading", cat: "Semua", q: "" };
+  const S = { rows: [], mode: "loading", cat: "Semua", q: "", pick: null };
   const vendors = [...new Set((D.vendors || []).map((v) => v.name))].sort((a, b) => a.localeCompare(b, "id"));
 
   root.innerHTML = `
@@ -49,7 +50,9 @@
             <label>Tanggal<input name="date" type="date" required value="${ymd(new Date())}"></label>
             <label class="fpp__who"><span>${WHO.Material[0]}</span><input name="who" required placeholder="${WHO.Material[1]}"></label>
           </div>
-          <label>Barang / kebutuhan<input name="barang" required placeholder="mis. Semen 50 kg"></label>
+          <label class="fpp__barang">Barang / kebutuhan<input name="barang" required placeholder="ketik mis. semen, hollo 4.4, keramik…" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="fppSug"></label>
+          <ul class="fpp__sug" id="fppSug" role="listbox" hidden></ul>
+          <div class="fpp__opts" hidden></div>
           <div class="gc-row">
             <label>Jumlah<input name="qty" type="number" min="0" step="any" required placeholder="0"></label>
             <label>Satuan<input name="unit" placeholder="sak / pcs / unit"></label>
@@ -93,7 +96,7 @@
         <td class="mono">${esc(r.no)}</td>
         <td>${esc(fdate(r.date))}</td>
         <td><span class="tag tag--plain">${esc(r.cat)}</span></td>
-        <td>${esc(r.item)}<small class="mono sub">${esc(WHO[r.cat] ? WHO[r.cat][0] : "Pemohon")}: ${esc(r.who)}${r.vendor ? " · " + esc(r.vendor) : ""}${r.note ? " · " + esc(r.note) : ""}</small></td>
+        <td>${esc(r.item)}<small class="mono sub">${r.kode ? esc(r.kode) + " · " : ""}${esc(WHO[r.cat] ? WHO[r.cat][0] : "Pemohon")}: ${esc(r.who)}${r.vendor ? " · " + esc(r.vendor) : ""}${r.note ? " · " + esc(r.note) : ""}</small></td>
         <td class="num">${esc(Number(r.qty).toLocaleString("id-ID"))} ${esc(r.unit || "")}</td>
         <td class="num">${r.price ? esc(rp(total(r))) : "—"}</td>
         <td><select class="select fpp__st pill--${TONE[r.status] || "muted"}" data-id="${esc(r.id)}" aria-label="Status ${esc(r.no)}">${STATUS.map((s) => `<option ${s === r.status ? "selected" : ""}>${s}</option>`).join("")}</select></td>
@@ -117,7 +120,7 @@
     const row = {
       at: new Date().toISOString(), no: nextNo(f.date.value), date: f.date.value, cat: f.cat.value, who: f.who.value.trim(),
       item: f.barang.value.trim(), qty: Number(f.qty.value) || 0, unit: f.unit.value.trim(), price: Number(f.price.value) || 0,
-      vendor: f.vendor.value.trim(), note: f.note.value.trim(), status: "Diajukan"
+      vendor: f.vendor.value.trim(), note: f.note.value.trim(), status: "Diajukan", kode: S.pick ? S.pick.id : ""
     };
     if (!row.item || !row.who || !row.date) { msg.textContent = "Lengkapi tanggal, pemohon, dan barang."; return; }
     btn.disabled = true; msg.textContent = "";
@@ -126,11 +129,70 @@
       log(`Input FPP ${row.cat}: ${row.item} (${[row.qty, row.unit].filter(Boolean).join(" ")}) · ${row.no}`);
       toast(`${row.no} tersimpan`);
       ["barang", "qty", "unit", "price", "vendor", "note"].forEach((k) => (f[k].value = ""));
+      clearPick(); preview();
     } catch (er) {
       msg.textContent = "Gagal menyimpan. Anda mungkin hanya punya akses lihat.";
     }
     btn.disabled = false;
   });
+  /* ---------- Sambungan ke daftar harga satuan material (DUHarga) ---------- */
+  const H = window.DUHarga, sug = $(".fpp__sug", root), opts = $(".fpp__opts", root), bIn = form.elements.barang;
+  let hits = [], sel = -1;
+  const rpS = (n) => "Rp " + Math.round(n).toLocaleString("id-ID");
+  function closeSug() { sug.hidden = true; bIn.setAttribute("aria-expanded", "false"); sel = -1; }
+  function clearPick() { S.pick = null; opts.hidden = true; opts.innerHTML = ""; }
+  function drawSug() {
+    sug.innerHTML = hits.map((it, i) => {
+      const o = H.options(it)[0];
+      return `<li role="option" data-i="${i}" class="${i === sel ? "is-sel" : ""}" aria-selected="${i === sel}"><b>${esc(it.name)}</b><small>${esc(it.id)} · ${esc(it.unit || "—")} · ${o ? esc((o.vendor || "referensi") + " " + rpS(o.price)) : "tanpa harga"}</small></li>`;
+    }).join("");
+    sug.hidden = !hits.length; bIn.setAttribute("aria-expanded", String(!!hits.length));
+  }
+  function applyOpt(o) {
+    form.elements.price.value = o.price;
+    form.elements.vendor.value = o.vendor;
+    $$(".fpp__opt", opts).forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.v === o.vendor && +b.dataset.p === o.price)));
+    preview();
+  }
+  function pick(it) {
+    S.pick = it; closeSug();
+    const f = form.elements;
+    if (f.cat.value !== "Material") { f.cat.value = "Material"; form.dispatchEvent(new Event("input")); }
+    f.barang.value = it.name; f.unit.value = it.unit || "";
+    const list = H.options(it);
+    opts.innerHTML = list.length ? `<span class="note mono">${esc(it.id)} · pilih harga:</span>` + list.map((o) =>
+      `<button type="button" class="fpp__opt" data-v="${esc(o.vendor)}" data-p="${o.price}" aria-pressed="false">${esc(o.label)} <b>${rpS(o.price)}</b></button>`).join("")
+      + (it.q ? `<span class="note">⚠ harga perlu dikonfirmasi ke vendor</span>` : "")
+      : `<span class="note">Belum ada harga untuk ${esc(it.id)}. Isi harga manual.</span>`;
+    opts.hidden = false;
+    if (list.length) applyOpt(list[0]);
+    preview();
+  }
+  if (H) {
+    bIn.addEventListener("input", () => {
+      if (S.pick && bIn.value !== S.pick.name) clearPick();
+      hits = bIn.value.trim().length >= 2 ? H.search(bIn.value, 8) : []; sel = -1; drawSug();
+    });
+    bIn.addEventListener("keydown", (e) => {
+      if (sug.hidden) return;
+      if (e.key === "ArrowDown" || e.key === "ArrowUp") { e.preventDefault(); sel = (sel + (e.key === "ArrowDown" ? 1 : -1) + hits.length) % hits.length; drawSug(); }
+      else if (e.key === "Enter" && sel >= 0) { e.preventDefault(); pick(hits[sel]); }
+      else if (e.key === "Escape") closeSug();
+    });
+    bIn.addEventListener("blur", () => setTimeout(closeSug, 150));
+    sug.addEventListener("mousedown", (e) => { const li = e.target.closest("[data-i]"); if (li) { e.preventDefault(); pick(hits[+li.dataset.i]); } });
+    opts.addEventListener("click", (e) => { const b = e.target.closest(".fpp__opt"); if (b) applyOpt({ vendor: b.dataset.v, price: +b.dataset.p }); });
+  }
+  /* dari tombol "+ FPP" di daftar harga */
+  function prefill(it) {
+    if (!it) return;
+    const tab = document.getElementById("tab-ga-proc");
+    if (tab) tab.click();
+    pick(it);
+    setTimeout(() => { root.scrollIntoView({ behavior: "smooth", block: "start" }); form.elements.qty.focus({ preventScroll: true }); }, 80);
+    toast(`${it.name} dimasukkan ke form FPP — isi jumlahnya`);
+  }
+
   chips.addEventListener("click", (e) => { const b = e.target.closest("[data-cat]"); if (b) { S.cat = b.dataset.cat; draw(); } });
   search.addEventListener("input", () => { S.q = search.value.trim(); draw(); });
   body.addEventListener("change", async (e) => {
@@ -157,7 +219,7 @@
     } catch (er) { toast("Gagal menghapus."); }
   });
 
-  window.DUFpp = { rows: () => S.rows };
+  window.DUFpp = { rows: () => S.rows, prefill };
   draw();
   window.DUStore.watch("fpp", (rows, mode) => {
     S.mode = mode === "error" ? "local" : mode;

@@ -18,7 +18,7 @@ window.DU_DATA = {
      LT.01 GENERAL AFFAIRS
      ===================================================== */
   /* Sumber: DAFTAR_VENDOR_MATERIAL.xlsx (66 baris, 18 jenis). Lokasi di Bandar Lampung. */
-  vendorCats: ["Toko Bangunan", "Material Alam", "Panglong Kayu", "Toko Interior", "Toko Cat", "Toko Listrik", "Toko Keramik", "Sanitari", "Toko Atap", "Toko Kaca", "Toko Plafon PVC", "Toko Gypsum", "Toko Batu Alam", "Toko Elektronik", "Toko Kain & Karpet", "Toko Hordeng", "Toko Teknik", "Toko Pre-Cast"],
+  vendorCats: ["Toko Bangunan", "Material Alam", "Panglong Kayu", "Toko Interior", "Toko Cat", "Toko Listrik", "Toko Keramik", "Sanitari", "Toko Atap", "Toko Kaca", "Toko Plafon PVC", "Toko Gypsum", "Toko Batu Alam", "Toko Elektronik", "Toko Kain & Karpet", "Toko Hordeng", "Toko Teknik", "Toko Pre-Cast", "Toko Besi & Baja"],
   vendors: [
     { cat: "Toko Bangunan", name: "TB Bersama Makmur", phone: "0852-6921-2448", loc: "Bataranila" },
     { cat: "Toko Bangunan", name: "TB Korpri Jaya", phone: "0813-7973-6872", loc: "Korpri" },
@@ -85,9 +85,12 @@ window.DU_DATA = {
     { cat: "Toko Teknik", name: "Mega baut", phone: "0721-269-649", loc: "Antasari" },
     { cat: "Toko Pre-Cast", name: "Sumber Berkah Jaya", phone: "0812-7975-107", loc: "Panjang" },
     { cat: "Toko Pre-Cast", name: "Paving Sakti", phone: "0823-1271-5072", loc: "Kemiling" },
-    { cat: "Toko Pre-Cast", name: "Fathir Berkah", phone: "0811-147-619", loc: "Teluk Betung" }
+    { cat: "Toko Pre-Cast", name: "Fathir Berkah", phone: "0811-147-619", loc: "Teluk Betung" },
+    { cat: "Toko Besi & Baja", name: "CV Setia Abadi", phone: "0812-7164-7900", loc: "—" }
   ],
-  subcontractors: [],
+  subcontractors: [
+    { name: "Rio Alumunium", cat: "Alumunium · kusen pintu", phone: "—", loc: "—" }
+  ],
 
   serviceStages: ["Baru", "Diproses", "Selesai"],
   services: [

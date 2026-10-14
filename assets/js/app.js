@@ -360,6 +360,8 @@
       const d = phone.replace(/\D/g, "");
       return d.startsWith("08") ? "https://wa.me/62" + d.slice(1) : null;
     };
+    const priceN = (name) => (window.DUHarga ? window.DUHarga.countFor(name) : 0);
+    body.addEventListener("click", (e) => { const b = e.target.closest("[data-harga]"); if (b && window.DUHarga) window.DUHarga.showVendor(b.dataset.harga); });
     let group = "vendor", cat = "Semua";
     const draw = () => {
       tools.hidden = group !== "vendor";
@@ -376,7 +378,7 @@
         const others = catsOf[key(v)].filter((c) => c !== v.cat);
         const w = wa(v.phone);
         return `<tr><td class="mono">${i + 1}</td>
-          <td>${esc(v.name)}${others.length ? `<small class="mono sub">juga: ${esc(others.join(", "))}</small>` : ""}</td>
+          <td>${esc(v.name)}${others.length ? `<small class="mono sub">juga: ${esc(others.join(", "))}</small>` : ""}${priceN(v.name) ? `<button type="button" class="hg-link" data-harga="${esc(v.name)}">Daftar harga · ${priceN(v.name)} item</button>` : ""}</td>
           <td><span class="tag tag--plain">${esc(v.cat)}</span></td>
           <td class="mono"><a class="tel" href="tel:${v.phone.replace(/\D/g, "")}">${esc(v.phone)}</a></td>
           <td>${esc(v.loc)}</td>

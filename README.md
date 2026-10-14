@@ -52,6 +52,14 @@ status Belum/Proses/Selesai, capaian (angka + satuan), tautan bukti, dan lampira
 Di claude.ai data tersimpan di database (koleksi `tasks`, satu dokumen per periode); tugas yang jatuh tempo
 dalam 2 hari muncul di lonceng notifikasi Sage.
 
+## Harga satuan material
+`assets/js/harga-data.js` berisi data dari **DATABASE_VENDOR_by_ROEMANTARA.xlsx**: 2.014 material (kode M…, satuan,
+harga referensi, harga per vendor) dan 719 item daftar harga CV Setia Abadi (harga bertanda ⚠ perlu konfirmasi).
+Tampil di GA → Vendor & Subkon → *Harga satuan material* (cari, filter sumber/kelompok/vendor; vendor yang punya
+daftar harga diberi tautan di direktori). Tersambung ke FPP: ketik nama barang di form FPP untuk memilih material,
+lalu satuan, harga, dan vendor terisi otomatis (bisa pilih harga vendor lain); tombol **+ FPP** di daftar harga
+langsung mengisi form. Logika di `assets/js/harga.js`.
+
 ## Input manual & riwayat aktivitas
 `assets/js/store.js` menyimpan data input manual di database artifact claude.ai (di salinan lokal: `localStorage` browser):
 - **FPP** (`assets/js/fpp.js`, koleksi `fpp`): GA → Procurement, nomor otomatis `FPP/YYYYMM/NNN`, status Diajukan/Disetujui/Dibeli/Ditolak.
