@@ -162,31 +162,45 @@
   document.addEventListener("du:tasks", () => buildNotes());
   document.addEventListener("du:cal", () => { if (current === "home") renderCal(); buildNotes(); });
 
-  /* Model bangunan 3D (aksonometri berputar) — murni dekorasi arsitektur */
+  /* Model bangunan 3D modern (aksonometri berputar) — murni dekorasi arsitektur.
+     Menara berpilin: tiap lantai kotak kaca + pelat tipis, berputar 7° per lantai. */
   function buildModel() {
     const host = $("#hIso");
     if (!host || host.dataset.built) return;
     host.dataset.built = "1";
-    /* x, z = posisi; w, d, h = lebar, dalam, tinggi; y = elevasi dasar (px) */
-    const masses = [
-      { x: 64, z: 34, w: 84, d: 104, h: 48, y: 0, kind: "podium" },
-      { x: -20, z: 0, w: 96, d: 76, h: 144, y: 0, kind: "tower" },
-      { x: -34, z: -8, w: 128, d: 62, h: 22, y: 144, kind: "slab" },
-      { x: -44, z: -10, w: 30, d: 30, h: 18, y: 166, kind: "core" }
-    ];
+    const parts = [];
+    let k = 0;
+    const add = (m) => parts.push({ k: k++, r: 0, anim: "rise", ...m });
+    // tapak: kolam & lansekap
+    add({ kind: "pool", x: 70, z: -62, w: 92, d: 40, h: 2, y: 0 });
+    // lobi kaca di atas kolom ramping
+    add({ kind: "glass", x: -24, z: 4, w: 64, d: 48, h: 20, y: 0 });
+    [[-1, -1], [1, -1], [1, 1], [-1, 1]].forEach(([sx, sz]) => add({ kind: "col", x: -24 + sx * 44, z: 4 + sz * 33, w: 4, d: 4, h: 20, y: 0 }));
+    // menara berpilin
+    const FL = 7, FH = 18, SH = 4;
+    for (let i = 0; i < FL; i++) {
+      const y = 20 + i * (FH + SH), r = i * 7;
+      add({ kind: "slab", x: -24, z: 4, w: 100, d: 78, h: SH, y, r, anim: "drop" });
+      add({ kind: "glass", x: -24, z: 4, w: 86, d: 64, h: FH, y: y + SH, r, anim: "drop" });
+    }
+    const top = 20 + FL * (FH + SH);
+    add({ kind: "slab", x: -24, z: 4, w: 104, d: 82, h: 6, y: top, r: FL * 7, anim: "drop" });
+    add({ kind: "core", x: -36, z: 0, w: 34, d: 26, h: 14, y: top + 6, r: FL * 7, anim: "drop" });
+    // sayap kantilever beratap hijau
+    add({ kind: "glass", x: 70, z: 34, w: 52, d: 44, h: 14, y: 0 });
+    add({ kind: "solid", x: 78, z: 34, w: 96, d: 62, h: 24, y: 14, roof: "green" });
     const face = (cls, w, h, t) => `<i class="b3d__f b3d__f--${cls}" style="width:${w}px;height:${h}px;margin:${-h / 2}px 0 0 ${-w / 2}px;transform:${t}"></i>`;
-    host.innerHTML = `<div class="b3d__scene"><div class="b3d__rot">
-      <div class="b3d__ground"></div>
-      ${masses.map((m, k) => `<div class="b3d__box b3d__box--${m.kind}" style="transform:translate3d(${m.x}px,${-(m.y + m.h / 2)}px,${m.z}px)">
-        <div class="b3d__in" style="--h:${m.h}px;--k:${k}">
-          ${face("fr", m.w, m.h, `translateZ(${m.d / 2}px)`)}
-          ${face("bk", m.w, m.h, `rotateY(180deg) translateZ(${m.d / 2}px)`)}
-          ${face("lf", m.d, m.h, `rotateY(-90deg) translateZ(${m.w / 2}px)`)}
-          ${face("rt", m.d, m.h, `rotateY(90deg) translateZ(${m.w / 2}px)`)}
+    const box = (m) => `<div class="b3d__box b3d__box--${m.kind}${m.roof ? " b3d__box--roof-" + m.roof : ""}" style="transform:translate3d(${m.x}px,${-(m.y + m.h / 2)}px,${m.z}px) rotateY(${m.r}deg)">
+        <div class="b3d__in b3d__in--${m.anim}" style="--h:${m.h}px;--k:${m.k}">
+          ${face("fr", m.w, m.h, `translateZ(${m.d / 2}px)`)}${face("bk", m.w, m.h, `rotateY(180deg) translateZ(${m.d / 2}px)`)}
+          ${face("lf", m.d, m.h, `rotateY(-90deg) translateZ(${m.w / 2}px)`)}${face("rt", m.d, m.h, `rotateY(90deg) translateZ(${m.w / 2}px)`)}
           ${face("tp", m.w, m.d, `rotateX(90deg) translateZ(${m.h / 2}px)`)}
-        </div></div>`).join("")}
-    </div></div>
-    <span class="b3d__tag">AKSONOMETRI · 1:200</span>`;
+        </div></div>`;
+    const trees = [[-112, 70, 1], [-92, -78, .8], [138, -18, .9], [12, 96, .75]].map(([x, z, s], i) =>
+      `<div class="b3d__tree" style="transform:translate3d(${x}px,0,${z}px) scale(${s});--t:${i}"><span class="b3d__tree-in"><i></i><i></i></span></div>`).join("");
+    host.innerHTML = `<div class="b3d__scene"><div class="b3d__rot">
+      <div class="b3d__ground"></div>${parts.map(box).join("")}${trees}
+    </div></div><span class="b3d__tag">AKSONOMETRI · 1:200</span>`;
   }
 
   /* Riwayat aktivitas harian (koleksi "activity") */

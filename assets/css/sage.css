@@ -560,39 +560,54 @@ body.fin-locked[data-skin="sage"] .hc.dark[data-secure="finance"]::after { backg
   .h-log__list li .tag { display: none; }
 }
 
-/* ---------- Beranda: model bangunan 3D (aksonometri berputar) ---------- */
-.b3d { position: relative; min-height: 270px; overflow: hidden; border: 1px dashed var(--line-soft);
-  background: var(--panel) linear-gradient(var(--line-soft) 1px, transparent 1px) 0 0 / 100% 18px; background-blend-mode: normal; }
-.b3d__scene { position: absolute; inset: 0; perspective: 1100px; perspective-origin: 50% 30%; }
-.b3d__rot { position: absolute; left: 50%; top: 80%; transform-style: preserve-3d; transform: rotateX(-24deg) rotateY(32deg); animation: b3dSpin 28s linear infinite 3.4s; }
+/* ---------- Beranda: model bangunan 3D modern (aksonometri berputar) ---------- */
+.b3d { position: relative; min-height: 290px; overflow: hidden; border: 1px dashed var(--line-soft);
+  background: linear-gradient(180deg, #eef3f5 0%, var(--panel) 62%); }
+.b3d::before { content: ""; position: absolute; inset: 0; background: linear-gradient(var(--line-soft) 1px, transparent 1px) 0 0 / 100% 18px; opacity: .45; }
+.b3d__scene { position: absolute; inset: 0; perspective: 1200px; perspective-origin: 50% 28%; }
+.b3d__rot { position: absolute; left: 50%; top: 82%; transform-style: preserve-3d; transform: rotateX(-22deg) rotateY(30deg) scale(.92); animation: b3dSpin 32s linear infinite 4.6s; }
 .b3d:hover .b3d__rot { animation-play-state: paused; }
-@keyframes b3dSpin { from { transform: rotateX(-24deg) rotateY(32deg); } to { transform: rotateX(-24deg) rotateY(392deg); } }
+@keyframes b3dSpin { from { transform: rotateX(-22deg) rotateY(30deg) scale(.92); } to { transform: rotateX(-22deg) rotateY(390deg) scale(.92); } }
 .b3d__ground {
-  position: absolute; width: 300px; height: 300px; margin: -150px 0 0 -150px; transform: rotateX(90deg); border: 1px solid var(--ink);
-  background: repeating-linear-gradient(0deg, transparent 0 19px, rgba(44, 93, 138, .18) 19px 20px), repeating-linear-gradient(90deg, transparent 0 19px, rgba(44, 93, 138, .18) 19px 20px), var(--panel);
+  position: absolute; width: 330px; height: 330px; margin: -165px 0 0 -165px; transform: rotateX(90deg); border: 1px solid var(--ink);
+  background: repeating-linear-gradient(0deg, transparent 0 21px, rgba(29, 32, 36, .1) 21px 22px), repeating-linear-gradient(90deg, transparent 0 21px, rgba(29, 32, 36, .1) 21px 22px),
+    radial-gradient(circle at 30% 70%, rgba(110, 150, 100, .28) 0 22%, transparent 23%), #f3f1ea;
   animation: b3dGround .8s cubic-bezier(.6, 0, .2, 1) both .2s;
 }
 @keyframes b3dGround { from { transform: rotateX(90deg) scale(0); opacity: 0; } }
-.b3d__box, .b3d__in { position: absolute; left: 0; top: 0; transform-style: preserve-3d; }
-.b3d__in { animation: b3dRise 1s cubic-bezier(.34, 1.15, .5, 1) both; animation-delay: calc(.8s + var(--k) * .55s); }
+.b3d__box, .b3d__in, .b3d__tree, .b3d__tree-in { position: absolute; left: 0; top: 0; transform-style: preserve-3d; }
+.b3d__in--rise { animation: b3dRise .7s cubic-bezier(.34, 1.15, .5, 1) both; animation-delay: calc(.6s + var(--k) * .12s); }
+.b3d__in--drop { animation: b3dDrop .55s cubic-bezier(.3, 1.4, .5, 1) both; animation-delay: calc(.9s + var(--k) * .14s); }
 @keyframes b3dRise { from { transform: translateY(calc(var(--h) / 2)) scaleY(.01); } }
-.b3d__f { position: absolute; left: 0; top: 0; backface-visibility: visible; border: 1.2px solid var(--ink); background-color: #fbfaf4; }
-/* fasad: garis lantai tiap 24 px + kolom jendela */
-.b3d__f--fr, .b3d__f--bk, .b3d__f--lf, .b3d__f--rt {
-  background-image: repeating-linear-gradient(0deg, transparent 0 22px, var(--ink) 22px 23.2px, transparent 23.2px 24px),
-    repeating-linear-gradient(90deg, transparent 0 9px, rgba(44, 93, 138, .28) 9px 15px, transparent 15px 18px);
+@keyframes b3dDrop { from { transform: translateY(-60px) scale3d(.6, .01, .6); } 60% { transform: translateY(4px) scale3d(1, 1, 1); } }
+.b3d__f { position: absolute; left: 0; top: 0; backface-visibility: visible; border: 1px solid rgba(29, 32, 36, .85); background-color: #fbfaf6; }
+/* kaca: pantulan langit + mullion */
+.b3d__box--glass .b3d__f:not(.b3d__f--tp) {
+  background: repeating-linear-gradient(90deg, transparent 0 10px, rgba(29, 32, 36, .55) 10px 11px), linear-gradient(160deg, #d9ecf4 0%, #8fb6cb 55%, #5f8ea8 100%);
 }
-.b3d__f--lf, .b3d__f--bk { background-color: #e8e4d7; }
-.b3d__f--rt { background-color: #f1eee4; }
-.b3d__f--tp { background: repeating-linear-gradient(45deg, transparent 0 5px, rgba(29, 32, 36, .16) 5px 6px), #f5f3ea; }
-/* podium: kaca penuh; slab: kantilever polos; core: atap mesin */
-.b3d__box--podium .b3d__f--fr, .b3d__box--podium .b3d__f--rt, .b3d__box--podium .b3d__f--lf, .b3d__box--podium .b3d__f--bk {
-  background-image: repeating-linear-gradient(90deg, rgba(44, 93, 138, .22) 0 12px, var(--ink) 12px 13px); background-color: #eef2f4;
-}
-.b3d__box--slab .b3d__f--fr, .b3d__box--slab .b3d__f--bk, .b3d__box--slab .b3d__f--lf, .b3d__box--slab .b3d__f--rt { background-image: none; background-color: #1d2024; }
-.b3d__box--core .b3d__f { background-image: none; background-color: #d9d4c6; }
+.b3d__box--glass .b3d__f--lf, .b3d__box--glass .b3d__f--bk { filter: brightness(.82); }
+.b3d__box--glass .b3d__f--tp { background: #cfd8dc; }
+/* pelat lantai putih tipis */
+.b3d__box--slab .b3d__f { background: #fdfcf8; border-color: #1d2024; }
+.b3d__box--slab .b3d__f--lf, .b3d__box--slab .b3d__f--bk { background: #e7e3d8; }
+.b3d__box--col .b3d__f { background: #1d2024; }
+.b3d__box--core .b3d__f { background: #e2ddd0; }
+.b3d__box--core .b3d__f--fr, .b3d__box--core .b3d__f--rt { background: repeating-linear-gradient(0deg, #e2ddd0 0 3px, #cdc7b8 3px 4px); }
+.b3d__box--solid .b3d__f { background: #fbfaf6; }
+.b3d__box--solid .b3d__f--fr, .b3d__box--solid .b3d__f--bk { background: linear-gradient(90deg, #fbfaf6 0 18%, #6f99b0 18% 82%, #fbfaf6 82%); }
+.b3d__box--solid .b3d__f--lf, .b3d__box--solid .b3d__f--bk { filter: brightness(.9); }
+.b3d__box--roof-green .b3d__f--tp { background: radial-gradient(circle at 30% 40%, #8fb57f 0 18%, transparent 19%), radial-gradient(circle at 70% 65%, #7aa66d 0 14%, transparent 15%), repeating-linear-gradient(45deg, #6f9a64 0 4px, #7ea872 4px 8px); }
+.b3d__box--pool .b3d__f { background: #5f8ea8; border-color: #3b6782; }
+.b3d__box--pool .b3d__f--tp { background: repeating-linear-gradient(170deg, #7fb2cc 0 6px, #95c3da 6px 9px); }
+/* pohon: dua bidang bersilang agar terlihat dari semua sisi */
+.b3d__tree-in { animation: b3dTree .6s cubic-bezier(.34, 1.6, .5, 1) both; animation-delay: calc(3.4s + var(--t) * .15s); }
+.b3d__tree i { position: absolute; width: 30px; height: 44px; left: -15px; top: -44px; backface-visibility: visible;
+  background: radial-gradient(circle at 50% 36%, #6f9a64 0 40%, #557f4c 41% 46%, transparent 47%), linear-gradient(#5a4632, #5a4632) 50% 100% / 2px 18px no-repeat; }
+.b3d__tree i + i { transform: rotateY(90deg); }
+@keyframes b3dTree { from { transform: scale(.01); } }
 .b3d__tag { position: absolute; left: 10px; bottom: 8px; font: 500 10px var(--f-mono); letter-spacing: .08em; color: var(--muted); }
 .b3d__spec { display: grid; grid-template-columns: repeat(3, auto); gap: 4px 14px; margin: 14px 0 0; justify-content: start; }
 .b3d__spec dt { font: 500 9.5px var(--f-mono); color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
 .b3d__spec dd { white-space: nowrap; margin: 2px 0 0; font: 700 16px var(--f-head); text-transform: uppercase; letter-spacing: .03em; }
-@media (prefers-reduced-motion: reduce) { .b3d__rot, .b3d__in, .b3d__ground { animation: none !important; } }
+@media (max-width: 600px) { .b3d__rot { top: 84%; } .b3d__spec { grid-template-columns: repeat(2, auto); } }
+@media (prefers-reduced-motion: reduce) { .b3d__rot, .b3d__in, .b3d__ground, .b3d__tree-in { animation: none !important; } }
