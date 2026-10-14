@@ -16,6 +16,8 @@
   const rp = (n) => (n == null ? "—" : "Rp " + Math.round(n).toLocaleString("id-ID"));
   const norm = (s) => String(s || "").toLowerCase().replace(/^(tb|cv|pt|ud|toko)\s+/, "").replace(/[^a-z0-9.,/]+/g, " ").replace(/[.,]+(\s|$)/g, " ").trim();
   const SA = H.setia.vendor;
+  /* file Excel asli disajikan di samping halaman (artifact: file pendamping; repo: assets/files/) */
+  const FILE = "assets/files/" + H.source;
 
   /* ---------- Indeks gabungan ---------- */
   const items = [];
@@ -70,7 +72,10 @@
   root.innerHTML = `
     <div class="panel__head">
       <h3 class="panel__title mono">${esc(up("Harga satuan material"))}</h3>
-      <input class="search hg-q" type="search" placeholder="Cari material, kode, ukuran…" aria-label="Cari harga material">
+      <div class="toolbar">
+        <a class="btn btn--solid hg-dl" href="${esc(FILE)}" download="${esc(H.source)}">⤓ Unduh file asli (.xlsx)</a>
+        <input class="search hg-q" type="search" placeholder="Cari material, kode, ukuran…" aria-label="Cari harga material">
+      </div>
     </div>
     <div class="toolbar hg-tools">
       <select class="select hg-src" aria-label="Sumber harga">
@@ -89,7 +94,7 @@
       <tbody class="hg-body"></tbody>
     </table></div>
     <div class="hg-more"></div>
-    <p class="note mono hg-note">Sumber: ${esc(H.source)} · ${esc(SA)} dari foto daftar harga toko (diterima ${esc(H.setia.received)}); harga bertanda ⚠ perlu dikonfirmasi ke vendor. ${qn} item bertanda. Harga belum termasuk ongkir/PPN kecuali disebut.</p>`;
+    <p class="note mono hg-note">Sumber: ${esc(H.source)} · ${esc(SA)} dari foto daftar harga toko (diterima ${esc(H.setia.received)}); harga bertanda ⚠ perlu dikonfirmasi ke vendor. ${qn} item bertanda. Harga belum termasuk ongkir/PPN kecuali disebut. Data lengkap (semua kolom vendor, keterangan, list harga subkon) ada di file asli.</p>`;
 
   const body = $(".hg-body", root), srcSel = $(".hg-src", root), grpSel = $(".hg-group", root), venSel = $(".hg-vendor", root), qIn = $(".hg-q", root);
   function sync() {
@@ -124,6 +129,28 @@
   venSel.addEventListener("change", () => { S.vendor = venSel.value; S.limit = 25; draw(); });
   let t = 0;
   qIn.addEventListener("input", () => { clearTimeout(t); t = setTimeout(() => { S.q = qIn.value; S.limit = 25; draw(); }, 150); });
+  /* Unduh file asli: di claude.ai lewat kemampuan "downloads" (viewer mengonfirmasi),
+     di salinan lokal / GitHub Pages lewat tautan biasa. */
+  $(".hg-dl", root).addEventListener("click", async (e) => {
+    if (!window.claude || typeof window.claude.use !== "function") return;
+    e.preventDefault();
+    const a = e.currentTarget, label = a.textContent;
+    const toast = (t) => { const el = $("#toast"); if (!el) return; el.textContent = t; el.classList.add("is-on"); clearTimeout(toast._t); toast._t = setTimeout(() => el.classList.remove("is-on"), 3200); };
+    const dl = await claude.use("downloads");
+    if (!dl) { toast("Unduhan tidak tersedia di tampilan ini."); return; }
+    a.textContent = "Menyiapkan file…";
+    try {
+      const res = await fetch(FILE);
+      if (!res.ok) throw { code: "missing" };
+      await dl.save({ filename: H.source, data: await res.blob() });
+      toast("File harga material tersimpan");
+      if (window.DULog) window.DULog.add("GA", "Mengunduh file asli " + H.source);
+    } catch (er) {
+      const code = er && er.code;
+      if (code !== "declined") toast(code === "missing" ? "File asli tidak ditemukan." : code === "rate_limited" ? "Tunggu sebentar lalu coba lagi." : "Gagal mengunduh file.");
+    }
+    a.textContent = label;
+  });
   root.addEventListener("click", (e) => {
     if (e.target.closest("[data-more]")) { S.limit += 50; draw(); return; }
     const b = e.target.closest("[data-fpp]");
