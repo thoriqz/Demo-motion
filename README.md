@@ -61,6 +61,10 @@ lalu satuan, harga, dan vendor terisi otomatis (bisa pilih harga vendor lain); t
 langsung mengisi form. Logika di `assets/js/harga.js`.
 File Excel asli ada di `assets/files/` dan bisa diunduh lewat tombol *Unduh file asli (.xlsx)* di panel tersebut
 (di claude.ai memakai kemampuan `downloads`; isi file disisipkan ke halaman saat build karena artifact tidak menyajikan .xlsx).
+Tombol **Unggah data terbaru** (khusus pengguna dengan akses edit) membaca file .xlsx berformat sama di browser
+(SheetJS dari cdnjs), menampilkan pratinjau harga yang berubah/baru/hilang, lalu setelah diterapkan menyimpan hasilnya
++ file aslinya sebagai aset JSON dengan penunjuk di database (`harga/current`, riwayat `hargaVersions`). Semua penampil
+otomatis memakai versi terbaru, dan tombol unduh memberikan file versi terbaru tersebut (`assets/js/harga-upload.js`).
 
 ## Input manual & riwayat aktivitas
 `assets/js/store.js` menyimpan data input manual di database artifact claude.ai (di salinan lokal: `localStorage` browser):

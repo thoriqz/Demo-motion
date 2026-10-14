@@ -1065,3 +1065,19 @@ a.cal__ev:hover { filter: brightness(1.15); text-decoration: underline; }
 .fpp__opt[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--panel); }
 .hg-dl { white-space: nowrap; padding: 9px 14px; }
 @media (max-width: 600px) { .hg-dl { width: 100%; justify-content: center; } }
+
+/* ---------- Unggah data harga terbaru ---------- */
+.hg-up { position: relative; cursor: pointer; white-space: nowrap; padding: 9px 14px; }
+.hg-ver { margin: -6px 0 12px; }
+.hg-preview { border: 1.5px dashed var(--ink); padding: 14px 16px; margin-bottom: 16px; background: rgba(44, 93, 138, .05); }
+.hg-preview h4 { margin: 0 0 10px; font: 700 16px var(--f-head); text-transform: uppercase; letter-spacing: .04em; }
+.hg-pv__stats { display: flex; flex-wrap: wrap; gap: 8px 16px; font: 12px var(--f-mono); margin-bottom: 10px; }
+.hg-pv__stats b { font: 700 18px var(--f-head); margin-right: 3px; }
+.hg-pv__stats .is-chg b { color: var(--warn); } .hg-pv__stats .is-add b { color: var(--ok); } .hg-pv__stats .is-del b { color: var(--danger); }
+.hg-pv__list { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 4px; font-size: 13px; }
+.hg-pv__list li { display: flex; justify-content: space-between; gap: 12px; border-bottom: 1px dashed var(--line-soft); padding: 4px 0; }
+.hg-pv__list small { color: var(--muted); font-family: var(--f-mono); }
+.hg-pv__list span { white-space: nowrap; font-family: var(--f-mono); font-size: 12px; }
+.hg-pv__act { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.hg-pv__err { color: var(--danger); margin: 0 0 10px; }
+@media (max-width: 600px) { .hg-up { width: 100%; justify-content: center; } .hg-pv__list li { flex-direction: column; gap: 2px; } }
