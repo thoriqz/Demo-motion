@@ -141,28 +141,7 @@
     countTo($("#hTasks"), tasks);
     $("#hModN").textContent = MODULES.length;
 
-    // Gedung arsip legal: tiap lantai satu PDF terbaru (paling baru di puncak)
-    const latest = docs ? docs.latest("legal", 3) : [];
-    const floors = latest.length ? latest.map((f) => ({ t: f.name.replace(/\.pdf$/i, ""), s: f.jenis, href: docs.url(f) }))
-      : [{ t: "Belum ada PDF", s: "unggah di menu Legal" }, { t: "Perizinan · kontrak · akta", s: "arsip legal" }, { t: "Divisi Umum", s: "Roemantara" }];
-    const n = floors.length;
-    $("#hIso").innerHTML = `
-      <svg class="bld__crane" viewBox="0 0 120 150" aria-hidden="true">
-        <path class="c1" pathLength="1" d="M30 150 V18 M22 150 V26 M22 26 L30 18 M22 50 L30 42 M22 74 L30 66 M22 98 L30 90 M22 122 L30 114"/>
-        <path class="c2" pathLength="1" d="M4 22 H116 M30 18 L44 8 L58 18 M4 22 L14 30 H26"/>
-        <g class="bld__hook"><line x1="96" y1="22" x2="96" y2="62"/><path d="M92 62 h8 v5 a4 4 0 0 1 -8 0z"/></g>
-      </svg>
-      <div class="bld__tower">
-        <div class="bld__roof" aria-hidden="true"></div>
-        ${floors.map((f, i) => {
-          const k = n - 1 - i;
-          const inner = `<span class="bld__lt">LT.${String(k + 1).padStart(2, "0")}</span><span class="bld__txt"><b>${esc(f.t)}</b><small>${esc(f.s)}</small></span>`;
-          return f.href ? `<a class="bld__fl" style="--k:${k}" href="${esc(f.href)}" target="_blank" rel="noopener" title="Buka ${esc(f.t)}">${inner}</a>`
-            : `<div class="bld__fl is-empty" style="--k:${k}">${inner}</div>`;
-        }).join("")}
-        <div class="bld__base" aria-hidden="true"><span></span><span></span><span class="door"></span><span></span><span></span></div>
-      </div>
-      <div class="bld__ground" aria-hidden="true"></div>`;
+    buildModel();
 
     renderLog();
 
@@ -182,6 +161,33 @@
   document.addEventListener("du:docs", () => { if (current === "home") renderHome(); });
   document.addEventListener("du:tasks", () => buildNotes());
   document.addEventListener("du:cal", () => { if (current === "home") renderCal(); buildNotes(); });
+
+  /* Model bangunan 3D (aksonometri berputar) — murni dekorasi arsitektur */
+  function buildModel() {
+    const host = $("#hIso");
+    if (!host || host.dataset.built) return;
+    host.dataset.built = "1";
+    /* x, z = posisi; w, d, h = lebar, dalam, tinggi; y = elevasi dasar (px) */
+    const masses = [
+      { x: 64, z: 34, w: 84, d: 104, h: 48, y: 0, kind: "podium" },
+      { x: -20, z: 0, w: 96, d: 76, h: 144, y: 0, kind: "tower" },
+      { x: -34, z: -8, w: 128, d: 62, h: 22, y: 144, kind: "slab" },
+      { x: -44, z: -10, w: 30, d: 30, h: 18, y: 166, kind: "core" }
+    ];
+    const face = (cls, w, h, t) => `<i class="b3d__f b3d__f--${cls}" style="width:${w}px;height:${h}px;margin:${-h / 2}px 0 0 ${-w / 2}px;transform:${t}"></i>`;
+    host.innerHTML = `<div class="b3d__scene"><div class="b3d__rot">
+      <div class="b3d__ground"></div>
+      ${masses.map((m, k) => `<div class="b3d__box b3d__box--${m.kind}" style="transform:translate3d(${m.x}px,${-(m.y + m.h / 2)}px,${m.z}px)">
+        <div class="b3d__in" style="--h:${m.h}px;--k:${k}">
+          ${face("fr", m.w, m.h, `translateZ(${m.d / 2}px)`)}
+          ${face("bk", m.w, m.h, `rotateY(180deg) translateZ(${m.d / 2}px)`)}
+          ${face("lf", m.d, m.h, `rotateY(-90deg) translateZ(${m.w / 2}px)`)}
+          ${face("rt", m.d, m.h, `rotateY(90deg) translateZ(${m.w / 2}px)`)}
+          ${face("tp", m.w, m.d, `rotateX(90deg) translateZ(${m.h / 2}px)`)}
+        </div></div>`).join("")}
+    </div></div>
+    <span class="b3d__tag">AKSONOMETRI · 1:200</span>`;
+  }
 
   /* Riwayat aktivitas harian (koleksi "activity") */
   const LOG = { rows: [], mode: "loading", day: new Date(today.toDateString()), area: "Semua" };

@@ -560,38 +560,39 @@ body.fin-locked[data-skin="sage"] .hc.dark[data-secure="finance"]::after { backg
   .h-log__list li .tag { display: none; }
 }
 
-/* ---------- Beranda: gedung arsip legal (motion pembangunan) ---------- */
-.bld { position: relative; min-height: 250px; display: grid; grid-template-columns: minmax(0, 1fr) 78px; align-items: end; padding: 8px 6px 0 12px; overflow: hidden; }
-.bld__tower { grid-column: 1; grid-row: 1; position: relative; z-index: 1; display: flex; flex-direction: column; padding-bottom: 6px; }
-.bld__crane { grid-column: 2; grid-row: 1; width: 78px; height: 150px; margin-left: -8px; align-self: end; margin-bottom: 6px; overflow: visible; fill: none; stroke: var(--ink); stroke-width: 1.6; stroke-linecap: square; }
-.bld__crane .c1, .bld__crane .c2 { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 1s cubic-bezier(.6, 0, .2, 1) forwards .5s; }
-.bld__crane .c2 { animation-delay: 1.2s; }
-.bld__hook { transform-origin: 96px 22px; transform-box: view-box; opacity: 0; animation: bldShow .3s forwards 1.9s, bldSwing 3.2s ease-in-out infinite 2.2s; }
-.bld__hook path { fill: var(--panel); }
-@keyframes bldShow { to { opacity: 1; } }
-@keyframes bldSwing { 0%, 100% { transform: rotate(4deg) scaleY(1); } 50% { transform: rotate(-4deg) scaleY(1.25); } }
-.bld__ground { grid-column: 1 / -1; grid-row: 2; height: 10px; border-top: 2px solid var(--ink); transform-origin: left; animation: bldGround .7s cubic-bezier(.6, 0, .2, 1) both .3s;
-  background: repeating-linear-gradient(-45deg, transparent 0 5px, var(--line-soft) 5px 6px); }
-@keyframes bldGround { from { transform: scaleX(0); } }
-.bld__roof { height: 12px; margin: 0 14%; border: 1.5px solid var(--ink); border-bottom: 0; transform-origin: bottom; animation: bldRise .5s cubic-bezier(.34, 1.4, .5, 1) both 2.6s; }
-.bld__fl {
-  position: relative; display: grid; grid-template-columns: 46px minmax(0, 1fr); align-items: center; min-height: 56px; margin-top: -1.5px;
-  border: 1.5px solid var(--ink); background: var(--panel); color: var(--ink); text-decoration: none; transform-origin: bottom;
-  animation: bldRise .6s cubic-bezier(.34, 1.3, .5, 1) both; animation-delay: calc(1.25s + var(--k) * .4s);
-  transition: background .25s, color .25s, transform .25s cubic-bezier(.16, 1, .3, 1);
+/* ---------- Beranda: model bangunan 3D (aksonometri berputar) ---------- */
+.b3d { position: relative; min-height: 270px; overflow: hidden; border: 1px dashed var(--line-soft);
+  background: var(--panel) linear-gradient(var(--line-soft) 1px, transparent 1px) 0 0 / 100% 18px; background-blend-mode: normal; }
+.b3d__scene { position: absolute; inset: 0; perspective: 1100px; perspective-origin: 50% 30%; }
+.b3d__rot { position: absolute; left: 50%; top: 80%; transform-style: preserve-3d; transform: rotateX(-24deg) rotateY(32deg); animation: b3dSpin 28s linear infinite 3.4s; }
+.b3d:hover .b3d__rot { animation-play-state: paused; }
+@keyframes b3dSpin { from { transform: rotateX(-24deg) rotateY(32deg); } to { transform: rotateX(-24deg) rotateY(392deg); } }
+.b3d__ground {
+  position: absolute; width: 300px; height: 300px; margin: -150px 0 0 -150px; transform: rotateX(90deg); border: 1px solid var(--ink);
+  background: repeating-linear-gradient(0deg, transparent 0 19px, rgba(44, 93, 138, .18) 19px 20px), repeating-linear-gradient(90deg, transparent 0 19px, rgba(44, 93, 138, .18) 19px 20px), var(--panel);
+  animation: b3dGround .8s cubic-bezier(.6, 0, .2, 1) both .2s;
 }
-.bld__fl::after { content: ""; position: absolute; right: 7px; top: 9px; bottom: 9px; width: 19px; background: repeating-linear-gradient(90deg, var(--line-soft) 0 8px, transparent 8px 11px); opacity: .9; }
-.bld__lt { align-self: stretch; display: grid; place-items: center; border-right: 1.5px solid var(--ink); font: 600 11px var(--f-mono); color: var(--red, var(--accent)); letter-spacing: .04em; }
-.bld__txt { min-width: 0; padding: 7px 34px 7px 10px; }
-.bld__txt b { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; font: 600 12.5px/1.25 var(--f-body); overflow: hidden; overflow-wrap: anywhere; }
-.bld__txt small { display: block; font: 11px var(--f-mono); color: var(--muted); }
-a.bld__fl:hover, a.bld__fl:focus-visible { background: var(--ink); color: var(--panel); transform: translateX(6px); outline: none; }
-a.bld__fl:hover small, a.bld__fl:focus-visible small { color: var(--line-soft); }
-a.bld__fl:hover::after { opacity: .25; }
-.bld__fl.is-empty .bld__txt b { color: var(--muted); font-weight: 500; }
-.bld__base { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; align-items: end; height: 44px; margin-top: -1.5px; padding: 8px 10px 0; border: 1.5px solid var(--ink); border-bottom: 0; background: var(--panel); transform-origin: bottom; animation: bldRise .5s cubic-bezier(.34, 1.3, .5, 1) both .85s; }
-.bld__base span { height: 22px; border: 1.2px solid var(--ink); border-bottom: 0; }
-.bld__base .door { height: 34px; background: repeating-linear-gradient(90deg, transparent 0 6px, var(--line-soft) 6px 7px); }
-@keyframes bldRise { from { transform: translateY(18px) scaleY(.2); opacity: 0; } }
-@media (max-width: 600px) { .bld { grid-template-columns: minmax(0, 1fr) 64px; } .bld__crane { width: 64px; height: 130px; } }
-@media (prefers-reduced-motion: reduce) { .bld *, .bld__crane * { animation: none !important; stroke-dashoffset: 0 !important; opacity: 1 !important; } }
+@keyframes b3dGround { from { transform: rotateX(90deg) scale(0); opacity: 0; } }
+.b3d__box, .b3d__in { position: absolute; left: 0; top: 0; transform-style: preserve-3d; }
+.b3d__in { animation: b3dRise 1s cubic-bezier(.34, 1.15, .5, 1) both; animation-delay: calc(.8s + var(--k) * .55s); }
+@keyframes b3dRise { from { transform: translateY(calc(var(--h) / 2)) scaleY(.01); } }
+.b3d__f { position: absolute; left: 0; top: 0; backface-visibility: visible; border: 1.2px solid var(--ink); background-color: #fbfaf4; }
+/* fasad: garis lantai tiap 24 px + kolom jendela */
+.b3d__f--fr, .b3d__f--bk, .b3d__f--lf, .b3d__f--rt {
+  background-image: repeating-linear-gradient(0deg, transparent 0 22px, var(--ink) 22px 23.2px, transparent 23.2px 24px),
+    repeating-linear-gradient(90deg, transparent 0 9px, rgba(44, 93, 138, .28) 9px 15px, transparent 15px 18px);
+}
+.b3d__f--lf, .b3d__f--bk { background-color: #e8e4d7; }
+.b3d__f--rt { background-color: #f1eee4; }
+.b3d__f--tp { background: repeating-linear-gradient(45deg, transparent 0 5px, rgba(29, 32, 36, .16) 5px 6px), #f5f3ea; }
+/* podium: kaca penuh; slab: kantilever polos; core: atap mesin */
+.b3d__box--podium .b3d__f--fr, .b3d__box--podium .b3d__f--rt, .b3d__box--podium .b3d__f--lf, .b3d__box--podium .b3d__f--bk {
+  background-image: repeating-linear-gradient(90deg, rgba(44, 93, 138, .22) 0 12px, var(--ink) 12px 13px); background-color: #eef2f4;
+}
+.b3d__box--slab .b3d__f--fr, .b3d__box--slab .b3d__f--bk, .b3d__box--slab .b3d__f--lf, .b3d__box--slab .b3d__f--rt { background-image: none; background-color: #1d2024; }
+.b3d__box--core .b3d__f { background-image: none; background-color: #d9d4c6; }
+.b3d__tag { position: absolute; left: 10px; bottom: 8px; font: 500 10px var(--f-mono); letter-spacing: .08em; color: var(--muted); }
+.b3d__spec { display: grid; grid-template-columns: repeat(3, auto); gap: 4px 14px; margin: 14px 0 0; justify-content: start; }
+.b3d__spec dt { font: 500 9.5px var(--f-mono); color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+.b3d__spec dd { white-space: nowrap; margin: 2px 0 0; font: 700 16px var(--f-head); text-transform: uppercase; letter-spacing: .03em; }
+@media (prefers-reduced-motion: reduce) { .b3d__rot, .b3d__in, .b3d__ground { animation: none !important; } }
