@@ -55,8 +55,8 @@ dalam 2 hari muncul di lonceng notifikasi Sage.
 ## Input manual & riwayat aktivitas
 `assets/js/store.js` menyimpan data input manual di database artifact claude.ai (di salinan lokal: `localStorage` browser):
 - **FPP** (`assets/js/fpp.js`, koleksi `fpp`): GA → Procurement, nomor otomatis `FPP/YYYYMM/NNN`, status Diajukan/Disetujui/Dibeli/Ditolak.
-- **Tugas harian** (`assets/js/harian.js`, koleksi `daily`): Tugas → Tugas Harian, tiap entri terhubung ke salah satu
-  tugas umum; kartu tugas umum menampilkan jumlah catatan harian di periodenya dan bisa saling melompat.
+- **Tugas harian** (`assets/js/harian.js`, koleksi `daily`): Tugas → Tugas Harian berupa checklist — centang saat selesai
+  dan isi keterangan detail pekerjaan; tiap entri terhubung ke salah satu tugas umum; kartu tugas umum menampilkan jumlah catatan harian di periodenya dan bisa saling melompat.
 - **Riwayat aktivitas** (koleksi `activity`): unggah/hapus PDF, input/status FPP, tugas harian, status tugas umum,
   dan agenda Google Calendar baru tercatat otomatis; tampil per hari di Beranda Sage.
 

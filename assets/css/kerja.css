@@ -492,3 +492,14 @@ body[data-look="kerja"] .att-live__frame { border-radius: 0; border: 1px solid v
   .gk-frame::before, .gk-frame::after, .gk-ax span, .gk-dim i, .gk-dim span, .gk-kop, .gk-code.is-swap,
   body[data-look="kerja"] .hc, body[data-look="kerja"] .panel, body[data-look="kerja"] .stat { animation: none !important; }
 }
+
+/* checklist tugas harian */
+body[data-look="kerja"] .hr-check { box-shadow: inset 4px 0 0 var(--warn); }
+body[data-look="kerja"] .hr-check.is-done { box-shadow: inset 4px 0 0 var(--ok); background: rgba(46, 107, 69, .04); }
+[data-look="kerja"] .hr-box span { border-radius: 0; background: var(--panel); }
+[data-look="kerja"] .hr-box input:checked + span { background: var(--ok); }
+[data-look="kerja"] .hr-text { font: 600 15px/1.35 var(--f-body); }
+[data-look="kerja"] .hr-note-in { font-family: var(--f-body); border-bottom-color: var(--line-soft); }
+[data-look="kerja"] .hr-note-in::placeholder { font: 12px var(--f-mono); color: var(--muted); }
+[data-look="kerja"] .hr-note-in:focus { border-bottom: 1.5px solid var(--red); }
+[data-look="kerja"] .hr-prog { background: repeating-linear-gradient(90deg, var(--line-soft) 0 1px, transparent 1px 8px); border: 1px solid var(--line-soft); height: 6px; }
