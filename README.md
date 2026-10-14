@@ -88,3 +88,12 @@ browser masing-masing, belum dibagikan antar pengguna.
 `design-options.html` berisi 9 arah desain bermotion untuk dibandingkan:
 - Bertema konstruksi: A Blueprint CAD (versi saat ini), B Beton Brutalis, C Material Board, D Maket Isometrik
 - Di luar tema konstruksi: E Swiss Grid, F Aurora Glass, G Nusantara Kawung, H Bento Pop, I Sage Soft Dashboard (dari referensi)
+
+## Ikon bookmark / layar utama ponsel
+`sage.html` dan `index.html` memuat ikon (`apple-touch-icon`, favicon) dan `manifest.webmanifest`, jadi saat halaman
+disimpan ke layar utama (iPhone: Bagikan → Tambah ke Layar Utama; Android/Chrome: ⋮ → Tambahkan ke layar utama)
+ikon Roemantara dan nama "Roemantara" dipakai otomatis. Ini berlaku bila webapp dibuka dari hosting sendiri
+(mis. GitHub Pages), bukan dari tautan claude.ai.
+
+Saat ini `assets/icons/logo.svg` masih tanda sementara. Untuk memakai logo asli: simpan sebagai
+`assets/icons/logo.png` (persegi, min. 512×512) lalu jalankan `python3 tools/make_icons.py`.

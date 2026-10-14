@@ -1,0 +1,16 @@
+{
+  "name": "Divisi Umum — Roemantara Indonesia",
+  "short_name": "Roemantara",
+  "description": "Webapp Divisi Umum Roemantara Indonesia: GA, Administrasi, Finance, HR, Legal, dan Tugas.",
+  "start_url": "sage.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5f3ea",
+  "theme_color": "#1d2024",
+  "lang": "id",
+  "icons": [
+    { "src": "assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "assets/icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "assets/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
