@@ -60,7 +60,7 @@ daftar harga diberi tautan di direktori). Tersambung ke FPP: ketik nama barang d
 lalu satuan, harga, dan vendor terisi otomatis (bisa pilih harga vendor lain); tombol **+ FPP** di daftar harga
 langsung mengisi form. Logika di `assets/js/harga.js`.
 File Excel asli ada di `assets/files/` dan bisa diunduh lewat tombol *Unduh file asli (.xlsx)* di panel tersebut
-(di claude.ai memakai kemampuan `downloads`; file ikut dipublikasikan sebagai file pendamping artifact).
+(di claude.ai memakai kemampuan `downloads`; isi file disisipkan ke halaman saat build karena artifact tidak menyajikan .xlsx).
 
 ## Input manual & riwayat aktivitas
 `assets/js/store.js` menyimpan data input manual di database artifact claude.ai (di salinan lokal: `localStorage` browser):

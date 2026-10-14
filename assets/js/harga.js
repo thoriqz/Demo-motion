@@ -18,6 +18,18 @@
   const SA = H.setia.vendor;
   /* file Excel asli disajikan di samping halaman (artifact: file pendamping; repo: assets/files/) */
   const FILE = "assets/files/" + H.source;
+  /* Versi claude.ai: isi file disisipkan ke halaman (window.DU_XLSX_B64) saat build, byte-nya sama persis */
+  async function fileBlob() {
+    const type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+    if (window.DU_XLSX_B64) {
+      const bin = atob(window.DU_XLSX_B64), buf = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) buf[i] = bin.charCodeAt(i);
+      return new Blob([buf], { type });
+    }
+    const res = await fetch(FILE);
+    if (!res.ok) throw { code: "missing" };
+    return res.blob();
+  }
 
   /* ---------- Indeks gabungan ---------- */
   const items = [];
@@ -140,9 +152,7 @@
     if (!dl) { toast("Unduhan tidak tersedia di tampilan ini."); return; }
     a.textContent = "Menyiapkan file…";
     try {
-      const res = await fetch(FILE);
-      if (!res.ok) throw { code: "missing" };
-      await dl.save({ filename: H.source, data: await res.blob() });
+      await dl.save({ filename: H.source, data: await fileBlob() });
       toast("File harga material tersimpan");
       if (window.DULog) window.DULog.add("GA", "Mengunduh file asli " + H.source);
     } catch (er) {
