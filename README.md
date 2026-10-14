@@ -95,5 +95,5 @@ disimpan ke layar utama (iPhone: Bagikan → Tambah ke Layar Utama; Android/Chro
 ikon Roemantara dan nama "Roemantara" dipakai otomatis. Ini berlaku bila webapp dibuka dari hosting sendiri
 (mis. GitHub Pages), bukan dari tautan claude.ai.
 
-Saat ini `assets/icons/logo.svg` masih tanda sementara. Untuk memakai logo asli: simpan sebagai
-`assets/icons/logo.png` (persegi, min. 512×512) lalu jalankan `python3 tools/make_icons.py`.
+Sumber ikon: logo Roemantara di `assets/icons/logo.png`. Bila logo berganti, timpa file itu lalu jalankan
+`python3 tools/make_icons.py` untuk membuat ulang semua ukuran ikon.
