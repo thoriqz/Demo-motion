@@ -1081,3 +1081,50 @@ a.cal__ev:hover { filter: brightness(1.15); text-decoration: underline; }
 .hg-pv__act { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
 .hg-pv__err { color: var(--danger); margin: 0 0 10px; }
 @media (max-width: 600px) { .hg-up { width: 100%; justify-content: center; } .hg-pv__list li { flex-direction: column; gap: 2px; } }
+
+/* ---------- FPP: format Permohonan Persetujuan Pembelian ---------- */
+.fpp__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px 16px; }
+.fpp__grid .fpp__wide { grid-column: span 2; }
+.fpp__sign { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.fpp__itemswrap { margin: 6px 0 2px; }
+.fpp__items { min-width: 720px; }
+.fpp__items th:nth-child(1), .fpp__items td:nth-child(1) { width: 36px; }
+.fpp__items th:nth-child(3), .fpp__items td:nth-child(3) { width: 90px; }
+.fpp__items th:nth-child(4), .fpp__items td:nth-child(4) { width: 100px; }
+.fpp__items th:nth-child(5), .fpp__items td:nth-child(5), .fpp__items th:nth-child(6), .fpp__items td:nth-child(6) { width: 130px; }
+.fpp__items th:nth-child(7), .fpp__items td:nth-child(7) { width: 40px; }
+.fpp__items td { padding: 4px 6px; vertical-align: middle; }
+.fpp__in { width: 100%; min-width: 0; font: 13.5px var(--f-body); color: var(--ink); background: transparent; border: 0; border-bottom: 1px solid var(--line-soft); padding: 6px 2px; }
+.fpp__in.num { text-align: right; font-variant-numeric: tabular-nums; }
+.fpp__in:focus { outline: none; border-bottom-color: var(--accent); }
+.fpp__items tfoot td { border-top: 1.5px solid var(--ink); padding-top: 8px; }
+.fpp__total { font: 700 15px var(--f-body); }
+.fpp__form .fpp__sug { position: absolute; margin: 0; z-index: 20; max-height: 280px; }
+.fpp__act { display: flex; flex-wrap: wrap; gap: 10px; }
+.fpp__rowact { white-space: nowrap; }
+.fpp__rowact .mini-btn + .mini-btn { margin-left: 6px; }
+@media (max-width: 900px) {
+  .fpp__grid, .fpp__sign { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 600px) {
+  .fpp__grid, .fpp__sign { grid-template-columns: 1fr; }
+  .fpp__grid .fpp__wide { grid-column: auto; }
+  .fpp__act .btn { flex: 1; justify-content: center; }
+}
+.fpp__opts[hidden], .fpp__sug[hidden] { display: none; }
+@media (max-width: 700px) {
+  .fpp__items { min-width: 0; }
+  .fpp__items thead { display: none; }
+  .fpp__items, .fpp__items tbody { display: block; }
+  .fpp__items tbody tr { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px 8px; padding: 10px 0; border-bottom: 1px dashed var(--line-soft); }
+  .fpp__items tbody td { display: block; border: 0; padding: 0; width: auto !important; }
+  .fpp__items tbody td::before { content: attr(data-l); display: block; font: 500 9.5px var(--f-mono); color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+  .fpp__items tbody td:nth-child(1) { grid-column: 1 / 4; grid-row: 1; font-weight: 600; align-self: center; }
+  .fpp__items tbody td:nth-child(1)::before { display: none; }
+  .fpp__items tbody td:nth-child(2) { grid-column: 1 / -1; }
+  .fpp__items tbody td.fpp__rm { grid-column: 4; grid-row: 1; justify-self: end; }
+  .fpp__items tbody td.fpp__rm::before { display: none; }
+  .fpp__items tfoot, .fpp__items tfoot tr { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 8px; }
+  .fpp__items tfoot td { display: block; border-top: 0; padding: 6px 0; }
+  .fpp__items tfoot td:first-child, .fpp__items tfoot td:last-child { display: none; }
+}

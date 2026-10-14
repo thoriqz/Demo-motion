@@ -68,7 +68,10 @@ otomatis memakai versi terbaru, dan tombol unduh memberikan file versi terbaru t
 
 ## Input manual & riwayat aktivitas
 `assets/js/store.js` menyimpan data input manual di database artifact claude.ai (di salinan lokal: `localStorage` browser):
-- **FPP** (`assets/js/fpp.js`, koleksi `fpp`): GA → Procurement, nomor otomatis `FPP/YYYYMM/NNN`, status Diajukan/Disetujui/Dibeli/Ditolak.
+- **FPP** (`assets/js/fpp.js`, koleksi `fpp`): GA → Procurement, format *Permohonan Persetujuan Pembelian* Roemantara —
+  nomor otomatis `FPP/<KODE>/<NNN>/<BLN>/<TAHUN>` (mis. FPP/YGA/002/OKT/2026), Divisi, Kebutuhan untuk, banyak item
+  (item · jumlah · satuan · harga satuan · harga), Total, Catatan, Diajukan/Disetujui; status Diajukan/Disetujui/Dibeli/Ditolak.
+  Tombol **PDF** mencetak FPP ke PDF dengan tata letak template (`assets/js/fpp-pdf.js`, jsPDF dari cdnjs, logo di `fpp-logo.js`).
 - **Tugas harian** (`assets/js/harian.js`, koleksi `daily`): Tugas → Tugas Harian berupa checklist — centang saat selesai
   dan isi keterangan detail pekerjaan; tiap entri terhubung ke salah satu tugas umum; kartu tugas umum menampilkan jumlah catatan harian di periodenya dan bisa saling melompat.
 - **Riwayat aktivitas** (koleksi `activity`): unggah/hapus PDF, input/status FPP, tugas harian, status tugas umum,
