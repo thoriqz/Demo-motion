@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Roemantara</title>
+  <meta name="description" content="Pintasan ke webapp Divisi Umum Roemantara Indonesia.">
+  <link rel="icon" href="assets/icons/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="icon" href="assets/icons/icon-192.png" sizes="192x192" type="image/png">
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+  <link rel="manifest" href="buka.webmanifest">
+  <meta name="apple-mobile-web-app-title" content="Roemantara">
+  <meta name="theme-color" content="#135b46">
+  <script>
+    /* Pintasan layar utama: dibuka dari ikon → langsung ke webapp di claude.ai.
+       Dibuka dengan ?pasang (dari tautan pemasangan) → tampilkan petunjuk dulu. */
+    (function () {
+      var APP = "https://claude.ai/artifact/WxdXm5C4ShLGgjUYrk5nJQ";
+      var setup = /[?&]pasang\b/.test(location.search);
+      var seen = false;
+      try { seen = sessionStorage.getItem("rmt-pasang") === "1"; } catch (e) {}
+      if (setup) {
+        try { sessionStorage.setItem("rmt-pasang", "1"); } catch (e) {}
+        /* alamat yang disimpan ke layar utama harus tanpa ?pasang */
+        history.replaceState(null, "", location.pathname);
+      } else if (!seen) {
+        location.replace(APP);
+      }
+      window.RMT_APP = APP;
+    })();
+  </script>
+  <style>
+    :root { --paper: #f5f3ea; --ink: #1d2024; --green: #135b46; --muted: #6d6b63; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 24px 16px;
+      background-color: var(--paper); color: var(--ink); font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+      background-image: linear-gradient(rgba(44, 93, 138, .1) 1px, transparent 1px), linear-gradient(90deg, rgba(44, 93, 138, .1) 1px, transparent 1px);
+      background-size: 22px 22px;
+    }
+    main { width: min(440px, 100%); background: #fff; border: 1.5px solid var(--ink); padding: 28px 24px; box-shadow: 8px 8px 0 rgba(29, 32, 36, .12); }
+    .logo { width: 132px; display: block; margin: 0 auto 14px; }
+    h1 { margin: 0; text-align: center; font-size: 22px; letter-spacing: .02em; }
+    .sub { margin: 4px 0 22px; text-align: center; color: var(--muted); font-size: 13px; }
+    .go { display: block; text-align: center; background: var(--green); color: #fff; text-decoration: none; font-weight: 600; padding: 14px; border: 0; }
+    h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; margin: 24px 0 8px; color: var(--green); }
+    ol { margin: 0; padding-left: 20px; }
+    li { margin-bottom: 6px; }
+    .note { margin-top: 18px; font-size: 12px; color: var(--muted); border-top: 1px dashed #cfcabb; padding-top: 12px; }
+  </style>
+</head>
+<body>
+  <main>
+    <img class="logo" src="assets/icons/logo.png" alt="Logo Roemantara Indonesia">
+    <h1>Divisi Umum Roemantara</h1>
+    <p class="sub">Pintasan ke webapp GA · Admin · Finance · HR · Legal · Tugas</p>
+    <a class="go" id="go" href="https://claude.ai/artifact/WxdXm5C4ShLGgjUYrk5nJQ">Buka webapp</a>
+
+    <h2>Pasang ikon di layar utama</h2>
+    <p><b>iPhone (Safari)</b></p>
+    <ol>
+      <li>Tekan tombol <b>Bagikan</b> (kotak dengan panah ke atas).</li>
+      <li>Pilih <b>Tambah ke Layar Utama</b>.</li>
+      <li>Pastikan ikon yang tampil logo Roemantara, lalu tekan <b>Tambah</b>.</li>
+    </ol>
+    <p><b>Android (Chrome)</b></p>
+    <ol>
+      <li>Tekan menu <b>⋮</b> di kanan atas.</li>
+      <li>Pilih <b>Tambahkan ke layar utama</b>, lalu <b>Tambahkan</b>.</li>
+    </ol>
+    <p class="note">Ikon di layar utama langsung membuka webapp di claude.ai. Buka ikon ini di browser yang sudah masuk (login) ke claude.ai.</p>
+  </main>
+</body>
+</html>

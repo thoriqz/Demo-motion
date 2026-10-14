@@ -95,5 +95,11 @@ disimpan ke layar utama (iPhone: Bagikan → Tambah ke Layar Utama; Android/Chro
 ikon Roemantara dan nama "Roemantara" dipakai otomatis. Ini berlaku bila webapp dibuka dari hosting sendiri
 (mis. GitHub Pages), bukan dari tautan claude.ai.
 
+Tautan claude.ai selalu memakai ikon claude.ai. Untuk tetap memakai webapp claude.ai (database, PDF, Google Calendar)
+dengan ikon Roemantara, pakai pintasan `buka.html` yang di-hosting di GitHub Pages:
+1. Buka `https://thoriqz.github.io/Demo-motion/buka.html?pasang` di ponsel, lalu Tambah ke Layar Utama.
+2. Ikon tersebut membuka `buka.html`, yang langsung mengalihkan ke webapp di claude.ai.
+Alamat webapp tujuan diatur di variabel `APP` dalam `buka.html`.
+
 Sumber ikon: logo Roemantara di `assets/icons/logo.png`. Bila logo berganti, timpa file itu lalu jalankan
 `python3 tools/make_icons.py` untuk membuat ulang semua ukuran ikon.
