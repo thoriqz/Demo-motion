@@ -141,10 +141,28 @@
     countTo($("#hTasks"), tasks);
     $("#hModN").textContent = MODULES.length;
 
-    // Tumpukan PDF legal terbaru
-    const latest = docs ? docs.latest("legal", 3).reverse() : [];
-    const cards = latest.length ? latest.map((f) => ({ t: f.name, s: f.jenis })) : [{ t: "Belum ada PDF", s: "unggah di menu Legal" }, { t: "Arsip legal", s: "perizinan · kontrak · akta" }, { t: "Divisi Umum", s: "Roemantara" }];
-    $("#hIso").innerHTML = cards.map((c, k) => `<div class="cd" style="--k:${k}">${esc(c.t)}<small>${esc(c.s)}</small></div>`).join("");
+    // Gedung arsip legal: tiap lantai satu PDF terbaru (paling baru di puncak)
+    const latest = docs ? docs.latest("legal", 3) : [];
+    const floors = latest.length ? latest.map((f) => ({ t: f.name.replace(/\.pdf$/i, ""), s: f.jenis, href: docs.url(f) }))
+      : [{ t: "Belum ada PDF", s: "unggah di menu Legal" }, { t: "Perizinan · kontrak · akta", s: "arsip legal" }, { t: "Divisi Umum", s: "Roemantara" }];
+    const n = floors.length;
+    $("#hIso").innerHTML = `
+      <svg class="bld__crane" viewBox="0 0 120 150" aria-hidden="true">
+        <path class="c1" pathLength="1" d="M30 150 V18 M22 150 V26 M22 26 L30 18 M22 50 L30 42 M22 74 L30 66 M22 98 L30 90 M22 122 L30 114"/>
+        <path class="c2" pathLength="1" d="M4 22 H116 M30 18 L44 8 L58 18 M4 22 L14 30 H26"/>
+        <g class="bld__hook"><line x1="96" y1="22" x2="96" y2="62"/><path d="M92 62 h8 v5 a4 4 0 0 1 -8 0z"/></g>
+      </svg>
+      <div class="bld__tower">
+        <div class="bld__roof" aria-hidden="true"></div>
+        ${floors.map((f, i) => {
+          const k = n - 1 - i;
+          const inner = `<span class="bld__lt">LT.${String(k + 1).padStart(2, "0")}</span><span class="bld__txt"><b>${esc(f.t)}</b><small>${esc(f.s)}</small></span>`;
+          return f.href ? `<a class="bld__fl" style="--k:${k}" href="${esc(f.href)}" target="_blank" rel="noopener" title="Buka ${esc(f.t)}">${inner}</a>`
+            : `<div class="bld__fl is-empty" style="--k:${k}">${inner}</div>`;
+        }).join("")}
+        <div class="bld__base" aria-hidden="true"><span></span><span></span><span class="door"></span><span></span><span></span></div>
+      </div>
+      <div class="bld__ground" aria-hidden="true"></div>`;
 
     renderLog();
 
