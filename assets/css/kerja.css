@@ -497,3 +497,5 @@ body[data-look="kerja"] .hr-check.is-done { box-shadow: inset 4px 0 0 var(--ok);
 [data-look="kerja"] .hr-note-in::placeholder { font: 12px var(--f-mono); color: var(--muted); }
 [data-look="kerja"] .hr-note-in:focus { border-bottom: 1.5px solid var(--red); }
 [data-look="kerja"] .hr-prog { background: repeating-linear-gradient(90deg, var(--line-soft) 0 1px, transparent 1px 8px); border: 1px solid var(--line-soft); height: 6px; }
+body[data-look="kerja"] .hr-link--umum { border: 1px dashed var(--ink); color: var(--ink); background: transparent; }
+body[data-look="kerja"] .hr-link--umum:hover { background: transparent; color: var(--ink); }

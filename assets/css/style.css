@@ -1128,3 +1128,5 @@ a.cal__ev:hover { filter: brightness(1.15); text-decoration: underline; }
   .fpp__items tfoot td { display: block; border-top: 0; padding: 6px 0; }
   .fpp__items tfoot td:first-child, .fpp__items tfoot td:last-child { display: none; }
 }
+.hr-link--umum { cursor: default; background: transparent; border: 1px dashed var(--muted); color: var(--ink-2, var(--ink)); }
+.hr-link--umum:hover { background: transparent; color: var(--ink-2, var(--ink)); }

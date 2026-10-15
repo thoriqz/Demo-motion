@@ -82,7 +82,7 @@
     return [ymd(from), ymd(p.date)];
   };
   const log = (it, text) => window.DULog && window.DULog.add(it ? it.bidang[0] : "Umum", text);
-  /* Buka kartu tugas umum di periode yang memuat tanggal catatan harian */
+  /* Buka kartu tugas pelaporan di periode yang memuat tanggal catatan harian */
   window.DUTasks.focus = (no, date) => {
     S.bidang = "Semua";
     const it = T.items.find((x) => String(x.no) === String(no));
@@ -232,7 +232,7 @@
     if (sb) {
       const it = T.items.find((x) => String(x.no) === String(no));
       write(no, { status: sb.dataset.st }); toast(`Tugas ${pad(no)} → ${sb.dataset.st}`);
-      log(it, `Tugas umum ${pad(no)} ${it ? it.name : ""} (${S.per.label}) → ${sb.dataset.st}`);
+      log(it, `Tugas pelaporan ${pad(no)} ${it ? it.name : ""} (${S.per.label}) → ${sb.dataset.st}`);
       return;
     }
     if (e.target.closest('[data-act="link"]')) {
@@ -247,7 +247,7 @@
         if (!/^https:\/\//i.test(url)) { toast("Gunakan tautan yang diawali https://"); return; }
         const r = recOf(S.per.key, no);
         write(no, r.link ? { att: r.att.concat({ type: "link", name: url, url }) } : { link: url });
-        log(T.items.find((x) => String(x.no) === String(no)), `Menambah tautan bukti tugas umum ${pad(no)} (${S.per.label})`);
+        log(T.items.find((x) => String(x.no) === String(no)), `Menambah tautan bukti tugas pelaporan ${pad(no)} (${S.per.label})`);
       });
       $("[data-cancel]", box).addEventListener("click", () => box.remove());
     }
@@ -274,7 +274,7 @@
         const r = recOf(S.per.key, no);
         await write(no, { att: r.att.concat({ type: "file", name: f.name, ext: (f.name.split(".").pop() || "").toLowerCase(), size: res.sizeBytes, assetId: res.id }) });
         toast(`${f.name} terlampir`);
-        log(T.items.find((x) => String(x.no) === String(no)), `Melampirkan ${f.name} ke tugas umum ${pad(no)} (${S.per.label})`);
+        log(T.items.find((x) => String(x.no) === String(no)), `Melampirkan ${f.name} ke tugas pelaporan ${pad(no)} (${S.per.label})`);
       } catch (er) {
         toast(er && er.code === "too_large" ? "Ukuran file melebihi 20 MB." : er && er.code === "unsupported_type" ? "Jenis file tidak didukung (PDF, PNG, JPG)." : "Gagal mengunggah file.");
       }

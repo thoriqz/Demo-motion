@@ -393,53 +393,6 @@
     draw();
   }
 
-  function renderServices() {
-    const st = D.serviceStages;
-    const items = store.get("du-serv", null) || D.services.map((s) => ({ ...s }));
-    const board = $("#servBoard");
-    const draw = () => {
-      board.innerHTML = st.map((s, si) => {
-        const list = items.filter((x) => x.stage === si);
-        return `<div class="kanban__col"><h4>${up(s)} <b>${list.length}</b></h4>
-          ${list.map((x) => `<button class="cand ${si === st.length - 1 ? "final" : ""}" type="button" data-id="${esc(x.id)}">
-            <span class="mono cand__id">${esc(x.id)} · ${esc(x.cat)}</span>${esc(x.title)}<small>Pemohon: ${esc(x.by)}</small></button>`).join("")}</div>`;
-      }).join("");
-    };
-    board.addEventListener("click", (e) => {
-      const b = e.target.closest(".cand");
-      if (!b || b.classList.contains("final")) return;
-      const x = items.find((i) => i.id === b.dataset.id);
-      x.stage++;
-      store.set("du-serv", items);
-      draw();
-      toast(`${x.id} → ${st[x.stage]}`);
-    });
-    draw();
-  }
-
-  function renderClient() {
-    const sla = D.slaMinutes;
-    const reqs = D.clientRequests;
-    const tone = { Selesai: "ok", Diproses: "info", Menunggu: "warn" };
-    $("#clientBody").innerHTML = reqs.map((r) => {
-      const t = r.mins == null ? pill("Belum direspons", "warn") : `<span class="${r.mins <= sla ? "t-ok" : "t-danger"} mono">${r.mins} mnt</span>`;
-      return `<tr><td>${esc(r.client)}</td><td>${esc(r.req)}</td><td><span class="tag tag--plain">${esc(r.channel)}</span></td><td class="mono">${esc(r.at)}</td><td>${t}</td><td>${pill(r.status, tone[r.status])}</td></tr>`;
-    }).join("");
-    const answered = reqs.filter((r) => r.mins != null);
-    const avg = Math.round(answered.reduce((s, r) => s + r.mins, 0) / answered.length);
-    const inSla = answered.filter((r) => r.mins <= sla).length;
-    const pct = Math.round((inSla / answered.length) * 100);
-    const byCh = {};
-    reqs.forEach((r) => (byCh[r.channel] = (byCh[r.channel] || 0) + 1));
-    $("#slaBox").innerHTML = `
-      <div class="sla">
-        ${ring(pct / 100, pct >= 80 ? "ok" : "warn", pct + "%", 96)}
-        <div><span class="mono note">${up("Dalam target " + sla + " menit")}</span><b class="big-num">${avg}<small> mnt</small></b><span class="note">rata-rata waktu respons</span></div>
-      </div>
-      <h4 class="mini-title mono">${up("Permintaan per kanal")}</h4>
-      <div class="bars">${Object.entries(byCh).map(([k, v]) => `<div class="bar-row"><span>${esc(k)}</span><b>${v}</b><div class="meter"><i data-w="${(v / reqs.length) * 100}"></i></div></div>`).join("")}</div>`;
-  }
-
   /* =========================================================
      LT.03 FINANCE
      ========================================================= */
@@ -694,7 +647,7 @@
   $$("[data-date]").forEach((el) => (el.textContent = up(fmtDate(today, { day: "2-digit", month: "long", year: "numeric" }))));
   initTheme();
   renderKpi();
-  renderAssets(); renderVendors(); renderServices(); renderClient();
+  renderAssets(); renderVendors();
   renderRecon(); renderReports(); renderClosing();
   renderEmployees(); renderFreelancers(); renderAttendance();
   initModTabs();

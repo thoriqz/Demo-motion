@@ -135,9 +135,8 @@
         <button role="tab" data-panel="ga-proc"><span class="mono">01</span>Procurement &amp; Purchasing</button>
         <button role="tab" data-panel="ga-asset"><span class="mono">02</span>Aset &amp; Inventaris</button>
         <button role="tab" data-panel="ga-vendor"><span class="mono">03</span>Vendor &amp; Subkon</button>
-        <button role="tab" data-panel="ga-serv"><span class="mono">04</span>Pelayanan Umum</button>
-        <button role="tab" data-panel="ga-client"><span class="mono">05</span>Layanan Klien</button>
-        <button role="tab" data-panel="ga-cal"><span class="mono">06</span>Kalender Google</button>
+        <button role="tab" data-panel="ga-meet"><span class="mono">04</span>Pelayanan Umum &amp; Tamu</button>
+        <button role="tab" data-panel="ga-cal"><span class="mono">05</span>Kalender Google</button>
       </div>
 
       <div class="modpanel" id="ga-proc" role="tabpanel">
@@ -200,31 +199,7 @@
         <article class="panel panel--wide" id="hargaApp"></article>
       </div>
 
-      <div class="modpanel" id="ga-serv" role="tabpanel" hidden>
-        <article class="panel panel--wide">
-          <div class="panel__head">
-            <h3 class="panel__title mono">Tiket pelayanan umum</h3>
-            <span class="note mono">Klik tiket untuk memindahkan ke tahap berikutnya →</span>
-          </div>
-          <div class="kanban kanban--3" id="servBoard"></div>
-        </article>
-      </div>
-
-      <div class="modpanel" id="ga-client" role="tabpanel" hidden>
-        <div class="grid grid--2-1">
-          <article class="panel">
-            <h3 class="panel__title mono">Permintaan klien hari ini</h3>
-            <div class="table-wrap"><table class="table">
-              <thead><tr><th>Klien</th><th>Permintaan</th><th>Kanal</th><th>Masuk</th><th>Waktu Respons</th><th>Status</th></tr></thead>
-              <tbody id="clientBody"></tbody>
-            </table></div>
-          </article>
-          <article class="panel">
-            <h3 class="panel__title mono">Kinerja respons</h3>
-            <div id="slaBox"></div>
-          </article>
-        </div>
-      </div>
+      <div class="modpanel" id="ga-meet" role="tabpanel" hidden><div id="meetApp"></div></div>
 
       <div class="modpanel" id="ga-cal" role="tabpanel" hidden></div>
     </section>
@@ -361,10 +336,10 @@
     </section>
         <!-- TUGAS -->
       <section class="view" hidden id="tugas" data-view="tugas">
-        <header class="view-head" hidden><h2>Tugas</h2><p>Tugas harian yang diinput manual dan terhubung ke tugas umum, serta 15 tugas pelaporan per periode (mingguan Sabtu &amp; bulanan tanggal 25).</p></header>
+        <header class="view-head" hidden><h2>Tugas</h2><p>Checklist tugas harian (tugas umum di luar bidang atau terhubung ke tugas pelaporan), serta 15 tugas pelaporan per periode (mingguan Sabtu &amp; bulanan tanggal 25).</p></header>
         <div class="modtabs" role="tablist" aria-label="Modul Tugas">
           <button role="tab" data-panel="tg-daily"><span class="mono">01</span>Tugas Harian</button>
-          <button role="tab" data-panel="tg-umum"><span class="mono">02</span>Tugas Umum</button>
+          <button role="tab" data-panel="tg-umum"><span class="mono">02</span>Tugas Pelaporan</button>
         </div>
         <div class="modpanel" id="tg-daily" role="tabpanel"><div id="harianApp"></div></div>
         <div class="modpanel" id="tg-umum" role="tabpanel" hidden><div id="tugasApp"></div></div>
@@ -395,6 +370,7 @@
   <script src="assets/js/pin.js"></script>
   <script src="assets/js/docs.js"></script>
   <script src="assets/js/gcal.js"></script>
+  <script src="assets/js/meet.js"></script>
   <script src="assets/js/fpp-logo.js"></script>
   <script src="assets/js/fpp-pdf.js"></script>
   <script src="assets/js/fpp.js"></script>

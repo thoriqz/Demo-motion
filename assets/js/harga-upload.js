@@ -227,7 +227,8 @@
     S.db = db; S.assets = assets; S.user = user; S.mode = assets ? "live" : "view";
     if (user) { try { S.uid = await user.id(); } catch (e) { S.uid = null; } }
     slot();
-    db.collection("harga").doc("current").onSnapshot((snap) => { if (snap && snap.exists) useVersion(snap.data()); }, () => {});
+    try { db.collection("harga").doc("current").onSnapshot((snap) => { if (snap && snap.exists) useVersion(snap.data()); }, () => {}); }
+    catch (e) { /* versi bawaan tetap dipakai */ }
   }
   boot();
 })();

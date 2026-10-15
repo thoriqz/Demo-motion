@@ -1,6 +1,6 @@
 /* =========================================================
    Tugas → Tugas Harian: checklist pekerjaan harian yang diinput manual,
-   masing-masing terhubung ke salah satu tugas umum (15 tugas pelaporan).
+   berjenis Tugas Umum (di luar bidang, no = 0) atau terhubung ke salah satu dari 15 tugas pelaporan.
    Dicentang saat selesai, dengan keterangan detail pekerjaan.
    Tersimpan di koleksi "daily" (status "Selesai"/"Belum", note, doneAt).
    ========================================================= */
@@ -22,19 +22,21 @@
   const hm = (iso) => { const d = new Date(iso); return isNaN(d) ? "" : d.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }); };
   const toast = (t) => { const el = $("#toast"); if (!el) return; el.textContent = t; el.classList.add("is-on"); clearTimeout(toast._t); toast._t = setTimeout(() => el.classList.remove("is-on"), 2600); };
   const isDone = (r) => r.status === "Selesai";
-  const item = (no) => T.items.find((it) => String(it.no) === String(no));
+  /* Jenis "Tugas Umum": pekerjaan di luar bidang GA/Admin/Finance/HR/Legal (no = 0, tidak terhubung ke tugas pelaporan) */
+  const UMUM = { no: 0, name: "Tugas Umum", bidang: ["Umum"], desc: "Pekerjaan umum di luar bidang GA, Admin, Finance, HR, dan Legal", unit: "" };
+  const item = (no) => (String(no) === "0" ? UMUM : T.items.find((it) => String(it.no) === String(no)));
   const areaOf = (it) => (it ? it.bidang[0] : "Umum");
   const log = (it, text) => window.DULog && window.DULog.add(areaOf(it), text);
 
   const S = { rows: [], mode: "loading", day: ymd(new Date()), task: "" };
 
-  /* Untuk tautan balik dari kartu tugas umum */
+  /* Untuk tautan balik dari kartu tugas pelaporan */
   window.DUHarian = {
     count: (no, from, to) => S.rows.filter((r) => String(r.no) === String(no) && r.date >= from && r.date <= to).length,
     show: (no) => { S.task = String(no); draw(); const t = document.getElementById("tab-tg-daily"); if (t) t.click(); root.scrollIntoView({ behavior: "smooth", block: "start" }); }
   };
 
-  const options = T.bidang.map((b) => `<optgroup label="${esc(b)}">${T.items.filter((it) => it.bidang[0] === b).map((it) => `<option value="${it.no}">${pad(it.no)} · ${esc(it.name)}</option>`).join("")}</optgroup>`).join("");
+  const options = `<optgroup label="Umum"><option value="0">Tugas Umum (di luar bidang)</option></optgroup>` + T.bidang.map((b) => `<optgroup label="${esc(b)}">${T.items.filter((it) => it.bidang[0] === b).map((it) => `<option value="${it.no}">${pad(it.no)} · ${esc(it.name)}</option>`).join("")}</optgroup>`).join("");
 
   root.innerHTML = `
     <div class="hr-day">
@@ -60,7 +62,7 @@
         <h3 class="panel__title mono">${esc(up("Input tugas harian"))}</h3>
         <form class="form hr-form" autocomplete="off">
           <label>Tanggal<input name="date" type="date" required></label>
-          <label>Terhubung ke tugas umum<select name="no" required>${options}</select></label>
+          <label>Jenis tugas<select name="no" required>${options}</select></label>
           <p class="note hr-desc"></p>
           <label>Pekerjaan<input name="text" required placeholder="mis. Input PO material proyek Kemang"></label>
           <button class="btn btn--solid" type="submit">+ Tambah ke checklist</button>
@@ -75,7 +77,7 @@
 
   function describe() {
     const it = item(form.elements.no.value);
-    $(".hr-desc", root).textContent = it ? `${it.bidang.join(", ")} · ${it.desc} (satuan: ${it.unit})` : "";
+    $(".hr-desc", root).textContent = !it ? "" : it.no === 0 ? it.desc + " · tidak terhubung ke tugas pelaporan" : `Terhubung ke tugas pelaporan · ${it.bidang.join(", ")} · ${it.desc} (satuan: ${it.unit})`;
   }
 
   function draw() {
@@ -83,12 +85,13 @@
     $(".hr-daylabel", root).textContent = fD(S.day, { weekday: "long", day: "numeric", month: "long", year: "numeric" });
     const dayRows = S.rows.filter((r) => r.date === S.day);
     const done = dayRows.filter(isDone).length, pct = dayRows.length ? Math.round((done / dayRows.length) * 100) : 0;
-    const touched = new Set(dayRows.map((r) => String(r.no))).size;
+    const touched = new Set(dayRows.filter((r) => String(r.no) !== "0").map((r) => String(r.no))).size;
+    const umumN = dayRows.filter((r) => String(r.no) === "0").length;
     $(".hr-stats", root).innerHTML =
       `<div class="stat stat--ok"><span class="mono">${esc(up("Checklist"))}</span><b>${pct}%</b><small>${done} dari ${dayRows.length} pekerjaan ${S.day === ymd(new Date()) ? "hari ini" : "di tanggal ini"}</small><i class="hr-prog"><i style="width:${pct}%"></i></i></div>` +
       `<div class="stat stat--ok"><span class="mono">${esc(up("Sudah dikerjakan"))}</span><b>${done}</b><small>${dayRows.filter((r) => isDone(r) && r.note).length} dengan keterangan</small></div>` +
       `<div class="stat stat--warn"><span class="mono">${esc(up("Belum"))}</span><b>${dayRows.length - done}</b><small>belum dicentang</small></div>` +
-      `<div class="stat"><span class="mono">${esc(up("Tugas umum tersentuh"))}</span><b>${touched}/${T.items.length}</b><small>terhubung dari entri harian</small></div>`;
+      `<div class="stat"><span class="mono">${esc(up("Tugas pelaporan tersentuh"))}</span><b>${touched}/${T.items.length}</b><small>${umumN} tugas umum · terhubung dari entri harian</small></div>`;
 
     const it = S.task ? item(S.task) : null;
     const rows = (it ? S.rows.filter((r) => String(r.no) === S.task) : dayRows).slice().sort((x, y) => isDone(x) - isDone(y));
@@ -104,7 +107,7 @@
         <label class="hr-box"><input type="checkbox" ${dn ? "checked" : ""} aria-label="Tandai selesai: ${esc(r.text)}"><span aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></label>
         <div class="hr-item__main">
           <b class="hr-text">${esc(r.text)}</b>
-          <button type="button" class="hr-link" data-goto="${esc(r.no)}" data-date="${esc(r.date)}" title="Buka di Tugas Umum">↗ ${pad(r.no)} · ${esc(t ? t.name : "Tugas umum")}</button>
+          ${String(r.no) === "0" ? `<span class="hr-link hr-link--umum">Tugas Umum</span>` : `<button type="button" class="hr-link" data-goto="${esc(r.no)}" data-date="${esc(r.date)}" title="Buka di Tugas Pelaporan">↗ ${pad(r.no)} · ${esc(t ? t.name : "Tugas pelaporan")}</button>`}
           <small class="mono">${it ? esc(fD(r.date, { weekday: "short", day: "numeric", month: "short" })) + " · " : ""}${dn && r.doneAt ? "selesai " + esc(hm(r.doneAt)) : "dibuat " + esc(hm(r.at))}${t ? " · " + esc(t.bidang.join(", ")) : ""}${r.link ? ` · <a class="lnk" href="${esc(r.link)}" target="_blank" rel="noopener">bukti</a>` : ""}</small>
           <textarea class="hr-note-in" rows="${r.note ? 2 : 1}" placeholder="Keterangan detail pekerjaan…" aria-label="Keterangan ${esc(r.text)}">${esc(r.note || "")}</textarea>
         </div>
@@ -188,7 +191,7 @@
     try {
       await window.DUStore.add("daily", row);
       const it = item(row.no);
-      log(it, `Checklist baru: ${row.text} → ${pad(row.no)} ${it ? it.name : ""}`);
+      log(it, `Checklist baru: ${row.text} → ${row.no ? pad(row.no) + " " : ""}${it ? it.name : ""}`);
       toast("Ditambahkan ke checklist");
       f.text.value = ""; f.text.focus();
       if (row.date !== S.day) { S.day = row.date; }

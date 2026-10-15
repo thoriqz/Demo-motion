@@ -5,7 +5,7 @@ Divisi digambarkan sebagai gedung 5 lantai — tiap lantai satu bidang:
 
 | Lantai | Bidang | Modul |
 |---|---|---|
-| LT.01 | General Affairs | Procurement & Purchasing (input manual FPP kategori Material / Divisi / Kebutuhan Kantor + lampiran PDF) · Aset & Inventaris · Vendor & Subkon (rating, status, filter kategori) · Pelayanan Umum (papan tiket) · Layanan Klien (waktu respons & target SLA 30 menit) · Kalender Internal & Eksternal |
+| LT.01 | General Affairs | Procurement & Purchasing (input manual FPP kategori Material / Divisi / Kebutuhan Kantor + lampiran PDF) · Aset & Inventaris · Vendor & Subkon (rating, status, filter kategori) · Pelayanan Umum & Tamu (jadwal meeting klien dari Google Calendar) · Kalender Internal & Eksternal |
 | LT.02 | Administrasi | Arsip PDF per kategori (SPK, SPH, Invoice, Berita Acara, surat masuk/keluar, company profile, portofolio, notulen, memo internal) |
 | LT.03 | Finance & Accounting | Rekonsiliasi bank per rekening · Laporan keuangan harian/mingguan/bulanan + anggaran vs realisasi · Daftar periksa tutup buku + kunci periode |
 | LT.04 | Human Resources | Database karyawan dari DATABASE_SDM_ROEMANTRA.xlsx (nama, jenis kelamin, usia, HP, posisi, email) · Direktori freelancer (tabel ala daftar vendor, filter posisi) dari DATABASE_FREELANCE.xlsx · Absensi live dari dashboard Google Apps Script (disematkan, muat ulang otomatis tiap 5 menit) |
@@ -73,7 +73,7 @@ otomatis memakai versi terbaru, dan tombol unduh memberikan file versi terbaru t
   (item · jumlah · satuan · harga satuan · harga), Total, Catatan, Diajukan/Disetujui; status Diajukan/Disetujui/Dibeli/Ditolak.
   Tombol **PDF** mencetak FPP ke PDF dengan tata letak template (`assets/js/fpp-pdf.js`, jsPDF dari cdnjs, logo di `fpp-logo.js`).
 - **Tugas harian** (`assets/js/harian.js`, koleksi `daily`): Tugas → Tugas Harian berupa checklist — centang saat selesai
-  dan isi keterangan detail pekerjaan; tiap entri terhubung ke salah satu tugas umum; kartu tugas umum menampilkan jumlah catatan harian di periodenya dan bisa saling melompat.
+  dan isi keterangan detail pekerjaan; jenisnya *Tugas Umum* (di luar bidang) atau terhubung ke salah satu tugas pelaporan (tab *Tugas Pelaporan*); kartu tugas umum menampilkan jumlah catatan harian di periodenya dan bisa saling melompat.
 - **Riwayat aktivitas** (koleksi `activity`): unggah/hapus PDF, input/status FPP, tugas harian, status tugas umum,
   dan agenda Google Calendar baru tercatat otomatis; tampil per hari di Beranda Sage.
 

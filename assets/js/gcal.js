@@ -75,7 +75,7 @@
     return S.monthEvents.concat(S.upcoming).filter((e) => day >= e.firstDay && day <= e.lastDay && !seen.has(e.id) && seen.add(e.id))
       .sort((a, b) => (b.allDay - a.allDay) || (a.start - b.start));
   };
-  window.DUCal = { upcoming: () => S.upcoming, mode: () => S.mode, error: () => S.err, preview: (id) => openEvent(id) };
+  window.DUCal = { upcoming: () => S.upcoming, mode: () => S.mode, error: () => S.err, preview: (id) => openEvent(id), showEvent: (e) => openEvent(e), events, errMsg, calendarId: CAL, local };
   const announce = () => document.dispatchEvent(new CustomEvent("du:cal"));
 
   /* ---------- Markup modul kalender ---------- */
@@ -159,7 +159,7 @@
   const box = modal.firstElementChild;
   let lastFocus = null;
   function openEvent(id) {
-    const e = findEv(id);
+    const e = typeof id === "object" ? id : findEv(id);
     if (!e) return;
     const range = e.allDay
       ? (+e.firstDay === +e.lastDay ? fmt(e.firstDay, { weekday: "long", day: "numeric", month: "long", year: "numeric" }) + " · seharian"

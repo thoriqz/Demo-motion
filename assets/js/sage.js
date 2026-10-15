@@ -135,8 +135,8 @@
       nd.style.transform = `rotate(${(pct / 100) * 180}deg)`;
     }));
 
-    // Tugas terbuka: tugas umum periode berjalan yang belum selesai + tiket baru
-    let tasks = (get("du-serv", null) || D.services).filter((s) => s.stage === 0).length;
+    // Tugas terbuka: tugas pelaporan periode berjalan yang belum selesai
+    let tasks = 0;
     if (window.DUTasks) { const t = window.DUTasks.summary(); tasks += t.Belum + t.Proses; }
     countTo($("#hTasks"), tasks);
     $("#hModN").textContent = MODULES.length;
@@ -160,6 +160,7 @@
   document.addEventListener("du:change", () => { if (current === "home") renderHome(); });
   document.addEventListener("du:docs", () => { if (current === "home") renderHome(); });
   document.addEventListener("du:tasks", () => buildNotes());
+  document.addEventListener("du:meet", () => buildNotes());
   document.addEventListener("du:cal", () => { if (current === "home") renderCal(); buildNotes(); });
 
   /* Model bangunan 3D modern (aksonometri berputar) — murni dekorasi arsitektur.
@@ -297,7 +298,7 @@
     if (window.DUTasks) {
       window.DUTasks.due().slice(0, 4).forEach((d) => items.push({ t: `Tugas ${d.n === 0 ? "hari ini" : d.n === 1 ? "besok" : d.n + " hari lagi"}: ${d.it.name}`, v: "tugas", tone: d.n === 0 ? "danger" : "warn" }));
     }
-    D.clientRequests.filter((c) => c.status === "Menunggu").forEach((c) => items.push({ t: `${c.client} menunggu respons`, v: "ga", tab: "ga-client", tone: "warn" }));
+    if (window.DUMeet) window.DUMeet.today().slice(0, 3).forEach((e) => items.push({ t: `Meeting klien hari ini${e.time ? " " + e.time : ""}: ${e.short}`, v: "ga", tab: "ga-meet", tone: "info" }));
     $("#sNoteList").innerHTML = items.map((n) => `<li><a href="#${n.v}" ${n.tab ? `data-tab="${n.tab}"` : ""}><i class="tone tone--${n.tone}"></i>${esc(n.t)}</a></li>`).join("");
     $("#sDot").hidden = !items.length;
   }

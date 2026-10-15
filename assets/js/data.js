@@ -92,26 +92,6 @@ window.DU_DATA = {
     { name: "Rio Alumunium", cat: "Alumunium · kusen pintu", phone: "—", loc: "—" }
   ],
 
-  serviceStages: ["Baru", "Diproses", "Selesai"],
-  services: [
-    { id: "GA-121", title: "AC ruang studio desain bocor", cat: "Perbaikan", by: "Tim Desain", stage: 0 },
-    { id: "GA-120", title: "Konsumsi rapat klien (12 org)", cat: "Konsumsi", by: "Marketing", stage: 0 },
-    { id: "GA-119", title: "Booking mobil survey Bogor", cat: "Kendaraan", by: "Arsitek", stage: 1 },
-    { id: "GA-118", title: "Mess pekerja site Cibubur", cat: "Akomodasi", by: "PM Proyek", stage: 1 },
-    { id: "GA-117", title: "Isi ulang galon & pantry", cat: "Kebersihan", by: "Admin", stage: 2 },
-    { id: "GA-116", title: "Perbaikan kunci ruang arsip", cat: "Perbaikan", by: "Admin", stage: 2 }
-  ],
-
-  slaMinutes: 30,
-  clientRequests: [
-    { client: "PT Graha Sentosa", req: "Minta revisi layout ruang direksi", channel: "WhatsApp", at: "08.12", mins: 9, status: "Selesai" },
-    { client: "Bpk. H. Santoso", req: "Jadwal kunjungan progres Rumah Kemang", channel: "Telepon", at: "09.05", mins: 14, status: "Selesai" },
-    { client: "PT Kopi Nusa", req: "Salinan BAST & garansi pekerjaan", channel: "Email", at: "10.20", mins: 42, status: "Selesai" },
-    { client: "CV Arunika", req: "Konfirmasi jadwal presentasi 3D", channel: "WhatsApp", at: "11.47", mins: 6, status: "Diproses" },
-    { client: "PT Logistik Andalan", req: "Laporan mingguan progres gudang", channel: "Email", at: "13.30", mins: 25, status: "Diproses" },
-    { client: "Ibu Larasati", req: "Permintaan penawaran desain dapur", channel: "Instagram", at: "14.02", mins: null, status: "Menunggu" }
-  ],
-
   /* Kalender Google yang dipakai modul Kalender (lihat assets/js/gcal.js) */
   googleCalendar: { calendarId: "roemantaraindonesia@gmail.com", timeZone: "Asia/Jakarta" },
 
